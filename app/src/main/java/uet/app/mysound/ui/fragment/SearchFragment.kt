@@ -13,10 +13,10 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import uet.app.mysound.R
 import uet.app.mysound.adapter.search.SearchHistoryItemAdapter
 import uet.app.mysound.adapter.search.SearchItemAdapter
 import uet.app.mysound.adapter.search.SuggestQueryAdapter
-import uet.app.mysound.R
 import uet.app.mysound.data.model.searchResult.albums.AlbumsResult
 import uet.app.mysound.data.model.searchResult.artists.ArtistsResult
 import uet.app.mysound.data.model.searchResult.playlists.PlaylistsResult
@@ -205,6 +205,12 @@ class SearchFragment : Fragment() {
                     val args = Bundle()
                     args.putString("id", id)
                     findNavController().navigate(R.id.action_global_playlistFragment, args)
+                }
+                if (type == "song"){
+                    val videoId = (resultAdapter.getCurrentList()[position] as SongsResult).videoId.toString()
+                    val args = Bundle()
+                    args.putString("videoId", videoId)
+                    findNavController().navigate(R.id.action_global_nowPlayingFragment, args)
                 }
             }
 

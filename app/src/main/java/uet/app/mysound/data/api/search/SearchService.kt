@@ -59,6 +59,4 @@ interface SearchService {
     //Playlist
     @GET("playlists")
     suspend fun browsePlaylist(@Query("id") id: String): Response<PlaylistBrowse>
-
-
 }

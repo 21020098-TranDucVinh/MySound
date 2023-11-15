@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/bottom_navigation_item_search"
-        android:name="com.maxrave.simpmusic.ui.fragment.SearchFragment"
+        android:name="uet.app.mysound.ui.fragment.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" >
         <action
@@ -20,17 +20,17 @@
     </fragment>
     <fragment
         android:id="@+id/bottom_navigation_item_library"
-        android:name="com.maxrave.simpmusic.ui.fragment.LibraryFragment"
+        android:name="uet.app.mysound.ui.fragment.LibraryFragment"
         android:label="fragment_library"
         tools:layout="@layout/fragment_library" />
     <fragment
         android:id="@+id/bottom_navigation_item_home"
-        android:name="com.maxrave.simpmusic.ui.fragment.HomeFragment"
+        android:name="uet.app.mysound.ui.fragment.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home"/>
     <fragment
         android:id="@+id/artistFragment"
-        android:name="com.maxrave.simpmusic.ui.fragment.other.ArtistFragment"
+        android:name="uet.app.mysound.ui.fragment.other.ArtistFragment"
         android:label="ArtistFragment" />
     <action
         android:id="@+id/action_global_artistFragment"
@@ -38,17 +38,24 @@
         app:enterAnim="@anim/bottom_to_top" />
     <fragment
         android:id="@+id/albumFragment"
-        android:name="com.maxrave.simpmusic.ui.fragment.other.AlbumFragment"
+        android:name="uet.app.mysound.ui.fragment.other.AlbumFragment"
         android:label="AlbumFragment" />
     <action
         android:id="@+id/action_global_albumFragment"
         app:destination="@id/albumFragment" />
     <fragment
         android:id="@+id/playlistFragment"
-        android:name="com.maxrave.simpmusic.ui.fragment.other.PlaylistFragment"
+        android:name="uet.app.mysound.ui.fragment.other.PlaylistFragment"
         android:label="PlaylistFragment" />
     <action
         android:id="@+id/action_global_playlistFragment"
         app:destination="@id/playlistFragment" />
+    <dialog
+        android:id="@+id/nowPlayingFragment"
+        android:name="uet.app.mysound.ui.fragment.NowPlayingFragment"
+        android:label="NowPlayingFragment" />
+    <action
+        android:id="@+id/action_global_nowPlayingFragment"
+        app:destination="@id/nowPlayingFragment" />
 
 </navigation>
