@@ -5,6 +5,7 @@ import uet.app.mysound.data.model.browse.album.AlbumBrowse
 import uet.app.mysound.data.model.browse.artist.ArtistBrowse
 import uet.app.mysound.data.model.browse.playlist.PlaylistBrowse
 import uet.app.mysound.data.model.explore.mood.Mood
+import uet.app.mysound.data.model.explore.mood.moodmoments.MoodsMomentObject
 import uet.app.mysound.data.model.home.homeItem
 import uet.app.mysound.data.model.searchResult.albums.AlbumsResult
 import uet.app.mysound.data.model.searchResult.artists.ArtistsResult
@@ -43,6 +44,8 @@ class RemoteDataSource @Inject constructor(private val searchService: SearchServ
     suspend fun getHome(): Response<ArrayList<homeItem>> = searchService.getHome()
 
     suspend fun exploreMood(): Response<Mood> = searchService.exploreMood()
+
+    suspend fun getMood(params: String): Response<MoodsMomentObject> = searchService.getMood(params)
 
     suspend fun browseArtist(channelId: String): Response<ArtistBrowse> = searchService.browseArtist(channelId)
 

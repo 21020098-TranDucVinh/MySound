@@ -2,37 +2,24 @@ package uet.app.mysound.ui.fragment
 
 import android.app.Dialog
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.view.*
-import android.widget.SeekBar
-import android.widget.Toast
-import androidx.core.content.ContextCompat
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.customview.widget.ViewDragHelper
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.slider.Slider
-import uet.app.mysound.R
-import uet.app.mysound.viewModel.NowPlayingDialogViewModel
-import uet.app.mysound.databinding.FragmentNowPlayingBinding
-import uet.app.mysound.viewModel.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.math.log
+import uet.app.mysound.R
+import uet.app.mysound.databinding.FragmentNowPlayingBinding
+import uet.app.mysound.viewModel.NowPlayingDialogViewModel
 
 @UnstableApi
 @AndroidEntryPoint
-class NowPlayingFragment: BottomSheetDialogFragment() {
+class NowPlayingFragment : BottomSheetDialogFragment() {
     private val UPDATE_INTERVAL_MS: Long = 1000
     private lateinit var dragHelper: ViewDragHelper
     private val viewModel by viewModels<NowPlayingDialogViewModel>()
@@ -82,6 +69,7 @@ class NowPlayingFragment: BottomSheetDialogFragment() {
         _binding = FragmentNowPlayingBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btPlayPause.setOnClickListener {

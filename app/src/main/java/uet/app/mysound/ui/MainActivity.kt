@@ -1,16 +1,13 @@
 package uet.app.mysound.ui
 
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import dagger.hilt.android.AndroidEntryPoint
 import uet.app.mysound.R
 import uet.app.mysound.databinding.ActivityMainBinding
 import uet.app.mysound.ui.fragment.NowPlayingFragment
-import uet.app.mysound.viewModel.SharedViewModel
-import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {

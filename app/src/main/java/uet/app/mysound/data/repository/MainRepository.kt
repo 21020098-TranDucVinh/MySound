@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import uet.app.mysound.data.model.explore.mood.moodmoments.MoodsMomentObject
 import javax.inject.Inject
 
 @ActivityRetainedScoped
@@ -39,7 +40,7 @@ class MainRepository @Inject constructor(private val remoteDataSource: RemoteDat
 
     //exploreMood
     suspend fun exploreMood(): Flow<Resource<Mood>> = flow<Resource<Mood>> { emit(safeApiCall { remoteDataSource.exploreMood() }) }.flowOn(Dispatchers.IO)
-
+    suspend fun getMood(params: String): Flow<Resource<MoodsMomentObject>> = flow<Resource<MoodsMomentObject>> { emit(safeApiCall { remoteDataSource.getMood(params) }) }.flowOn(Dispatchers.IO)
     //browse
     //artist
     suspend fun browseArtist(channelId: String): Flow<Resource<ArtistBrowse>> = flow<Resource<ArtistBrowse>> { emit(safeApiCall { remoteDataSource.browseArtist(channelId) }) }.flowOn(Dispatchers.IO)
