@@ -9,10 +9,10 @@
         android:id="@+id/bottom_navigation_item_search"
         android:name="uet.app.mysound.ui.fragment.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" >
+        tools:layout="@layout/fragment_search">
         <action
             android:id="@+id/action_bottom_navigation_item_search_to_artistFragment"
-            app:destination="@id/artistFragment" >
+            app:destination="@id/artistFragment">
             <argument
                 android:name="channelId"
                 app:argType="string" />
@@ -27,7 +27,7 @@
         android:id="@+id/bottom_navigation_item_home"
         android:name="uet.app.mysound.ui.fragment.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home"/>
+        tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/artistFragment"
         android:name="uet.app.mysound.ui.fragment.other.ArtistFragment"
@@ -57,5 +57,12 @@
     <action
         android:id="@+id/action_global_nowPlayingFragment"
         app:destination="@id/nowPlayingFragment" />
+    <fragment
+        android:id="@+id/moodFragment"
+        android:name="uet.app.mysound.ui.fragment.other.MoodFragment"
+        android:label="MoodFragment" />
+    <action
+        android:id="@+id/action_global_moodFragment"
+        app:destination="@id/moodFragment" />
 
 </navigation>

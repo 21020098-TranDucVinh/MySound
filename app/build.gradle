@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'androidx.navigation.safeargs'
-    id 'kotlin-kapt'
+    id 'kotlin-kapt' // Kotlin Annotation Processing Tool
     id 'com.google.dagger.hilt.android'
 }
 
@@ -32,7 +32,7 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
     //enable data binding
     dataBinding {
@@ -45,6 +45,7 @@ android {
 }
 
 dependencies {
+    implementation project(':youtubeExtractor')
 
     implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -67,13 +68,11 @@ dependencies {
     implementation "androidx.media3:media3-exoplayer-smoothstreaming:$media3_version"
     implementation "androidx.media3:media3-exoplayer-workmanager:$media3_version"
     //Youtube
-    implementation 'com.github.sealedtx:java-youtube-downloader:3.1.0'
+    implementation 'com.github.sealedtx:java-youtube-downloader:3.2.2'
     //palette color
     implementation 'androidx.palette:palette:1.0.0'
     //expandable text view
     implementation 'com.github.giangpham96:expandable-text:2.0.0'
-
-    implementation 'net.colindodd:gradientlayout:1.2'
 
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
@@ -126,7 +125,7 @@ dependencies {
     kapt 'com.google.dagger:hilt-compiler:2.45'
 
     // For instrumentation tests
-    androidTestImplementation  'com.google.dagger:hilt-android-testing:2.45'
+    androidTestImplementation 'com.google.dagger:hilt-android-testing:2.45'
     kaptAndroidTest 'com.google.dagger:hilt-compiler:2.45'
 
     // For local unit tests

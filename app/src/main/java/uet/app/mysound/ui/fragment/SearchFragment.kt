@@ -68,7 +68,7 @@ class SearchFragment : Fragment() {
                     binding.defaultLayout.visibility = View.GONE
                     binding.resultView.visibility = View.VISIBLE
                     if (!searchHistory.contains(query)){
-                        searchHistory.add(query)
+                        searchHistory.add(0 ,query)
                         Log.d("Check History in Fragment", searchHistory.toString())
                     }
                     Log.d("Check History", searchHistory.toString())
@@ -210,6 +210,7 @@ class SearchFragment : Fragment() {
                     val videoId = (resultAdapter.getCurrentList()[position] as SongsResult).videoId.toString()
                     val args = Bundle()
                     args.putString("videoId", videoId)
+                    args.putString("from", "Search Result")
                     findNavController().navigate(R.id.action_global_nowPlayingFragment, args)
                 }
             }

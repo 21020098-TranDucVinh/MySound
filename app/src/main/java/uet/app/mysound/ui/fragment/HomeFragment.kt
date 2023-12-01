@@ -25,8 +25,10 @@ import uet.app.mysound.data.model.explore.mood.Mood
 import uet.app.mysound.data.model.explore.mood.MoodsMoment
 import uet.app.mysound.adapter.home.HomeItemAdapter
 import uet.app.mysound.adapter.home.MoodsMomentAdapter
+import uet.app.mysound.adapter.home.QuickPicksAdapter
 import uet.app.mysound.adapter.home.chart.ArtistChartAdapter
 import uet.app.mysound.adapter.home.chart.TrackChartAdapter
+import uet.app.mysound.data.model.home.Content
 import uet.app.mysound.data.model.home.chart.Chart
 import uet.app.mysound.data.model.home.chart.ItemArtist
 import uet.app.mysound.data.model.home.chart.ItemVideo
@@ -51,8 +53,10 @@ class HomeFragment : Fragment() {
     private lateinit var genreAdapter: GenreAdapter
     private lateinit var trackChartAdapter: TrackChartAdapter
     private lateinit var artistChartAdapter: ArtistChartAdapter
+    private lateinit var quickPicksAdapter: QuickPicksAdapter
 
     private var homeItemList: ArrayList<homeItem>? = null
+    private var homeItemListWithoutQuickPicks: ArrayList<homeItem>? = null
     private var exploreMoodItem: Mood? = null
     private var moodsMoment: ArrayList<MoodsMoment>? = null
     private var genre: ArrayList<Genre>? = null
@@ -99,14 +103,17 @@ class HomeFragment : Fragment() {
         Log.d("Date", "onCreateView: $date")
         binding.tvTitleMoodsMoment.visibility = View.GONE
         binding.tvTitleGenre.visibility = View.GONE
+        binding.fullLayout.visibility = View.GONE
         mAdapter = HomeItemAdapter(arrayListOf(), requireContext(), findNavController())
         moodsMomentAdapter = MoodsMomentAdapter(arrayListOf())
         genreAdapter = GenreAdapter(arrayListOf())
         trackChartAdapter = TrackChartAdapter(arrayListOf(), requireContext())
         artistChartAdapter = ArtistChartAdapter(arrayListOf(), requireContext())
+        quickPicksAdapter = QuickPicksAdapter(arrayListOf(), requireContext(), findNavController())
         val gridLayoutManager1 = GridLayoutManager(requireContext(), 3, GridLayoutManager.HORIZONTAL, false)
         val gridLayoutManager2 = GridLayoutManager(requireContext(), 3, GridLayoutManager.HORIZONTAL, false)
         val gridLayoutManager3 = GridLayoutManager(requireContext(), 3, GridLayoutManager.HORIZONTAL, false) //artist chart
+        val gridLayoutManager4 = GridLayoutManager(requireContext(), 3, GridLayoutManager.HORIZONTAL, false) //quick picks
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val layoutManager2 = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.rvHome.apply {
@@ -128,6 +135,10 @@ class HomeFragment : Fragment() {
         binding.rvTopArtist.apply {
             this.adapter = artistChartAdapter
             this.layoutManager = gridLayoutManager3
+        }
+        binding.rvQuickPicks.apply {
+            this.adapter = quickPicksAdapter
+            this.layoutManager = gridLayoutManager4
         }
         if (viewModel.homeItemList.value == null || viewModel.homeItemList.value?.data == null || viewModel.homeItemList.value?.data!!.isEmpty()){
             fetchHomeData()
@@ -175,9 +186,11 @@ class HomeFragment : Fragment() {
                     })
                     binding.tvTitleMoodsMoment.visibility = View.VISIBLE
                     binding.tvTitleGenre.visibility = View.VISIBLE
+                    binding.fullLayout.visibility = View.VISIBLE
 //                    binding.swipeRefreshLayout.isRefreshing = false
                 }
                 else {
+                    binding.fullLayout.visibility = View.GONE
                     binding.swipeRefreshLayout.isRefreshing = true
                 }
             })
@@ -194,14 +207,17 @@ class HomeFragment : Fragment() {
                     }
                 }
                 Log.d("Region Code", "onViewCreated: ${viewModel.regionCodeChart.value}")
+                binding.chartResultLayout.visibility = View.GONE
             }
             Log.d("Data from Result", "Load lại từ viewModel: ${viewModel.homeItemList.value}")
             if (homeItemList == null) {
                 homeItemList = ArrayList()
+                homeItemListWithoutQuickPicks = ArrayList()
             }
             else
             {
                 homeItemList?.clear()
+                homeItemListWithoutQuickPicks?.clear()
             }
             chart = viewModel.chart.value?.data as Chart
             trackChart = chart?.videos?.items as ArrayList<ItemVideo>
@@ -210,7 +226,19 @@ class HomeFragment : Fragment() {
             artistChartAdapter.updateData(artistChart!!)
             homeItemList?.addAll(viewModel.homeItemList.value?.data!!)
             Log.d("Data", "onViewCreated: $homeItemList")
-            mAdapter.updateData(homeItemList!!)
+            if (homeItemList!![0].title == "Quick picks")
+            {
+                val temp = homeItemList!![0].contents as ArrayList<Content>
+                quickPicksAdapter.updateData(temp as ArrayList<Content>)
+                for (i in 1..homeItemList!!.size - 1){
+                    homeItemListWithoutQuickPicks?.add(homeItemList!![i])
+                }
+            }
+            else
+            {
+                homeItemListWithoutQuickPicks = homeItemList
+            }
+            mAdapter.updateData(homeItemListWithoutQuickPicks!!)
             exploreMoodItem = viewModel.exploreMoodItem.value?.data as Mood
             moodsMoment = exploreMoodItem?.moodsMoments as ArrayList<MoodsMoment>
             genre = exploreMoodItem?.genres as ArrayList<Genre>
@@ -220,6 +248,7 @@ class HomeFragment : Fragment() {
             binding.tvTitleGenre.visibility = View.VISIBLE
             moodsMomentAdapter.updateData(moodsMoment!!)
             genreAdapter.updateData(genre!!)
+            binding.fullLayout.visibility = View.VISIBLE
             binding.swipeRefreshLayout.isRefreshing = false
         }
 //        fetchHomeData()
@@ -263,11 +292,17 @@ class HomeFragment : Fragment() {
         moodsMomentAdapter.setOnMoodsMomentClickListener(object : MoodsMomentAdapter.onMoodsMomentItemClickListener {
             override fun onMoodsMomentItemClick(position: Int) {
                 Toast.makeText( requireContext(),"${moodsMoment?.get(position)}", Toast.LENGTH_SHORT).show()
+                val args = Bundle()
+                args.putString("params", moodsMoment?.get(position)?.params.toString())
+                findNavController().navigate(R.id.action_global_moodFragment, args)
             }
         })
         genreAdapter.setOnGenreClickListener(object : GenreAdapter.onGenreItemClickListener {
             override fun onGenreItemClick(position: Int) {
                 Toast.makeText( requireContext(),"${genre?.get(position)}", Toast.LENGTH_SHORT).show()
+                val args = Bundle()
+                args.putString("params", genre?.get(position)?.params.toString())
+                findNavController().navigate(R.id.action_global_moodFragment, args)
             }
         })
         artistChartAdapter.setOnArtistClickListener(object : ArtistChartAdapter.onArtistItemClickListener {
@@ -276,6 +311,15 @@ class HomeFragment : Fragment() {
                 val args = Bundle()
                 args.putString("channelId", artistChart?.get(position)?.browseId.toString())
                 findNavController().navigate(R.id.action_global_artistFragment, args)
+            }
+        })
+        quickPicksAdapter.setOnClickListener(object : QuickPicksAdapter.OnClickListener {
+            override fun onClick(position: Int) {
+                Toast.makeText( requireContext(),"${quickPicksAdapter.getData()[position]}", Toast.LENGTH_SHORT).show()
+                val args = Bundle()
+                args.putString("videoId", quickPicksAdapter.getData()[position].videoId)
+                args.putString("from", "Quick Picks")
+                findNavController().navigate(R.id.action_global_nowPlayingFragment, args)
             }
         })
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -320,6 +364,8 @@ class HomeFragment : Fragment() {
         listPopup.setAdapter(codeAdapter)
         listPopup.setOnItemClickListener { adapterView, view, position, id ->
             binding.btRegionCode.text = itemsData[position]
+            binding.chartResultLayout.visibility = View.GONE
+            binding.chartLoadingLayout.visibility = View.VISIBLE
             viewModel.exploreChart(items[position])
             viewModel.loadingChart.observe(viewLifecycleOwner, Observer { loading ->
                 if (!loading)
@@ -343,14 +389,29 @@ class HomeFragment : Fragment() {
                         Log.d("Data from Result", "onViewCreated: $it")
                         if (homeItemList == null) {
                             homeItemList = ArrayList()
+                            homeItemListWithoutQuickPicks = ArrayList()
                         }
                         else
                         {
                             homeItemList?.clear()
+                            homeItemListWithoutQuickPicks?.clear()
                         }
                         homeItemList?.addAll(it!!)
+                        if (homeItemList!![0].title == "Quick picks")
+                        {
+                            val temp = homeItemList!![0].contents as ArrayList<Content>
+                            quickPicksAdapter.updateData(temp as ArrayList<Content>)
+                            for (i in 1..homeItemList!!.size - 1){
+                                homeItemListWithoutQuickPicks?.add(homeItemList!![i])
+                            }
+                        }
+                        else
+                        {
+                            homeItemListWithoutQuickPicks = homeItemList
+                        }
                         Log.d("Data", "onViewCreated: $homeItemList")
-                        mAdapter.updateData(homeItemList!!)
+                        mAdapter.updateData(homeItemListWithoutQuickPicks!!)
+                        binding.fullLayout.visibility = View.VISIBLE
                         binding.swipeRefreshLayout.isRefreshing = false
                     }
                 }
@@ -410,7 +471,6 @@ class HomeFragment : Fragment() {
     }
     private fun observerChart(){
         viewModel.chart.observe(viewLifecycleOwner, Observer {response ->
-            binding.chartResultLayout.visibility = View.GONE
             when (response) {
                 is Resource.Success -> {
                     response.data.let {
@@ -421,6 +481,7 @@ class HomeFragment : Fragment() {
                         artistChartAdapter.updateData(artistChart!!)
                     }
                     binding.chartResultLayout.visibility = View.VISIBLE
+                    binding.chartLoadingLayout.visibility = View.GONE
                 }
                 is Resource.Loading -> {
                 }
@@ -434,6 +495,7 @@ class HomeFragment : Fragment() {
                             .show()
                     }
                     binding.chartResultLayout.visibility = View.GONE
+                    binding.chartLoadingLayout.visibility = View.GONE
                 }
             }
         })

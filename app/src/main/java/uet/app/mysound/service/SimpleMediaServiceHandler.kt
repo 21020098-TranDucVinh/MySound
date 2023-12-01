@@ -6,7 +6,6 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.MediaSource
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,10 +25,12 @@ class SimpleMediaServiceHandler @Inject constructor(
         player.addListener(this)
         job = Job()
     }
+
     fun addMediaSource(mediaSource: MediaSource) {
         player.setMediaSource(mediaSource)
         player.prepare()
     }
+
     fun addMediaSourceList(mediaSourceList: List<MediaSource>) {
         player.setMediaSources(mediaSourceList)
         player.prepare()
@@ -59,8 +60,10 @@ class SimpleMediaServiceHandler @Inject constructor(
                     startProgressUpdate()
                 }
             }
+
             PlayerEvent.Stop -> stopProgressUpdate()
-            is PlayerEvent.UpdateProgress -> player.seekTo((player.duration * playerEvent.newProgress).toLong())
+            is PlayerEvent.UpdateProgress -> player.seekTo((player.duration * playerEvent.newProgress/100).toLong())
+            else -> {}
         }
     }
 
@@ -69,6 +72,7 @@ class SimpleMediaServiceHandler @Inject constructor(
         when (playbackState) {
             ExoPlayer.STATE_BUFFERING -> _simpleMediaState.value =
                 SimpleMediaState.Buffering(player.currentPosition)
+
             ExoPlayer.STATE_READY -> _simpleMediaState.value =
                 SimpleMediaState.Ready(player.duration)
         }

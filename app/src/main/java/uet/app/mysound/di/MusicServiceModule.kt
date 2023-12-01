@@ -7,20 +7,18 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.session.MediaSession
-import uet.app.mysound.service.SimpleMediaNotificationManager
-import uet.app.mysound.service.SimpleMediaServiceHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ServiceScoped
 import dagger.hilt.components.SingletonComponent
+import uet.app.mysound.service.SimpleMediaNotificationManager
+import uet.app.mysound.service.SimpleMediaServiceHandler
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class MusicServiceModule {
+object MusicServiceModule {
 
     @Provides
     @Singleton

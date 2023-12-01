@@ -3,7 +3,6 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
-        jcenter()
     }
 }
 dependencyResolutionManagement {
@@ -12,8 +11,8 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url "https://jitpack.io" }
-        jcenter()
     }
 }
-rootProject.name = "My Sound"
+rootProject.name = "MySound"
 include ':app'
+include ':youtubeExtractor'
