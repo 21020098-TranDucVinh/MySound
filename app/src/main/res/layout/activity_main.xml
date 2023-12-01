@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <data>
-
         <variable
             name="mainViewModel"
             type="uet.app.mysound.viewModel.SharedViewModel" />
@@ -14,11 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/bottom_navigation_view">
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragment_container_view"
                 android:name="androidx.navigation.fragment.NavHostFragment"
@@ -31,39 +29,38 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card"
-            style="?attr/materialCardViewFilledStyle"
             android:layout_width="match_parent"
             android:layout_height="60sp"
-            android:layout_above="@+id/bottom_navigation_view"
-            android:layout_gravity="bottom"
             android:layout_marginStart="5sp"
             android:layout_marginEnd="5sp"
+            app:cardCornerRadius="6sp"
+            style="?attr/materialCardViewFilledStyle"
+            android:layout_gravity="bottom"
             android:clickable="true"
-            app:cardCornerRadius="6sp">
+            android:layout_above="@+id/bottom_navigation_view"
+            app:cardPreventCornerOverlap="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#282828"
                 android:orientation="horizontal"
                 android:padding="0dp">
-
                 <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivArt"
                     android:layout_width="45sp"
                     android:layout_height="45sp"
-                    android:layout_gravity="center_vertical"
                     android:layout_marginStart="8sp"
+                    android:layout_gravity="center_vertical"
                     android:src="@drawable/outline_album_24">
 
                 </com.google.android.material.imageview.ShapeableImageView>
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:orientation="vertical"
                     android:layout_marginStart="10sp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1">
 
                     <TextView
                         android:id="@+id/song_title"
@@ -74,10 +71,10 @@
                         android:marqueeRepeatLimit="marquee_forever"
                         android:scrollHorizontally="true"
                         android:singleLine="true"
-                        android:text=""
                         android:textColor="?android:textColorPrimary"
                         android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:text="" />
 
                     <TextView
                         android:id="@+id/song_artist"
@@ -91,37 +88,34 @@
                         android:textColor="?android:textColorSecondary"
                         android:textSize="12sp" />
                 </LinearLayout>
-
                 <com.google.android.material.checkbox.MaterialCheckBox
                     android:id="@+id/cbFavorite"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
                     android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
                     android:button="@drawable/selector_favorite_check_box">
 
                 </com.google.android.material.checkbox.MaterialCheckBox>
-
                 <ImageButton
-                    android:layout_width="40sp"
                     android:layout_height="40sp"
-                    android:layout_gravity="center_vertical"
+                    android:layout_width="40sp"
                     android:layout_marginEnd="10sp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/baseline_play_arrow_24"
                     android:background="@null"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/baseline_play_arrow_24">
+                    android:scaleType="fitCenter">
 
                 </ImageButton>
             </LinearLayout>
 
 
         </com.google.android.material.card.MaterialCardView>
-
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation_view"
+            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:background="@drawable/transparent_rect"
             app:itemBackground="@drawable/transparent_rect"
             app:menu="@menu/bottom_navigation_items">
