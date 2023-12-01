@@ -29,7 +29,7 @@
                 app:menu="@menu/top_app_bar_home"
                 app:subtitle="Good Evening"
                 app:subtitleTextAppearance="@style/TextAppearance.AppCompat"
-                app:title="SimpMusic"
+                app:title="My Sound"
                 app:titleTextAppearance="@style/TextAppearance.Material3.TitleMedium" />
         </com.google.android.material.appbar.AppBarLayout>
 

@@ -13,6 +13,8 @@ import uet.app.mysound.data.model.searchResult.playlists.PlaylistsResult
 import uet.app.mysound.data.model.searchResult.songs.SongsResult
 import uet.app.mysound.data.model.thumbnailUrl
 import retrofit2.Response
+import uet.app.mysound.data.model.explore.mood.genre.GenreObject
+import uet.app.mysound.data.model.metadata.MetadataSong
 import javax.inject.Inject
 
 class RemoteDataSource @Inject constructor(private val searchService: SearchService) {
@@ -47,6 +49,8 @@ class RemoteDataSource @Inject constructor(private val searchService: SearchServ
 
     suspend fun getMood(params: String): Response<MoodsMomentObject> = searchService.getMood(params)
 
+    suspend fun getGenre(params: String): Response<GenreObject> = searchService.getGenre(params)
+
     suspend fun browseArtist(channelId: String): Response<ArtistBrowse> = searchService.browseArtist(channelId)
 
     suspend fun browseAlbum(browseId: String): Response<AlbumBrowse> = searchService.browseAlbum(browseId)
@@ -54,4 +58,6 @@ class RemoteDataSource @Inject constructor(private val searchService: SearchServ
     suspend fun browsePlaylist(id: String): Response<PlaylistBrowse> = searchService.browsePlaylist(id)
 
     suspend fun exploreChart(regionCode: String): Response<Chart> = searchService.exploreChart(regionCode)
+
+    suspend fun getMetadata(videoId: String): Response<MetadataSong> = searchService.getMetadata(videoId)
 }

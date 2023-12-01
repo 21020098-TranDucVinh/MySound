@@ -19,7 +19,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import uet.app.mysound.data.model.explore.mood.genre.GenreObject
 import uet.app.mysound.data.model.explore.mood.moodmoments.MoodsMomentObject
+import uet.app.mysound.data.model.metadata.MetadataSong
 import javax.inject.Inject
 
 @ActivityRetainedScoped
@@ -41,6 +43,8 @@ class MainRepository @Inject constructor(private val remoteDataSource: RemoteDat
     //exploreMood
     suspend fun exploreMood(): Flow<Resource<Mood>> = flow<Resource<Mood>> { emit(safeApiCall { remoteDataSource.exploreMood() }) }.flowOn(Dispatchers.IO)
     suspend fun getMood(params: String): Flow<Resource<MoodsMomentObject>> = flow<Resource<MoodsMomentObject>> { emit(safeApiCall { remoteDataSource.getMood(params) }) }.flowOn(Dispatchers.IO)
+    suspend fun getGenre(params: String): Flow<Resource<GenreObject>> = flow<Resource<GenreObject>> { emit(safeApiCall { remoteDataSource.getGenre(params) }) }.flowOn(Dispatchers.IO)
+
     //browse
     //artist
     suspend fun browseArtist(channelId: String): Flow<Resource<ArtistBrowse>> = flow<Resource<ArtistBrowse>> { emit(safeApiCall { remoteDataSource.browseArtist(channelId) }) }.flowOn(Dispatchers.IO)
@@ -50,4 +54,7 @@ class MainRepository @Inject constructor(private val remoteDataSource: RemoteDat
     suspend fun browsePlaylist(id: String): Flow<Resource<PlaylistBrowse>> = flow<Resource<PlaylistBrowse>> { emit(safeApiCall { remoteDataSource.browsePlaylist(id) }) }.flowOn(Dispatchers.IO)
     //chart
     suspend fun exploreChart(regionCode: String): Flow<Resource<Chart>> = flow<Resource<Chart>> { emit(safeApiCall { remoteDataSource.exploreChart(regionCode) }) }.flowOn(Dispatchers.IO)
+
+    //metadata
+    suspend fun getMetadata(videoId: String): Flow<Resource<MetadataSong>> = flow<Resource<MetadataSong>> { emit(safeApiCall { remoteDataSource.getMetadata(videoId) }) }.flowOn(Dispatchers.IO)
 }

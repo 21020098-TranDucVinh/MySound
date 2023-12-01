@@ -1,30 +1,68 @@
 package uet.app.mysound.ui.fragment
 
 import android.app.Dialog
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.view.*
+import android.widget.SeekBar
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.customview.widget.ViewDragHelper
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.navigation.fragment.findNavController
+import androidx.palette.graphics.Palette
+import coil.ImageLoader
+import coil.load
+import coil.request.ImageRequest
+import coil.size.Size
+import coil.transform.Transformation
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import dagger.hilt.android.AndroidEntryPoint
+import com.google.android.material.slider.Slider
 import uet.app.mysound.R
-import uet.app.mysound.databinding.FragmentNowPlayingBinding
+import uet.app.mysound.data.model.metadata.MetadataSong
 import uet.app.mysound.viewModel.NowPlayingDialogViewModel
+import uet.app.mysound.databinding.FragmentNowPlayingBinding
+import uet.app.mysound.utils.Resource
+import uet.app.mysound.viewModel.SharedViewModel
+import uet.app.mysound.viewModel.UIEvent
+import dagger.hilt.android.AndroidEntryPoint
+import kotlin.math.log
 
 @UnstableApi
 @AndroidEntryPoint
 class NowPlayingFragment : BottomSheetDialogFragment() {
     private val UPDATE_INTERVAL_MS: Long = 1000
     private lateinit var dragHelper: ViewDragHelper
-    private val viewModel by viewModels<NowPlayingDialogViewModel>()
+    private val viewModel by viewModels<SharedViewModel>()
     private var _binding: FragmentNowPlayingBinding? = null
     private val binding get() = _binding!!
+    private var metadataCurSong: MetadataSong? = null
+
+    private var videoId: String? = null
+    private var from: String? = null
+
+    private var gradientDrawable: GradientDrawable? = null
+    private var lyricsBackground: Int? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.FullScreenDialogTheme)
@@ -33,10 +71,6 @@ class NowPlayingFragment : BottomSheetDialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.setWindowAnimations(R.style.DialogAnimation)
-        val videoId = arguments?.getString("videoId")
-        if (videoId != null) {
-            viewModel.songResult.postValue(videoId)
-        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -48,6 +82,7 @@ class NowPlayingFragment : BottomSheetDialogFragment() {
                 bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
             parentLayout?.let { bottom ->
                 val behaviour = BottomSheetBehavior.from(bottom)
+                behaviour.isDraggable = false
                 setupFullHeight(bottom)
                 behaviour.state = BottomSheetBehavior.STATE_EXPANDED
             }
@@ -64,7 +99,7 @@ class NowPlayingFragment : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentNowPlayingBinding.inflate(inflater, container, false)
         return binding.root
@@ -72,8 +107,41 @@ class NowPlayingFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("check Video ID in ViewModel", viewModel.videoId.value.toString())
+        videoId = arguments?.getString("videoId")
+        from = arguments?.getString("from")
+        Log.d("check Video ID in Fragment", videoId.toString())
+        if (videoId != null) {
+            if (viewModel.videoId.value == videoId)
+            {
+                gradientDrawable = viewModel.gradientDrawable.value
+                lyricsBackground = viewModel.lyricsBackground.value
+                metadataCurSong = viewModel.metadata.value?.data
+                updateUI()
+            }
+            else
+            {
+                viewModel.gradientDrawable.postValue(null)
+                viewModel.lyricsBackground.postValue(null)
+                binding.tvSongTitle.visibility = View.GONE
+                binding.tvSongArtist.visibility = View.GONE
+                binding.ivArt.visibility = View.GONE
+                binding.loadingArt.visibility = View.VISIBLE
+                viewModel.getMetadata(videoId!!)
+                observerMetadata()
+            }
+        }
+        else {
+            videoId = viewModel.videoId.value
+            from = viewModel.from.value
+            metadataCurSong = viewModel.metadata.value?.data
+            gradientDrawable = viewModel.gradientDrawable.value
+            lyricsBackground = viewModel.lyricsBackground.value
+            updateUI()
+        }
+
         binding.btPlayPause.setOnClickListener {
-            viewModel.onUIEvent(NowPlayingDialogViewModel.UIEvent.PlayPause)
+            viewModel.onUIEvent(UIEvent.PlayPause)
         }
 
         binding.topAppBar.setNavigationOnClickListener {
@@ -171,5 +239,140 @@ class NowPlayingFragment : BottomSheetDialogFragment() {
 //        }
 //    }
 
+    private fun removeTrailingComma(sentence: String): String {
+        val trimmed = sentence.trimEnd()
+        return if (trimmed.endsWith(", ")) {
+            trimmed.dropLast(2)
+        } else {
+            trimmed
+        }
+    }
 
+
+    private fun removeComma(string: String): String {
+        return if (string.endsWith(',')) {
+            string.substring(0, string.length - 1)
+        } else {
+            string
+        }
+    }
+    private fun observerMetadata(){
+        viewModel.loadMediaItems(videoId!!)
+        viewModel.videoId.postValue(videoId)
+        viewModel.from.postValue(from)
+        viewModel.metadata.observe(viewLifecycleOwner, Observer {
+            when (it){
+                is Resource.Success ->{
+                    metadataCurSong = it.data
+                    updateUI()
+                }
+                is Resource.Error ->{
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
+                is Resource.Loading ->{
+
+                }
+            }
+        })
+    }
+    private fun updateUI(){
+        binding.ivArt.visibility = View.GONE
+        binding.loadingArt.visibility = View.VISIBLE
+        val request = ImageRequest.Builder(requireContext())
+            .data(metadataCurSong?.thumbnails?.last()?.url)
+            .target(
+                onStart = {
+                    binding.ivArt.visibility = View.GONE
+                    binding.loadingArt.visibility = View.VISIBLE
+                    Log.d("Metadata", "onStart: ")
+                },
+                onSuccess = { result ->
+                    binding.ivArt.visibility = View.VISIBLE
+                    binding.loadingArt.visibility = View.GONE
+                    binding.ivArt.setImageDrawable(result)
+                    Log.d("Metadata", "onSuccess: ")
+                    if (viewModel.gradientDrawable.value != null){
+                        viewModel.gradientDrawable.observe(viewLifecycleOwner, Observer {
+                            binding.rootLayout.background = it
+                        })
+                        viewModel.lyricsBackground.observe(viewLifecycleOwner, Observer {
+                            binding.lyricsLayout.setCardBackgroundColor(it)
+                            updateStatusBarColor(it)
+                        })
+                        Log.d("Metadata", "updateUI: NULL")
+                    }
+                },
+                onError = { error ->
+                    binding.ivArt.visibility = View.GONE
+                    binding.loadingArt.visibility = View.VISIBLE
+                    Log.d("Metadata", "onError: "+ error.toString())
+                }
+            )
+            .transformations(object : Transformation{
+                override val cacheKey: String
+                    get() = "paletteArtTransformer"
+
+                override suspend fun transform(input: Bitmap, size: Size): Bitmap {
+                    val p = Palette.from(input).generate()
+                    val defaultColor = 0x000000
+                    var startColor = p.getDarkVibrantColor(defaultColor)
+                    Log.d("Check Start Color", "transform: $startColor")
+                    if (startColor == defaultColor){
+                        startColor = p.getDarkMutedColor(defaultColor)
+                        if (startColor == defaultColor){
+                            startColor = p.getVibrantColor(defaultColor)
+                            if (startColor == defaultColor){
+                                startColor = p.getMutedColor(defaultColor)
+                                if (startColor == defaultColor){
+                                    startColor = p.getLightVibrantColor(defaultColor)
+                                    if (startColor == defaultColor){
+                                        startColor = p.getLightMutedColor(defaultColor)
+                                    }
+                                }
+                            }
+                        }
+                        Log.d("Check Start Color", "transform: $startColor")
+                    }
+//                    val centerColor = 0x6C6C6C
+                    val endColor = 0x1b1a1f
+                    val gd = GradientDrawable(
+                        GradientDrawable.Orientation.TOP_BOTTOM,
+                        intArrayOf(startColor, endColor)
+                    )
+                    gd.cornerRadius = 0f
+                    gd.gradientType = GradientDrawable.LINEAR_GRADIENT
+                    gd.gradientRadius = 0.5f
+                    gd.alpha = 150
+                    viewModel.gradientDrawable.postValue(gd)
+
+                    viewModel.lyricsBackground.postValue(startColor)
+                    return input
+                }
+
+            })
+            .build()
+        ImageLoader(requireContext()).enqueue(request)
+        Log.d("Metadata", metadataCurSong.toString())
+        binding.topAppBar.subtitle = from
+        binding.tvSongTitle.text = metadataCurSong?.title
+        var artistName = ""
+        if (metadataCurSong?.artists != null) {
+            for (artist in metadataCurSong!!.artists) {
+                artistName += artist.name + ", "
+            }
+        }
+        artistName = removeTrailingComma(artistName)
+        artistName = removeComma(artistName)
+        binding.tvSongArtist.text = artistName
+        binding.tvSongTitle.visibility = View.VISIBLE
+        binding.tvSongArtist.visibility = View.VISIBLE
+        Log.d("Metadata", metadataCurSong.toString())
+    }
+
+    fun updateStatusBarColor(color: Int) { // Color must be in hexadecimal format
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        val window: Window = requireActivity().window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = Color.parseColor("99"+color.toString())
+    }
 }

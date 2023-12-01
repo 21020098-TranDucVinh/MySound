@@ -45,6 +45,7 @@ android {
 }
 
 dependencies {
+    implementation project(':youtubeExtractor')
 
     implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -67,7 +68,7 @@ dependencies {
     implementation "androidx.media3:media3-exoplayer-smoothstreaming:$media3_version"
     implementation "androidx.media3:media3-exoplayer-workmanager:$media3_version"
     //Youtube
-    implementation 'com.github.sealedtx:java-youtube-downloader:3.1.0'
+    implementation 'com.github.sealedtx:java-youtube-downloader:3.2.2'
     //palette color
     implementation 'androidx.palette:palette:1.0.0'
     //expandable text view

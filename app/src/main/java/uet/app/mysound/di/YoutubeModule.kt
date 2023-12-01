@@ -1,28 +1,27 @@
 package uet.app.mysound.di
 
+import com.github.kiulian.downloader.Config
 import com.github.kiulian.downloader.YoutubeDownloader
 import com.github.kiulian.downloader.downloader.YoutubeCallback
 import com.github.kiulian.downloader.downloader.request.RequestVideoInfo
 import com.github.kiulian.downloader.downloader.response.Response
 import com.github.kiulian.downloader.model.videos.VideoInfo
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-class YoutubeModule(var videoId: String){
-    var downloader = YoutubeDownloader()
-    fun Request(): VideoInfo {
-        val request = RequestVideoInfo(videoId)
-            .callback(object : YoutubeCallback<VideoInfo?> {
-                override fun onFinished(videoInfo: VideoInfo?) {
-                    println("Finished parsing")
-                }
+@Module
+@InstallIn(SingletonComponent::class)
+object YoutubeModule{
+    @Singleton
+    @Provides
+    fun provideConfig(): Config = Config.Builder()
+        .maxRetries(5)
+        .build()
 
-                override fun onError(throwable: Throwable) {
-                    println("Error: " + throwable.message)
-                }
-            })
-            .async()
-        val response: Response<VideoInfo> = downloader.getVideoInfo(request)
-        val video: VideoInfo = response.data()
-        return video
-    }
-
+    @Singleton
+    @Provides
+    fun provideYoutubeDownloader(config: Config): YoutubeDownloader = YoutubeDownloader(config)
 }
