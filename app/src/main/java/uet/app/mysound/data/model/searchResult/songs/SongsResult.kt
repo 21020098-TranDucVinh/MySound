@@ -1,5 +1,6 @@
 package uet.app.mysound.data.model.searchResult.songs
 
+
 import com.google.gson.annotations.SerializedName
 
 data class SongsResult(
@@ -30,3 +31,6 @@ data class SongsResult(
     @SerializedName("year")
     val year: Any
 )
+
+
+

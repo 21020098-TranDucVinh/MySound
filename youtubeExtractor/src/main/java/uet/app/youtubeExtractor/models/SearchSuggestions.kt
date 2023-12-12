@@ -1,0 +1,6 @@
+package uet.app.youtubeExtractor.models
+
+data class SearchSuggestions(
+    val queries: List<String>,
+    val recommendedItems: List<YTItem>,
+)

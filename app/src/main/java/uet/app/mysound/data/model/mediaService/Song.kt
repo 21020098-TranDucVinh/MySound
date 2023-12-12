@@ -1,7 +1,6 @@
 package uet.app.mysound.data.model.mediaService
 
 import android.graphics.Bitmap
-import androidx.media3.common.MediaItem
 import uet.app.mysound.data.model.searchResult.songs.Album
 import uet.app.mysound.data.model.searchResult.songs.Artist
 import uet.app.mysound.data.model.searchResult.songs.Thumbnail

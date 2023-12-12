@@ -11,11 +11,11 @@ import uet.app.mysound.R
 import uet.app.mysound.data.model.explore.mood.moodmoments.Content
 import uet.app.mysound.data.model.explore.mood.moodmoments.Item
 import uet.app.mysound.databinding.ItemMoodMomentPlaylistBinding
+import uet.app.mysound.extension.navigateSafe
 
 class MoodItemAdapter(private var itemList: ArrayList<Item>, val context: Context, val navController: NavController): RecyclerView.Adapter<MoodItemAdapter.ViewHolder>() {
-    inner class ViewHolder(val binding: ItemMoodMomentPlaylistBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: ItemMoodMomentPlaylistBinding): RecyclerView.ViewHolder(binding.root)
 
-    }
     fun updateData(newList: ArrayList<Item>){
         itemList.clear()
         itemList.addAll(newList)
@@ -44,7 +44,7 @@ class MoodItemAdapter(private var itemList: ArrayList<Item>, val context: Contex
                 override fun onClick(position: Int) {
                     val args = Bundle()
                     args.putString("id", playlistContent[position].playlistBrowseId)
-                    navController.navigate(R.id.action_global_playlistFragment, args)
+                    navController.navigateSafe(R.id.action_global_playlistFragment, args)
                 }
             })
         }

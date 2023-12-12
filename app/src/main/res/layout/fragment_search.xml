@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.fragment.SearchFragment">
 
     <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        tools:context=".ui.fragment.SearchFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="10sp">
+        android:paddingTop="10sp"
+        android:paddingHorizontal="10sp">
         <androidx.appcompat.widget.SearchView
+            app:marginTopSystemWindowInsets="true"
             android:id="@+id/svSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:iconifiedByDefault="false"
             app:queryBackground="@null"
-            app:defaultQueryHint="What do you want to listen to?"
+            app:defaultQueryHint="@string/what_do_you_want_to_listen_to"
             android:background="@drawable/shapebgsearch">
 
         </androidx.appcompat.widget.SearchView>
@@ -31,35 +33,55 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/suggestList"
-                    tools:listitem="@layout/item_suggest_query"
+                    android:id="@+id/suggestListYtItem"
                     android:visibility="gone">
 
                 </androidx.recyclerview.widget.RecyclerView>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/suggestList"
+                    tools:listitem="@layout/item_suggest_query"
+                    android:visibility="gone"
+                    android:clipToPadding="false"
+                    android:paddingBottom="150dp">
 
-                <LinearLayout
+                </androidx.recyclerview.widget.RecyclerView>
+
+                <RelativeLayout
+                    android:id="@+id/recentlyQueryView"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
-                    android:id="@+id/recentlyQueryView"
-                    android:orientation="vertical"
-                    android:visibility="visible">
+                    android:visibility="visible"
+                    android:layout_marginBottom="150dp">
 
-                    <androidx.recyclerview.widget.RecyclerView
+                    <androidx.core.widget.NestedScrollView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/recentlyList"
-                        tools:listitem="@layout/item_recently_query">
+                        android:layout_alignParentTop="true">
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/recentlyList"
+                                tools:itemCount="15"
+                                tools:listitem="@layout/item_recently_query">
 
-                    </androidx.recyclerview.widget.RecyclerView>
-                    <Button
-                        android:id="@+id/btClearSearchHistory"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@style/Widget.Material3.Button.TextButton"
-                        android:text="Clear search history"
-                        android:textColor="?attr/colorOnBackground">
-                    </Button>
-                </LinearLayout>
+                            </androidx.recyclerview.widget.RecyclerView>
+                            <Button
+                                android:id="@+id/btClearSearchHistory"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                style="@style/Widget.Material3.Button.TextButton"
+                                android:text="@string/clear_search_history"
+                                android:textColor="?attr/colorOnBackground">
+                            </Button>
+                        </LinearLayout>
+                    </androidx.core.widget.NestedScrollView>
+                </RelativeLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -68,47 +90,103 @@
                     android:visibility="gone">
                     <HorizontalScrollView
                         android:layout_height="wrap_content"
-                        android:layout_width="match_parent">
-                        <com.google.android.material.chip.ChipGroup
-                            android:id="@+id/chipGroupTypeSearch"
-                            android:layout_height="wrap_content"
-                            android:layout_width="wrap_content"
-                            app:singleSelection="true"
-                            app:singleLine="true">
-                            <com.google.android.material.chip.Chip
-                                android:id="@+id/chipAll"
-                                android:checked="true"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="All"
-                                style="@style/Widget.MaterialComponents.Chip.Filter" />
-                            <com.google.android.material.chip.Chip
-                                android:id="@+id/chipSong"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Songs"
-                                style="@style/Widget.MaterialComponents.Chip.Filter" />
-                            <com.google.android.material.chip.Chip
-                                android:id="@+id/chipArtists"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Artists"
-                                style="@style/Widget.MaterialComponents.Chip.Filter" />
-                            <com.google.android.material.chip.Chip
-                                android:id="@+id/chipAlbum"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Album"
-                                style="@style/Widget.MaterialComponents.Chip.Filter" />
-                            <com.google.android.material.chip.Chip
-                                android:id="@+id/chipPlaylist"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Playlist"
-                                style="@style/Widget.MaterialComponents.Chip.Filter" />
+                        android:layout_width="match_parent"
+                        android:scrollbars="none">
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroupTypeSearch"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        app:singleSelection="true"
+                        app:singleLine="true"
+                        app:selectionRequired="true">
 
-                        </com.google.android.material.chip.ChipGroup>
-                    </HorizontalScrollView>
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipAll"
+                            android:checked="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/all"
+                            android:checkable="true"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:chipBackgroundColor="@color/bg_chip_state_list"
+                            style="@style/Widget.MaterialComponents.Chip.Filter" />
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/chipVideo"
+                            android:text="@string/videos"
+                            android:checkable="true"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:chipBackgroundColor="@color/bg_chip_state_list"
+                            style="@style/Widget.MaterialComponents.Chip.Filter"/>
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipSong"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/songs"
+                            android:checkable="true"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:chipBackgroundColor="@color/bg_chip_state_list"
+                            style="@style/Widget.MaterialComponents.Chip.Filter" />
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipArtists"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/artists"
+                            android:checkable="true"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:chipBackgroundColor="@color/bg_chip_state_list"
+                            style="@style/Widget.MaterialComponents.Chip.Filter" />
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipAlbum"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/albums"
+                            android:checkable="true"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:chipBackgroundColor="@color/bg_chip_state_list"
+                            style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipPlaylist"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/playlists"
+                            android:checkable="true"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:chipBackgroundColor="@color/bg_chip_state_list"
+                            style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipFeaturedPlaylist"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/featured_playlists"
+                            android:checkable="true"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:chipBackgroundColor="@color/bg_chip_state_list"
+                            style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipPodcast"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/podcasts"
+                            android:checkable="true"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:chipBackgroundColor="@color/bg_chip_state_list"
+                            style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+                    </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
 
                     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                         android:id="@+id/refreshSearch"
@@ -119,14 +197,43 @@
                             android:orientation="vertical"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
+                            <com.facebook.shimmer.ShimmerFrameLayout
+                                android:id="@+id/shimmerLayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:shimmer_duration="1500">
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+                                    <include layout="@layout/shimmer_search_fragment"/>
+                                    <include layout="@layout/shimmer_search_fragment"/>
+                                    <include layout="@layout/shimmer_search_fragment"/>
+                                    <include layout="@layout/shimmer_search_fragment"/>
+                                    <include layout="@layout/shimmer_search_fragment"/>
+                                    <include layout="@layout/shimmer_search_fragment"/>
+                                    <include layout="@layout/shimmer_search_fragment"/>
+                                    <include layout="@layout/shimmer_search_fragment"/>
+                                    <include layout="@layout/shimmer_search_fragment"/>
+                                    <include layout="@layout/shimmer_search_fragment"/>
+                                    <include layout="@layout/shimmer_search_fragment"/>
+                                </LinearLayout>
+
+                            </com.facebook.shimmer.ShimmerFrameLayout>
                             <androidx.recyclerview.widget.RecyclerView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:id="@+id/resultList"
-                                android:paddingBottom="135sp"
-                                android:clipToPadding="false">
+                                android:clipToPadding="false"
+                                android:paddingBottom="150dp" >
 
                             </androidx.recyclerview.widget.RecyclerView>
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="150dp"
+                                android:background="@android:color/transparent">
+
+                            </RelativeLayout>
                         </LinearLayout>
                     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
@@ -148,7 +255,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Everything you need"
+                    android:text="@string/everything_you_need"
                     android:textStyle="bold"
                     android:textSize="16sp"
                     android:gravity="center"
@@ -158,7 +265,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Search for songs, artists, albums, playlists, and more"
+                    android:text="@string/search_for_songs_artists_albums_playlists_and_more"
                     android:textSize="14sp"
                     android:gravity="center">
 
@@ -166,5 +273,3 @@
             </LinearLayout>
         </RelativeLayout>
     </RelativeLayout>
-
-</layout>

@@ -6,25 +6,25 @@ import uet.app.mysound.data.model.searchResult.songs.Thumbnail
 
 data class VideosResult(
     @SerializedName("artists")
-    val artists: List<Artist>,
+    val artists: List<Artist>?,
     @SerializedName("category")
-    val category: String,
+    val category: String?,
     @SerializedName("duration")
-    val duration: String,
+    val duration: String?,
     @SerializedName("duration_seconds")
-    val durationSeconds: Int,
+    val durationSeconds: Int?,
     @SerializedName("resultType")
-    val resultType: String,
+    val resultType: String?,
     @SerializedName("thumbnails")
-    val thumbnails: List<Thumbnail>,
+    val thumbnails: List<Thumbnail>?,
     @SerializedName("title")
     val title: String,
     @SerializedName("videoId")
     val videoId: String,
     @SerializedName("videoType")
-    val videoType: String,
+    val videoType: String?,
     @SerializedName("views")
-    val views: String,
+    val views: String?,
     @SerializedName("year")
     val year: Any
 )

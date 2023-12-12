@@ -24,10 +24,10 @@ class QuickPicksAdapter(val contentList: ArrayList<Content>, val context: Contex
         fun onClick(position: Int)
     }
     private lateinit var mListener: OnClickListener
-    fun setOnClickListener(listener: OnClickListener) {
+    fun setOnClickListener(listener: OnClickListener){
         mListener = listener
     }
-    fun updateData(newData: ArrayList<Content>) {
+    fun updateData(newData: List<Content>) {
         contentList.clear()
         contentList.addAll(newData)
         notifyDataSetChanged()
@@ -54,7 +54,9 @@ class QuickPicksAdapter(val contentList: ArrayList<Content>, val context: Contex
             artistName = removeTrailingComma(artistName)
             artistName = removeComma(artistName)
             binding.tvSongArtist.text = artistName
-            binding.ivThumbnail.load(content.thumbnails.last().url)
+            binding.ivThumbnail.load(content.thumbnails.lastOrNull()?.url ?: "https://i.ytimg.com/vi/${content.videoId}/maxresdefault.jpg")
+            binding.tvSongArtist.isSelected = true
+            binding.tvSongTitle.isSelected = true
         }
     }
     private fun removeTrailingComma(sentence: String): String {

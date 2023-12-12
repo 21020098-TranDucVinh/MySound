@@ -1,5 +1,6 @@
 package uet.app.mysound.data.model.home.chart
 
+
 import com.google.gson.annotations.SerializedName
 import uet.app.mysound.data.model.searchResult.songs.Thumbnail
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/round_home_24"
+        android:shortcutId="home"
+        android:shortcutShortLabel="@string/home">
+        <intent
+            android:action="uet.app.mysound.action.HOME"
+            android:targetClass="uet.app.mysound.ui.MainActivity"
+            android:targetPackage="uet.app.mysound" />
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/round_search_24"
+        android:shortcutId="search"
+        android:shortcutShortLabel="@string/search">
+        <intent
+            android:action="uet.app.mysound.action.SEARCH"
+            android:targetClass="uet.app.mysound.ui.MainActivity"
+            android:targetPackage="uet.app.mysound" />
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/round_library_music_24"
+        android:shortcutId="library"
+        android:shortcutShortLabel="@string/library">
+        <intent
+            android:action="uet.app.mysound.action.LIBRARY"
+            android:targetClass="uet.app.mysound.ui.MainActivity"
+            android:targetPackage="uet.app.mysound" />
+    </shortcut>
+</shortcuts>

@@ -1,87 +1,124 @@
 package uet.app.mysound.adapter.home
 
-import android.util.Log
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import uet.app.mysound.R
 import uet.app.mysound.data.model.home.Content
+import uet.app.mysound.databinding.ItemHomeContentArtistBinding
 import uet.app.mysound.databinding.ItemHomeContentPlaylistBinding
 import uet.app.mysound.databinding.ItemHomeContentSongBinding
+import uet.app.mysound.extension.connectArtists
+import uet.app.mysound.extension.toListName
 
-class HomeItemContentAdapter(private var listContent: ArrayList<Content>) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class HomeItemContentAdapter(private var listContent: ArrayList<Content>, private val context: Context): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private lateinit var mPlaylistListener: onPlaylistItemClickListener
+    private lateinit var mAlbumListener: onAlbumItemClickListener
     private lateinit var mSongListener: onSongItemClickListener
-
-    interface onSongItemClickListener {
+    private lateinit var mArtistListener: onArtistItemClickListener
+    interface onSongItemClickListener{
         fun onSongItemClick(position: Int)
     }
-
-    interface onPlaylistItemClickListener {
+    interface onPlaylistItemClickListener{
         fun onPlaylistItemClick(position: Int)
     }
-
-    fun setOnSongClickListener(listener: onSongItemClickListener) {
+    interface onAlbumItemClickListener{
+        fun onAlbumItemClick(position: Int)
+    }
+    interface onArtistItemClickListener{
+        fun onArtistItemClick(position: Int)
+    }
+    fun setOnSongClickListener(listener: onSongItemClickListener){
         mSongListener = listener
     }
-
-    fun setOnPlaylistClickListener(listener: onPlaylistItemClickListener) {
+    fun setOnPlaylistClickListener(listener: onPlaylistItemClickListener){
         mPlaylistListener = listener
     }
-
-    inner class SongViewHolder(
-        var binding: ItemHomeContentSongBinding,
-        var listener: onSongItemClickListener
-    ) : RecyclerView.ViewHolder(binding.root) {
+    fun setOnAlbumClickListener(listener: onAlbumItemClickListener){
+        mAlbumListener = listener
+    }
+    fun setOnArtistClickListener(listener: onArtistItemClickListener){
+        mArtistListener = listener
+    }
+    inner class SongViewHolder(var binding: ItemHomeContentSongBinding, var listener: onSongItemClickListener): RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.root.setOnClickListener { listener.onSongItemClick(bindingAdapterPosition) }
+            binding.root.setOnClickListener {listener.onSongItemClick(bindingAdapterPosition)}
         }
-
-        fun bind(content: Content) {
-            with(binding) {
+        fun bind(content: Content){
+            with(binding){
                 if (content.thumbnails.size > 1) {
                     ivArt.load(content.thumbnails[1].url)
-                } else {
+                }
+                else{
                     ivArt.load(content.thumbnails[0].url)
                 }
                 tvSongName.text = content.title
                 tvSongName.isSelected = true
-                var artistName = ""
-                if (content.artists != null) {
-                    for (artist in content.artists) {
-                        artistName += artist.name + ", "
-                    }
-                    artistName = removeTrailingComma(artistName)
-                    artistName = removeComma(artistName)
-                }
-                tvArtistName.text = artistName
+                tvArtistName.text = content.artists.toListName().firstOrNull()
                 tvArtistName.isSelected = true
-                tvAlbumName.text = content.album?.name
+                tvAlbumName.text = content.album?.name ?: context.getString(R.string.songs)
                 tvAlbumName.isSelected = true
             }
         }
     }
-
-    inner class PlaylistViewHolder(
-        var binding: ItemHomeContentPlaylistBinding,
-        var listener: onPlaylistItemClickListener
-    ) : RecyclerView.ViewHolder(binding.root) {
+    inner class PlaylistViewHolder(var binding: ItemHomeContentPlaylistBinding, var listener: onPlaylistItemClickListener): RecyclerView.ViewHolder(binding.root){
         init {
-            binding.root.setOnClickListener { listener.onPlaylistItemClick(bindingAdapterPosition) }
+            binding.root.setOnClickListener {listener.onPlaylistItemClick(bindingAdapterPosition)}
         }
-
-        fun bind(content: Content) {
-            with(binding) {
+        fun bind(content: Content){
+            with(binding){
                 if (content.thumbnails.size > 1) {
                     ivArt.load(content.thumbnails[1].url)
-                } else {
+                }
+                else{
                     ivArt.load(content.thumbnails[0].url)
                 }
                 tvTitle.text = content.title
                 tvTitle.isSelected = true
-                tvDescription.text = content.description
+                tvDescription.text = content.description ?: (if (!content.artists.isNullOrEmpty()) content.artists.toListName().connectArtists() else context.getString(R.string.playlist))
                 tvDescription.isSelected = true
+            }
+        }
+    }
+    inner class AlbumViewHolder(var binding: ItemHomeContentPlaylistBinding, var listener: onAlbumItemClickListener): RecyclerView.ViewHolder(binding.root){
+        init {
+            binding.root.setOnClickListener {listener.onAlbumItemClick(bindingAdapterPosition)}
+        }
+        fun bind(content: Content){
+            with(binding){
+                if (content.thumbnails.size > 1) {
+                    ivArt.load(content.thumbnails[1].url)
+                }
+                else{
+                    ivArt.load(content.thumbnails[0].url)
+                }
+                tvTitle.text = content.title
+                tvTitle.isSelected = true
+                if (content.description != "" && content.description != null) {
+                    tvDescription.text = content.description
+                }
+                else {
+                    tvDescription.text = if (!content.artists.isNullOrEmpty()) content.artists.toListName().connectArtists() else context.getString(R.string.album)
+                }
+                tvDescription.isSelected = true
+            }
+        }
+    }
+    inner class ArtistViewHolder(var binding: ItemHomeContentArtistBinding, var listener: onArtistItemClickListener) : RecyclerView.ViewHolder(binding.root){
+        init {
+            binding.root.setOnClickListener {listener.onArtistItemClick(bindingAdapterPosition)}
+        }
+        fun bind(content: Content){
+            with(binding){
+                if (content.thumbnails.size > 1) {
+                    ivArt.load(content.thumbnails[1].url)
+                }
+                else{
+                    ivArt.load(content.thumbnails[0].url)
+                }
+                tvArtistName.text = content.title
             }
         }
     }
@@ -89,36 +126,37 @@ class HomeItemContentAdapter(private var listContent: ArrayList<Content>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflate = LayoutInflater.from(parent.context)
         return when (viewType) {
-            SONG -> SongViewHolder(
-                ItemHomeContentSongBinding.inflate(inflate, parent, false),
-                mSongListener
-            )
-
-            PLAYLIST -> PlaylistViewHolder(
-                ItemHomeContentPlaylistBinding.inflate(
-                    inflate,
-                    parent,
-                    false
-                ), mPlaylistListener
-            )
-
+            SONG -> SongViewHolder(ItemHomeContentSongBinding.inflate(inflate, parent, false), mSongListener)
+            PLAYLIST -> PlaylistViewHolder(ItemHomeContentPlaylistBinding.inflate(inflate, parent, false), mPlaylistListener)
+            ALBUM -> AlbumViewHolder(ItemHomeContentPlaylistBinding.inflate(inflate, parent, false), mAlbumListener)
+            ARTIST -> ArtistViewHolder(ItemHomeContentArtistBinding.inflate(inflate, parent, false), mArtistListener)
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder) {
+        when (holder){
             is SongViewHolder -> holder.bind(listContent[position])
             is PlaylistViewHolder -> holder.bind(listContent[position])
+            is AlbumViewHolder -> holder.bind(listContent[position])
+            is ArtistViewHolder -> holder.bind(listContent[position])
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        Log.d("TAG", "getItemViewType: ${listContent[position].playlistId}")
         val temp = listContent[position]
-        return if (temp.playlistId != null && temp.videoId == null) {
-            PLAYLIST
-        } else {
+        return if ((temp.playlistId != null && temp.videoId == null) || (temp.playlistId != null && temp.videoId == "")){
+            if (temp.playlistId.startsWith("UC"))
+                ARTIST
+            else
+                PLAYLIST
+        } else if ((temp.browseId != null && temp.videoId == null) || (temp.browseId != null && temp.videoId == "") ) {
+            if (temp.browseId.startsWith("UC"))
+                ARTIST
+            else
+                ALBUM
+        }
+        else{
             SONG
         }
     }
@@ -127,26 +165,10 @@ class HomeItemContentAdapter(private var listContent: ArrayList<Content>) :
         return listContent.size
     }
 
-    fun removeTrailingComma(sentence: String): String {
-        val trimmed = sentence.trimEnd()
-        return if (trimmed.endsWith(", ")) {
-            trimmed.dropLast(2)
-        } else {
-            trimmed
-        }
-    }
-
-
-    fun removeComma(string: String): String {
-        return if (string.endsWith(',')) {
-            string.substring(0, string.length - 1)
-        } else {
-            string
-        }
-    }
-
     companion object {
         private const val SONG = 1
         private const val PLAYLIST = 2
+        private const val ALBUM = 3
+        private const val ARTIST = 4
     }
 }

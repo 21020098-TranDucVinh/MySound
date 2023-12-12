@@ -1,5 +1,6 @@
 package uet.app.mysound.data.model.home
 
+
 import com.google.gson.annotations.SerializedName
 import uet.app.mysound.data.model.searchResult.songs.Album
 import uet.app.mysound.data.model.searchResult.songs.Artist
@@ -16,6 +17,8 @@ data class Content(
     val isExplicit: Boolean?,
     @SerializedName("playlistId")
     val playlistId: String?,
+    @SerializedName("browseId")
+    val browseId: String?,
     @SerializedName("thumbnails")
     val thumbnails: List<Thumbnail>,
     @SerializedName("title")
@@ -23,5 +26,8 @@ data class Content(
     @SerializedName("videoId")
     val videoId: String?,
     @SerializedName("views")
-    val views: String?
+    val views: String?,
+    @SerializedName("durationSeconds")
+    val durationSeconds: Int? = null,
+    val radio: String? = null,
 )
