@@ -219,9 +219,9 @@ class HomeFragment : Fragment() {
                 homeItemList?.clear()
                 homeItemListWithoutQuickPicks?.clear()
             }
-            chart = viewModel.chart.value?.data as Chart
-            trackChart = chart?.videos?.items as ArrayList<ItemVideo>
-            artistChart = chart?.artists?.itemArtists as ArrayList<ItemArtist>
+            chart = viewModel.chart.value?.data as? Chart ?: null; // hoặc giá trị mặc định khác hoặc thực hiện xử lý khác tùy thuộc vào yêu cầu của bạn
+            trackChart = chart?.videos?.items as? ArrayList<ItemVideo> ?: ArrayList()
+            artistChart = chart?.artists?.itemArtists as? ArrayList<ItemArtist> ?: ArrayList()
             trackChartAdapter.updateData(trackChart!!)
             artistChartAdapter.updateData(artistChart!!)
             homeItemList?.addAll(viewModel.homeItemList.value?.data!!)
@@ -239,7 +239,7 @@ class HomeFragment : Fragment() {
                 homeItemListWithoutQuickPicks = homeItemList
             }
             mAdapter.updateData(homeItemListWithoutQuickPicks!!)
-            exploreMoodItem = viewModel.exploreMoodItem.value?.data as Mood
+            exploreMoodItem = viewModel.exploreMoodItem.value?.data as? Mood ?: null // hoặc giá trị mặc định khác tùy thuộc vào yêu cầu của bạn
             moodsMoment = exploreMoodItem?.moodsMoments as ArrayList<MoodsMoment>
             genre = exploreMoodItem?.genres as ArrayList<Genre>
             Log.d("Moods & Moment", "onViewCreated: $moodsMoment")
