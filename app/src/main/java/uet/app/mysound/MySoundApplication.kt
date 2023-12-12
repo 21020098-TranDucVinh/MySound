@@ -9,6 +9,7 @@ import dagger.hilt.android.HiltAndroidApp
 class MySoundApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        // Enable dark theme
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
     }
 }

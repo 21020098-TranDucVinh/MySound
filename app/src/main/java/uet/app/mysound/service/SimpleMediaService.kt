@@ -44,5 +44,8 @@ class SimpleMediaService : MediaSessionService() {
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession =
         mediaSession
 
-
+    @UnstableApi
+    override fun onUpdateNotification(session: MediaSession, startInForegroundRequired: Boolean) {
+        super.onUpdateNotification(session, startInForegroundRequired)
+    }
 }

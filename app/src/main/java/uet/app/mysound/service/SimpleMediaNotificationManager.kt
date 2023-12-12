@@ -29,6 +29,24 @@ class SimpleMediaNotificationManager @Inject constructor(
     private var notificationManager: NotificationManagerCompat =
         NotificationManagerCompat.from(context)
 
+    private lateinit var playerNotificationManager: PlayerNotificationManager
+
+    @UnstableApi
+    private var notificationListener: PlayerNotificationManager.NotificationListener =
+        object : PlayerNotificationManager.NotificationListener {
+            override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
+                super.onNotificationCancelled(notificationId, dismissedByUser)
+            }
+
+            override fun onNotificationPosted(
+                notificationId: Int,
+                notification: Notification,
+                ongoing: Boolean
+            ) {
+                super.onNotificationPosted(notificationId, notification, ongoing)
+            }
+        }
+
     init {
         createNotificationChannel()
     }
@@ -44,13 +62,14 @@ class SimpleMediaNotificationManager @Inject constructor(
 
     @UnstableApi
     private fun buildNotification(mediaSession: MediaSession) {
-        PlayerNotificationManager.Builder(context, NOTIFICATION_ID, NOTIFICATION_CHANNEL_ID)
+        playerNotificationManager =PlayerNotificationManager.Builder(context, NOTIFICATION_ID, NOTIFICATION_CHANNEL_ID)
             .setMediaDescriptionAdapter(
                 SimpleMediaNotificationAdapter(
                     context = context,
                     pendingIntent = mediaSession.sessionActivity
                 )
             )
+            .setNotificationListener(notificationListener)
             .setSmallIconResourceId(R.drawable.ic_microphone)
             .build()
             .also {
