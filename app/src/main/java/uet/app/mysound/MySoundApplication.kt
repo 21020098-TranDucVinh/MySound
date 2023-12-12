@@ -2,12 +2,28 @@ package uet.app.mysound
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.media3.common.util.UnstableApi
 import dagger.hilt.android.HiltAndroidApp
+import cat.ereza.customactivityoncrash.config.CaocConfig
+import uet.app.mysound.ui.MainActivity
+
 
 @HiltAndroidApp
 class MySoundApplication : Application() {
+    @UnstableApi
     override fun onCreate() {
         super.onCreate()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        CaocConfig.Builder.create()
+            .backgroundMode(CaocConfig.BACKGROUND_MODE_SILENT) //default: CaocConfig.BACKGROUND_MODE_SHOW_CUSTOM
+            .enabled(true) //default: true
+            .showErrorDetails(true) //default: true
+            .showRestartButton(true) //default: true
+            .errorDrawable(R.drawable.logo_simpmusic_01)
+            .logErrorOnRestart(false) //default: true
+            .trackActivities(true) //default: false
+            .minTimeBetweenCrashesMs(2000) //default: 3000 //default: bug image
+            .restartActivity(MainActivity::class.java) //default: null (your app's launch activity)
+            .apply()
     }
 }

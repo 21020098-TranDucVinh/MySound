@@ -124,6 +124,9 @@ dependencies {
     implementation 'com.google.dagger:hilt-android:2.45'
     kapt 'com.google.dagger:hilt-compiler:2.45'
 
+    //Custom Activity On Crash
+    implementation ("cat.ereza:customactivityoncrash:2.4.0")
+
     // For instrumentation tests
     androidTestImplementation 'com.google.dagger:hilt-android-testing:2.45'
     kaptAndroidTest 'com.google.dagger:hilt-compiler:2.45'

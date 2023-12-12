@@ -31,7 +31,7 @@
         <item name="android:fontFamily">@font/roboto</item>
         <item name="fontFamily">@font/roboto</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
-
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
     <style name="FullScreenDialogTheme" parent="MaterialAlertDialog.Material3">
         <item name="windowNoTitle">true</item>
@@ -42,5 +42,9 @@
     </style>
     <style name="circle">
         <item name="cornerSize">50%</item>
+    </style>
+    <style name="ThemeOverlay.SimpMusic.FullscreenContainer" parent="">
+        <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
+        <item name="fullscreenTextColor">@color/light_blue_A200</item>
     </style>
 </resources>
