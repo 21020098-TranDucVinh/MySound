@@ -190,7 +190,6 @@ class AlbumFragment: Fragment() {
                     viewModel.gradientDrawable.postValue(gd)
                     return input
                 }
-
             })
         }
     }
