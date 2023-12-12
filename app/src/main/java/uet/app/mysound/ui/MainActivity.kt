@@ -132,7 +132,6 @@ class MainActivity : AppCompatActivity(), NowPlayingFragment.OnNowPlayingSongCha
         }
     }
 
-
     private fun removeComma(string: String): String {
         return if (string.endsWith(',')) {
             string.substring(0, string.length - 1)

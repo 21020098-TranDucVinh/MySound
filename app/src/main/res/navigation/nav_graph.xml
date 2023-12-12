@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/libraryFragment">
+
+    <fragment
+        android:id="@+id/libraryFragment"
+        android:name="uet.app.mysound.ui.fragment.LibraryFragment"
+        android:label="fragment_library">
+        <!-- Định nghĩa các đối số nếu cần -->
+        <!-- Ví dụ: <argument ... /> -->
+    </fragment>
+
+    <activity
+        android:id="@+id/loginActivity"
+        android:name="uet.app.mysound.myAPI.LoginActivity"
+        android:label="Login Activity" />
+
+    <action
+        android:id="@+id/action_library_to_login"
+        app:destination="@id/loginActivity" />
+
+</navigation>
