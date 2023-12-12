@@ -1,6 +1,5 @@
 package uet.app.mysound.viewModel
 
-
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -52,11 +51,11 @@ class HomeViewModel @Inject constructor(
                 }
             }
             val job2 = viewModelScope.launch {
-//                mainRepository.exploreMood().collect{values ->
-//                    _exploreMoodItem.value = values
-//                    Log.d("HomeViewModel", "getHomeItemList: ${exploreMoodItem.value?.data}")
-//                    loading.value = false
-//                }
+                mainRepository.exploreMood().collect { values ->
+                    _exploreMoodItem.value = values
+                    Log.d("HomeViewModel", "getHomeItemList: ${exploreMoodItem.value?.data}")
+                    loading.value = false
+                }
             }
             val job3 = viewModelScope.launch {
                 mainRepository.exploreChart("ZZ").collect { values ->

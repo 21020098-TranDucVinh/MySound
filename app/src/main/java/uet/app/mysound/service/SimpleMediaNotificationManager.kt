@@ -11,15 +11,13 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.ui.PlayerNotificationManager
-import uet.app.mysound.R
-import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
+import uet.app.mysound.R
 import javax.inject.Inject
 
 private const val NOTIFICATION_ID = 200
 private const val NOTIFICATION_CHANNEL_NAME = "notification channel 1"
 private const val NOTIFICATION_CHANNEL_ID = "notification channel id 1"
-
 
 class SimpleMediaNotificationManager @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -28,7 +26,6 @@ class SimpleMediaNotificationManager @Inject constructor(
 
     private var notificationManager: NotificationManagerCompat =
         NotificationManagerCompat.from(context)
-
     private lateinit var playerNotificationManager: PlayerNotificationManager
 
     @UnstableApi
@@ -49,6 +46,7 @@ class SimpleMediaNotificationManager @Inject constructor(
 
     init {
         createNotificationChannel()
+
     }
 
     @UnstableApi
@@ -62,24 +60,25 @@ class SimpleMediaNotificationManager @Inject constructor(
 
     @UnstableApi
     private fun buildNotification(mediaSession: MediaSession) {
-        playerNotificationManager =PlayerNotificationManager.Builder(context, NOTIFICATION_ID, NOTIFICATION_CHANNEL_ID)
-            .setMediaDescriptionAdapter(
-                SimpleMediaNotificationAdapter(
-                    context = context,
-                    pendingIntent = mediaSession.sessionActivity
+        playerNotificationManager =
+            PlayerNotificationManager.Builder(context, NOTIFICATION_ID, NOTIFICATION_CHANNEL_ID)
+                .setMediaDescriptionAdapter(
+                    SimpleMediaNotificationAdapter(
+                        context = context,
+                        pendingIntent = mediaSession.sessionActivity
+                    )
                 )
-            )
-            .setNotificationListener(notificationListener)
-            .setSmallIconResourceId(R.drawable.ic_microphone)
-            .build()
-            .also {
-                it.setMediaSessionToken(mediaSession.sessionCompatToken)
-                it.setUseFastForwardActionInCompactView(true)
-                it.setUseRewindActionInCompactView(true)
-                it.setUseNextActionInCompactView(false)
-                it.setPriority(NotificationCompat.PRIORITY_LOW)
-                it.setPlayer(player)
-            }
+                .setNotificationListener(notificationListener)
+                .setSmallIconResourceId(R.drawable.ic_microphone)
+                .build()
+                .also {
+                    it.setMediaSessionToken(mediaSession.sessionCompatToken)
+                    it.setUseFastForwardActionInCompactView(true)
+                    it.setUseRewindActionInCompactView(true)
+                    it.setUseNextActionInCompactView(false)
+                    it.setPriority(NotificationCompat.PRIORITY_LOW)
+                    it.setPlayer(player)
+                }
     }
 
     private fun startForegroundNotification(mediaSessionService: MediaSessionService) {

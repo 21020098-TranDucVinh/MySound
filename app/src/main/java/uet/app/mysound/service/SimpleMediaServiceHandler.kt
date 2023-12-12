@@ -63,8 +63,7 @@ class SimpleMediaServiceHandler @Inject constructor(
             }
 
             PlayerEvent.Stop -> stopProgressUpdate()
-            is PlayerEvent.UpdateProgress -> player.seekTo((player.duration * playerEvent.newProgress/100).toLong())
-            else -> {}
+            is PlayerEvent.UpdateProgress -> player.seekTo((player.duration * playerEvent.newProgress / 100).toLong())
         }
     }
 
@@ -95,13 +94,13 @@ class SimpleMediaServiceHandler @Inject constructor(
 
     private suspend fun startProgressUpdate() = job.run {
         while (true) {
-            delay(500)
+            delay(100)
             _simpleMediaState.value = SimpleMediaState.Progress(player.currentPosition)
         }
     }
 
     private suspend fun startBufferedUpdate() = job.run {
-        while (true){
+        while (true) {
             delay(500)
             _simpleMediaState.value = SimpleMediaState.Loading(player.bufferedPercentage)
         }
@@ -142,7 +141,7 @@ sealed class PlayerEvent {
 sealed class SimpleMediaState {
     object Initial : SimpleMediaState()
     data class Ready(val duration: Long) : SimpleMediaState()
-    data class Loading(val bufferedPercentage: Int): SimpleMediaState()
+    data class Loading(val bufferedPercentage: Int) : SimpleMediaState()
     data class Progress(val progress: Long) : SimpleMediaState()
     data class Buffering(val position: Long) : SimpleMediaState()
     data class Playing(val isPlaying: Boolean) : SimpleMediaState()

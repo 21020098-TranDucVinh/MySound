@@ -55,24 +55,47 @@ class MainActivity : AppCompatActivity(), NowPlayingFragment.OnNowPlayingSongCha
             viewModel.onUIEvent(UIEvent.PlayPause)
         }
         lifecycleScope.launch {
-            viewModel.metadata.observe(this@MainActivity) {
-                if (it is Resource.Success) {
-                    binding.card.visibility = View.VISIBLE
-                    startService()
-                } else {
-                    binding.card.visibility = View.GONE
+            val job1 = launch {
+                viewModel.metadata.observe(this@MainActivity) {
+                    if (it is Resource.Success) {
+                        binding.card.visibility = View.VISIBLE
+                        startService()
+                    } else {
+                        binding.card.visibility = View.GONE
+                    }
                 }
             }
+            val job2 = launch {
+                viewModel.progress.collect {
+                    binding.progressBar.progress = (it * 100).toInt()
+                }
+            }
+            job1.join()
+            job2.join()
         }
         binding.card.animation = AnimationUtils.loadAnimation(this, R.anim.bottom_to_top)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("Service", "Service destroyed")
+    }
+
     private fun startService() {
-        if (!viewModel.isServiceRunning.value!!) {
+        if (viewModel.isServiceRunning.value == false) {
             val intent = Intent(this, SimpleMediaService::class.java)
             startForegroundService(intent)
             viewModel.isServiceRunning.postValue(true)
             Log.d("Service", "Service started")
+        }
+    }
+
+    private fun stopService() {
+        if (viewModel.isServiceRunning.value == true) {
+            val intent = Intent(this, SimpleMediaService::class.java)
+            stopService(intent)
+            viewModel.isServiceRunning.postValue(false)
+            Log.d("Service", "Service stopped")
         }
     }
 
@@ -121,6 +144,10 @@ class MainActivity : AppCompatActivity(), NowPlayingFragment.OnNowPlayingSongCha
                 binding.btPlayPause.setImageResource(R.drawable.baseline_play_arrow_24)
             }
         }
+    }
+
+    override fun onUpdateProgressBar(progress: Float) {
+
     }
 
     private fun removeTrailingComma(sentence: String): String {

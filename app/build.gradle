@@ -47,6 +47,7 @@ android {
 dependencies {
     implementation project(':youtubeExtractor')
 
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
     implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     //material design 3
@@ -67,12 +68,14 @@ dependencies {
     implementation "androidx.media3:media3-exoplayer-rtsp:$media3_version"
     implementation "androidx.media3:media3-exoplayer-smoothstreaming:$media3_version"
     implementation "androidx.media3:media3-exoplayer-workmanager:$media3_version"
+
     //Youtube
     implementation 'com.github.sealedtx:java-youtube-downloader:3.2.2'
     //palette color
     implementation 'androidx.palette:palette:1.0.0'
     //expandable text view
     implementation 'com.github.giangpham96:expandable-text:2.0.0'
+
 
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
@@ -131,7 +134,6 @@ dependencies {
     // For local unit tests
     testImplementation 'com.google.dagger:hilt-android-testing:2.45'
     kaptTest 'com.google.dagger:hilt-compiler:2.45'
-
     //Swipe To Refresh
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01"
 }

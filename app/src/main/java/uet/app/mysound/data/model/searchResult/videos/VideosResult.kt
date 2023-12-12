@@ -1,8 +1,7 @@
 package uet.app.mysound.data.model.searchResult.videos
 
-import uet.app.mysound.data.model.searchResult.songs.Artist
-
 import com.google.gson.annotations.SerializedName
+import uet.app.mysound.data.model.searchResult.songs.Artist
 import uet.app.mysound.data.model.searchResult.songs.Thumbnail
 
 data class VideosResult(

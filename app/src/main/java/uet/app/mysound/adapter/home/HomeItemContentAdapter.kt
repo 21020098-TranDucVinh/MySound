@@ -9,31 +9,40 @@ import uet.app.mysound.data.model.home.Content
 import uet.app.mysound.databinding.ItemHomeContentPlaylistBinding
 import uet.app.mysound.databinding.ItemHomeContentSongBinding
 
-class HomeItemContentAdapter(private var listContent: ArrayList<Content>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class HomeItemContentAdapter(private var listContent: ArrayList<Content>) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private lateinit var mPlaylistListener: onPlaylistItemClickListener
     private lateinit var mSongListener: onSongItemClickListener
-    interface onSongItemClickListener{
+
+    interface onSongItemClickListener {
         fun onSongItemClick(position: Int)
     }
-    interface onPlaylistItemClickListener{
+
+    interface onPlaylistItemClickListener {
         fun onPlaylistItemClick(position: Int)
     }
-    fun setOnSongClickListener(listener: onSongItemClickListener){
+
+    fun setOnSongClickListener(listener: onSongItemClickListener) {
         mSongListener = listener
     }
-    fun setOnPlaylistClickListener(listener: onPlaylistItemClickListener){
+
+    fun setOnPlaylistClickListener(listener: onPlaylistItemClickListener) {
         mPlaylistListener = listener
     }
-    inner class SongViewHolder(var binding: ItemHomeContentSongBinding, var listener: onSongItemClickListener): RecyclerView.ViewHolder(binding.root) {
+
+    inner class SongViewHolder(
+        var binding: ItemHomeContentSongBinding,
+        var listener: onSongItemClickListener
+    ) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.root.setOnClickListener {listener.onSongItemClick(bindingAdapterPosition)}
+            binding.root.setOnClickListener { listener.onSongItemClick(bindingAdapterPosition) }
         }
-        fun bind(content: Content){
-            with(binding){
+
+        fun bind(content: Content) {
+            with(binding) {
                 if (content.thumbnails.size > 1) {
                     ivArt.load(content.thumbnails[1].url)
-                }
-                else{
+                } else {
                     ivArt.load(content.thumbnails[0].url)
                 }
                 tvSongName.text = content.title
@@ -53,20 +62,26 @@ class HomeItemContentAdapter(private var listContent: ArrayList<Content>): Recyc
             }
         }
     }
-    inner class PlaylistViewHolder(var binding: ItemHomeContentPlaylistBinding, var listener: onPlaylistItemClickListener): RecyclerView.ViewHolder(binding.root){
+
+    inner class PlaylistViewHolder(
+        var binding: ItemHomeContentPlaylistBinding,
+        var listener: onPlaylistItemClickListener
+    ) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.root.setOnClickListener {listener.onPlaylistItemClick(bindingAdapterPosition)}
+            binding.root.setOnClickListener { listener.onPlaylistItemClick(bindingAdapterPosition) }
         }
-        fun bind(content: Content){
-            with(binding){
+
+        fun bind(content: Content) {
+            with(binding) {
                 if (content.thumbnails.size > 1) {
                     ivArt.load(content.thumbnails[1].url)
-                }
-                else{
+                } else {
                     ivArt.load(content.thumbnails[0].url)
                 }
                 tvTitle.text = content.title
+                tvTitle.isSelected = true
                 tvDescription.text = content.description
+                tvDescription.isSelected = true
             }
         }
     }
@@ -74,14 +89,25 @@ class HomeItemContentAdapter(private var listContent: ArrayList<Content>): Recyc
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflate = LayoutInflater.from(parent.context)
         return when (viewType) {
-            SONG -> SongViewHolder(ItemHomeContentSongBinding.inflate(inflate, parent, false), mSongListener)
-            PLAYLIST -> PlaylistViewHolder(ItemHomeContentPlaylistBinding.inflate(inflate, parent, false), mPlaylistListener)
+            SONG -> SongViewHolder(
+                ItemHomeContentSongBinding.inflate(inflate, parent, false),
+                mSongListener
+            )
+
+            PLAYLIST -> PlaylistViewHolder(
+                ItemHomeContentPlaylistBinding.inflate(
+                    inflate,
+                    parent,
+                    false
+                ), mPlaylistListener
+            )
+
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder){
+        when (holder) {
             is SongViewHolder -> holder.bind(listContent[position])
             is PlaylistViewHolder -> holder.bind(listContent[position])
         }
@@ -100,6 +126,7 @@ class HomeItemContentAdapter(private var listContent: ArrayList<Content>): Recyc
     override fun getItemCount(): Int {
         return listContent.size
     }
+
     fun removeTrailingComma(sentence: String): String {
         val trimmed = sentence.trimEnd()
         return if (trimmed.endsWith(", ")) {

@@ -1,17 +1,19 @@
 package uet.app.mysound.ui.fragment
 
-import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Toast
-import androidx.core.graphics.alpha
+import androidx.core.graphics.ColorUtils
 import androidx.customview.widget.ViewDragHelper
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -26,20 +28,19 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.slider.Slider
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import uet.app.mysound.R
 import uet.app.mysound.data.model.metadata.MetadataSong
 import uet.app.mysound.databinding.FragmentNowPlayingBinding
 import uet.app.mysound.utils.Resource
 import uet.app.mysound.viewModel.SharedViewModel
 import uet.app.mysound.viewModel.UIEvent
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 
 
 @UnstableApi
 @AndroidEntryPoint
-class NowPlayingFragment: BottomSheetDialogFragment() {
+class NowPlayingFragment : BottomSheetDialogFragment() {
     private val UPDATE_INTERVAL_MS: Long = 1000
     private val viewModel by activityViewModels<SharedViewModel>()
     private lateinit var dragHelper: ViewDragHelper
@@ -56,10 +57,9 @@ class NowPlayingFragment: BottomSheetDialogFragment() {
     private lateinit var songChangeListener: OnNowPlayingSongChangeListener
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnNowPlayingSongChangeListener){
+        if (context is OnNowPlayingSongChangeListener) {
             songChangeListener = context
-        }
-        else{
+        } else {
             throw RuntimeException("$context must implement OnNowPlayingSongChangeListener")
         }
     }
@@ -105,23 +105,22 @@ class NowPlayingFragment: BottomSheetDialogFragment() {
         _binding = FragmentNowPlayingBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.lyricsFullLayout.visibility = View.GONE
         binding.buffered.max = 100
         Log.d("check Video ID in ViewModel", viewModel.videoId.value.toString())
         videoId = arguments?.getString("videoId")
         from = arguments?.getString("from")
         Log.d("check Video ID in Fragment", videoId.toString())
         if (videoId != null) {
-            if (viewModel.videoId.value == videoId)
-            {
+            if (viewModel.videoId.value == videoId) {
                 gradientDrawable = viewModel.gradientDrawable.value
                 lyricsBackground = viewModel.lyricsBackground.value
                 metadataCurSong = viewModel.metadata.value?.data
                 updateUI()
-            }
-            else
-            {
+            } else {
                 binding.ivArt.visibility = View.GONE
                 binding.loadingArt.visibility = View.VISIBLE
                 viewModel.gradientDrawable.postValue(null)
@@ -131,8 +130,7 @@ class NowPlayingFragment: BottomSheetDialogFragment() {
                 viewModel.getMetadata(videoId!!)
                 observerMetadata()
             }
-        }
-        else {
+        } else {
             videoId = viewModel.videoId.value
             from = viewModel.from.value
             metadataCurSong = viewModel.metadata.value?.data
@@ -143,23 +141,23 @@ class NowPlayingFragment: BottomSheetDialogFragment() {
 
         lifecycleScope.launch {
             val job1 = launch {
-                viewModel.progressString.observe(viewLifecycleOwner, Observer {
+                viewModel.progressString.observe(viewLifecycleOwner) {
                     binding.tvCurrentTime.text = it
-                    if (viewModel.progress.value * 100 in 0f..100f){
+                    if (viewModel.progress.value * 100 in 0f..100f) {
                         binding.progressSong.value = viewModel.progress.value * 100
+                        songChangeListener.onUpdateProgressBar(viewModel.progress.value * 100)
                     }
-                })
+                }
                 viewModel.duration.collect {
                     binding.tvFullTime.text = viewModel.formatDuration(it)
                 }
             }
             val job2 = launch {
-                viewModel.isPlaying.observe(viewLifecycleOwner){
-                    if (it){
+                viewModel.isPlaying.observe(viewLifecycleOwner) {
+                    if (it) {
                         binding.btPlayPause.setImageResource(R.drawable.baseline_pause_circle_24)
                         songChangeListener.onIsPlayingChange()
-                    }
-                    else{
+                    } else {
                         binding.btPlayPause.setImageResource(R.drawable.baseline_play_circle_24)
                         songChangeListener.onIsPlayingChange()
                     }
@@ -167,21 +165,90 @@ class NowPlayingFragment: BottomSheetDialogFragment() {
             }
             //Update progress bar from buffered percentage
             val job3 = launch {
-                viewModel.bufferedPercentage.collect{
+                viewModel.bufferedPercentage.collect {
                     binding.buffered.progress = it
                     Log.d("buffered", it.toString())
                 }
             }
             //Check if song is ready to play. And make progress bar indeterminate
             val job4 = launch {
-                viewModel.notReady.observe(viewLifecycleOwner){
+                viewModel.notReady.observe(viewLifecycleOwner) {
                     binding.buffered.isIndeterminate = it
+                }
+            }
+            val job5 = launch {
+                viewModel.progressMillis.collect {
+                    if (viewModel.metadata.value?.data != null) {
+                        val temp = viewModel.getLyricsString(it)
+                        if (temp != null) {
+                            if (temp.nowLyric == "Lyrics not found") {
+                                binding.lyricsLayout.visibility = View.GONE
+                                binding.lyricsTextLayout.visibility = View.GONE
+                            } else {
+                                if (binding.btFull.text == "Show") {
+                                    binding.lyricsTextLayout.visibility = View.VISIBLE
+                                }
+                                binding.lyricsLayout.visibility = View.VISIBLE
+                                if (temp.nowLyric != null) {
+                                    binding.tvNowLyrics.visibility = View.VISIBLE
+                                    binding.tvNowLyrics.text = temp.nowLyric
+                                } else {
+                                    binding.tvNowLyrics.visibility = View.GONE
+                                }
+                                if (temp.prevLyrics != null) {
+                                    binding.tvPrevLyrics.visibility = View.VISIBLE
+                                    if (temp.prevLyrics.size > 1) {
+                                        val txt = temp.prevLyrics[0] + "\n" + temp.prevLyrics[1]
+                                        binding.tvPrevLyrics.text = txt
+                                    } else {
+                                        binding.tvPrevLyrics.text = temp.prevLyrics[0]
+                                    }
+                                } else {
+                                    binding.tvPrevLyrics.visibility = View.GONE
+                                }
+                                if (temp.nextLyric != null) {
+                                    binding.tvNextLyrics.visibility = View.VISIBLE
+                                    if (temp.nextLyric.size > 1) {
+                                        val txt = temp.nextLyric[0] + "\n" + temp.nextLyric[1]
+                                        binding.tvNextLyrics.text = txt
+                                    } else {
+                                        binding.tvNextLyrics.text = temp.nextLyric[0]
+                                    }
+                                } else {
+                                    binding.tvNextLyrics.visibility = View.GONE
+                                }
+                            }
+                        }
+                    } else {
+                        binding.lyricsLayout.visibility = View.GONE
+                        binding.lyricsTextLayout.visibility = View.GONE
+                    }
+                }
+            }
+            val job6 = launch {
+                viewModel.lyricsFull.observe(viewLifecycleOwner) {
+                    if (it != null) {
+                        binding.tvFullLyrics.text = it
+                    }
                 }
             }
             job1.join()
             job2.join()
             job3.join()
             job4.join()
+            job5.join()
+            job6.join()
+        }
+        binding.btFull.setOnClickListener {
+            if (binding.btFull.text == "Show") {
+                binding.btFull.text = "Hide"
+                binding.lyricsTextLayout.visibility = View.GONE
+                binding.lyricsFullLayout.visibility = View.VISIBLE
+            } else {
+                binding.btFull.text = "Show"
+                binding.lyricsTextLayout.visibility = View.VISIBLE
+                binding.lyricsFullLayout.visibility = View.GONE
+            }
         }
 
         binding.progressSong.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
@@ -202,6 +269,7 @@ class NowPlayingFragment: BottomSheetDialogFragment() {
             dismiss()
         }
     }
+
     //
 //        val player = ExoPlayer.Builder(requireContext()).build()
 //        if (viewModel.currentSong.value == null){
@@ -309,20 +377,23 @@ class NowPlayingFragment: BottomSheetDialogFragment() {
             string
         }
     }
-    private fun observerMetadata(){
+
+    private fun observerMetadata() {
         viewModel.videoId.postValue(videoId)
         viewModel.from.postValue(from)
         viewModel.metadata.observe(viewLifecycleOwner, Observer {
-            when (it){
-                is Resource.Success ->{
+            when (it) {
+                is Resource.Success -> {
                     metadataCurSong = it.data
                     viewModel.loadMediaItems(videoId!!)
                     updateUI()
                 }
-                is Resource.Error ->{
+
+                is Resource.Error -> {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
                 }
-                is Resource.Loading ->{
+
+                is Resource.Loading -> {
 
                 }
 
@@ -332,7 +403,8 @@ class NowPlayingFragment: BottomSheetDialogFragment() {
             }
         })
     }
-    private fun updateUI(){
+
+    private fun updateUI() {
         binding.ivArt.visibility = View.GONE
         binding.loadingArt.visibility = View.VISIBLE
         val request = ImageRequest.Builder(requireContext())
@@ -348,7 +420,7 @@ class NowPlayingFragment: BottomSheetDialogFragment() {
                     binding.loadingArt.visibility = View.GONE
                     binding.ivArt.setImageDrawable(result)
                     Log.d("Update UI", "onSuccess: ")
-                    if (viewModel.gradientDrawable.value != null){
+                    if (viewModel.gradientDrawable.value != null) {
                         viewModel.gradientDrawable.observe(viewLifecycleOwner, Observer {
                             binding.rootLayout.background = it
 //                            viewModel.lyricsBackground.observe(viewLifecycleOwner, Observer { color ->
@@ -363,7 +435,7 @@ class NowPlayingFragment: BottomSheetDialogFragment() {
                     songChangeListener.onNowPlayingSongChange()
                 },
             )
-            .transformations(object : Transformation{
+            .transformations(object : Transformation {
                 override val cacheKey: String
                     get() = "paletteArtTransformer"
 
@@ -372,15 +444,15 @@ class NowPlayingFragment: BottomSheetDialogFragment() {
                     val defaultColor = 0x000000
                     var startColor = p.getDarkVibrantColor(defaultColor)
                     Log.d("Check Start Color", "transform: $startColor")
-                    if (startColor == defaultColor){
+                    if (startColor == defaultColor) {
                         startColor = p.getDarkMutedColor(defaultColor)
-                        if (startColor == defaultColor){
+                        if (startColor == defaultColor) {
                             startColor = p.getVibrantColor(defaultColor)
-                            if (startColor == defaultColor){
+                            if (startColor == defaultColor) {
                                 startColor = p.getMutedColor(defaultColor)
-                                if (startColor == defaultColor){
+                                if (startColor == defaultColor) {
                                     startColor = p.getLightVibrantColor(defaultColor)
-                                    if (startColor == defaultColor){
+                                    if (startColor == defaultColor) {
                                         startColor = p.getLightMutedColor(defaultColor)
                                     }
                                 }
@@ -398,8 +470,9 @@ class NowPlayingFragment: BottomSheetDialogFragment() {
                     gd.gradientType = GradientDrawable.LINEAR_GRADIENT
                     gd.gradientRadius = 0.5f
                     gd.alpha = 150
+                    val bg = ColorUtils.setAlphaComponent(startColor, 230)
                     viewModel.gradientDrawable.postValue(gd)
-                    viewModel.lyricsBackground.postValue(startColor)
+                    viewModel.lyricsBackground.postValue(bg)
                     return input
                 }
 
@@ -425,15 +498,18 @@ class NowPlayingFragment: BottomSheetDialogFragment() {
 
         Log.d("Metadata", metadataCurSong.toString())
     }
+
     fun updateStatusBarColor(color: Int) { // Color must be in hexadecimal format
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         val window: Window = requireActivity().window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = Color.parseColor("99"+color.toString())
+        window.statusBarColor = Color.parseColor("99" + color.toString())
     }
-    public interface OnNowPlayingSongChangeListener{
+
+    public interface OnNowPlayingSongChangeListener {
         fun onNowPlayingSongChange()
         fun onIsPlayingChange()
+        fun onUpdateProgressBar(progress: Float)
     }
 
 

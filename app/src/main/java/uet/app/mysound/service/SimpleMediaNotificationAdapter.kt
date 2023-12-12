@@ -3,10 +3,8 @@ package uet.app.mysound.service
 import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.Log
-import androidx.core.graphics.drawable.toBitmap
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerNotificationManager
@@ -22,7 +20,10 @@ class SimpleMediaNotificationAdapter(
 ) : PlayerNotificationManager.MediaDescriptionAdapter {
 
     override fun getCurrentContentTitle(player: Player): CharSequence {
-        Log.d("SimpleMediaNotificationAdapter", "getCurrentContentTitle: ${player.mediaMetadata.title}")
+        Log.d(
+            "SimpleMediaNotificationAdapter",
+            "getCurrentContentTitle: ${player.mediaMetadata.title}"
+        )
         return player.mediaMetadata.title ?: ""
     }
 
@@ -51,5 +52,4 @@ class SimpleMediaNotificationAdapter(
             })
         return null
     }
-
 }

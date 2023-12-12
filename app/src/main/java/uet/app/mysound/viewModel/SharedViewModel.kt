@@ -3,7 +3,6 @@ package uet.app.mysound.viewModel
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.util.Log
@@ -16,39 +15,40 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.util.UnstableApi
-import uet.app.youtubeExtractor.VideoMeta
-import uet.app.youtubeExtractor.YouTubeExtractor
-import uet.app.youtubeExtractor.YtFile
 import com.github.kiulian.downloader.YoutubeDownloader
-import com.github.kiulian.downloader.downloader.YoutubeCallback
-import com.github.kiulian.downloader.downloader.request.RequestVideoInfo
-import com.github.kiulian.downloader.downloader.response.Response
-import com.github.kiulian.downloader.model.videos.VideoInfo
-import com.google.android.material.snackbar.Snackbar
-import uet.app.mysound.data.model.mediaService.Song
-import uet.app.mysound.data.model.metadata.MetadataSong
-import uet.app.mysound.data.repository.MainRepository
-import uet.app.mysound.databinding.FragmentNowPlayingBinding
-import uet.app.mysound.service.PlayerEvent
-import uet.app.mysound.service.SimpleMediaServiceHandler
-import uet.app.mysound.service.SimpleMediaState
-import uet.app.mysound.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import uet.app.mysound.data.model.mediaService.Song
+import uet.app.mysound.data.model.metadata.Line
+import uet.app.mysound.data.model.metadata.Lyrics
+import uet.app.mysound.data.model.metadata.MetadataSong
+import uet.app.mysound.data.repository.MainRepository
+import uet.app.mysound.service.PlayerEvent
+import uet.app.mysound.service.SimpleMediaServiceHandler
+import uet.app.mysound.service.SimpleMediaState
+import uet.app.mysound.utils.Resource
+import uet.app.youtubeExtractor.VideoMeta
+import uet.app.youtubeExtractor.YouTubeExtractor
+import uet.app.youtubeExtractor.YtFile
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
-class SharedViewModel @Inject constructor(private val mainRepository: MainRepository, private val simpleMediaServiceHandler: SimpleMediaServiceHandler, private val ytDownloader: YoutubeDownloader, application: Application) : AndroidViewModel(application){
+class SharedViewModel @Inject constructor(
+    private val mainRepository: MainRepository,
+    private val simpleMediaServiceHandler: SimpleMediaServiceHandler,
+    private val ytDownloader: YoutubeDownloader,
+    application: Application
+) : AndroidViewModel(application) {
     protected val context
         get() = getApplication<Application>()
+
     val isServiceRunning = MutableLiveData<Boolean>(false)
 
-    val listItag = listOf(171,249,250,251,140,141,256,258)
+    val listItag = listOf(171, 249, 250, 251, 140, 141, 256, 258)
     var videoId = MutableLiveData<String>()
     var from = MutableLiveData<String>()
     var gradientDrawable: MutableLiveData<GradientDrawable> = MutableLiveData()
@@ -60,8 +60,10 @@ class SharedViewModel @Inject constructor(private val mainRepository: MainReposi
     val bufferedPercentage: StateFlow<Int> = _bufferedPercentage
 
     private var _progress = MutableStateFlow<Float>(0F)
+    private var _progressMillis = MutableStateFlow<Long>(0L)
+    val progressMillis: StateFlow<Long> = _progressMillis
     val progress: StateFlow<Float> = _progress
-    var progressString : MutableLiveData<String> = MutableLiveData("00:00")
+    var progressString: MutableLiveData<String> = MutableLiveData("00:00")
 
     private val _duration = MutableStateFlow<Long>(0L)
     val duration: StateFlow<Long> = _duration
@@ -71,11 +73,16 @@ class SharedViewModel @Inject constructor(private val mainRepository: MainReposi
     var isPlaying = MutableLiveData<Boolean>(false)
     var notReady = MutableLiveData<Boolean>(true)
 
+    private var _lyrics = MutableLiveData<Lyrics>()
+    private var lyricsFormat: MutableLiveData<ArrayList<Line>> = MutableLiveData()
+    var lyricsFull = MutableLiveData<String>()
+
     private val _mediaItems = MutableLiveData<Resource<ArrayList<Song>>>()
     val mediaItems: LiveData<Resource<ArrayList<Song>>> = _mediaItems
 
     private val _mediaSources = MutableLiveData<Resource<String>>()
     val mediaSources: LiveData<Resource<String>> = _mediaSources
+
 
     val playbackState = simpleMediaServiceHandler.simpleMediaState
 
@@ -84,23 +91,28 @@ class SharedViewModel @Inject constructor(private val mainRepository: MainReposi
             simpleMediaServiceHandler.simpleMediaState.collect { mediaState ->
                 when (mediaState) {
                     is SimpleMediaState.Buffering -> {
-                    notReady.value = true
-                }
+                        notReady.value = true
+                    }
+
                     SimpleMediaState.Initial -> _uiState.value = UIState.Initial
                     is SimpleMediaState.Playing -> isPlaying.value = mediaState.isPlaying
                     is SimpleMediaState.Progress -> {
-                        if (duration.value > 0){
+                        if (duration.value > 0) {
                             calculateProgressValues(mediaState.progress)
+                            _progressMillis.value = mediaState.progress
                         }
                     }
+
                     is SimpleMediaState.Loading -> {
                         _bufferedPercentage.value = mediaState.bufferedPercentage
                     }
+
                     is SimpleMediaState.Ready -> {
                         notReady.value = false
                         _duration.value = mediaState.duration
                         _uiState.value = UIState.Ready
                     }
+
                     else -> {}
                 }
             }
@@ -109,34 +121,21 @@ class SharedViewModel @Inject constructor(private val mainRepository: MainReposi
 
     fun getMetadata(videoId: String) {
         viewModelScope.launch {
-            mainRepository.getMetadata(videoId).collect{response ->
+            mainRepository.getMetadata(videoId).collect { response ->
                 _metadata.value = response
+                _lyrics.value = response.data?.lyrics
+                Log.d("Check lại Lyrics", _lyrics.value.toString())
+                parseLyrics(_lyrics.value)
             }
         }
     }
+
     @UnstableApi
-    fun loadMediaItems(videoId: String){
+    fun loadMediaItems(videoId: String) {
         val title = metadata.value?.data?.title
-        var uri = ""
-//
-//        val job = viewModelScope.launch{
-//            val request = RequestVideoInfo(videoId)
-//                .callback(object : YoutubeCallback<VideoInfo?> {
-//                    override fun onFinished(videoInfo: VideoInfo?) {
-//                        println("Finished parsing")
-//                    }
-//
-//                    override fun onError(throwable: Throwable) {
-//                        println("Error: " + throwable.message)
-//                    }
-//                })
-//                .async()
-//            val response: Response<VideoInfo> = ytDownloader.getVideoInfo(request)
-//            val video: VideoInfo = response.data()
-//            Log.d("SharedViewModel", "loadMediaItems: ${video.audioFormats().toString()}")
-//            uri = video.bestAudioFormat().url()
+
         @SuppressLint("StaticFieldLeak")
-        val request = object: YouTubeExtractor(context) {
+        val request = object : YouTubeExtractor(context) {
 
             override fun onExtractionComplete(
                 ytFiles: SparseArray<YtFile>?,
@@ -144,22 +143,23 @@ class SharedViewModel @Inject constructor(private val mainRepository: MainReposi
             ) {
                 var uri = ""
                 Log.d("Check YT data", ytFiles.toString())
-                if (ytFiles != null)
-                {
-                    if (ytFiles[251] != null){
+                if (ytFiles != null) {
+                    if (ytFiles[251] != null) {
                         uri = ytFiles[251].url
-                    }
-                    else if (ytFiles[140] != null){
+                    } else if (ytFiles[140] != null) {
                         uri = ytFiles[140].url
-                    }
-                    else if (ytFiles[250] != null){
+                    } else if (ytFiles[250] != null) {
                         uri = ytFiles[249].url
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "This track is not available in your country! Use VPN to fix this problem",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
-                    else{
-                        Toast.makeText(context, "This track is not available in your country! Use VPN to fix this problem", Toast.LENGTH_LONG).show()
-                    }
-                    if(uri != ""){
+                    if (uri != "") {
                         var artist = ""
+                        Log.d("Itag", uri)
                         if (metadata.value?.data?.artists != null) {
                             for (a in metadata.value?.data?.artists!!) {
                                 artist += a.name + ", "
@@ -179,13 +179,16 @@ class SharedViewModel @Inject constructor(private val mainRepository: MainReposi
                             .build()
                         simpleMediaServiceHandler.addMediaItem(mediaItem)
                     }
-                }
-                else {
-                    Toast.makeText(context, "This track is not available in your country! Use VPN to fix this problem", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(
+                        context,
+                        "This track is not available in your country! Use VPN to fix this problem",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
 
-        }.extract("https://youtube.com/watch?v="+videoId)
+        }.extract("https://youtube.com/watch?v=" + videoId)
 
 
 //            val mediaItem = MediaItem.Builder().setUri(uri)
@@ -218,30 +221,120 @@ class SharedViewModel @Inject constructor(private val mainRepository: MainReposi
             }
         }
     }
+
     fun formatDuration(duration: Long): String {
         val minutes: Long = TimeUnit.MINUTES.convert(duration, TimeUnit.MILLISECONDS)
         val seconds: Long = (TimeUnit.SECONDS.convert(duration, TimeUnit.MILLISECONDS)
                 - minutes * TimeUnit.SECONDS.convert(1, TimeUnit.MINUTES))
         return String.format("%02d:%02d", minutes, seconds)
     }
+
     private fun calculateProgressValues(currentProgress: Long) {
-        _progress.value = if (currentProgress > 0) (currentProgress.toFloat() / duration.value) else 0f
+        _progress.value =
+            if (currentProgress > 0) (currentProgress.toFloat() / duration.value) else 0f
         progressString.value = formatDuration(currentProgress)
     }
+
 
     @UnstableApi
     fun seekTo(position: Long) {
     }
+
     fun nextSong() {
 
     }
+
     fun previousSong() {
 
     }
 
+    fun parseLyrics(lyrics: Lyrics?) {
+        if (lyrics != null) {
+            if (!lyrics.error) {
+                if (lyrics.syncType == "LINE_SYNCED") {
+                    val firstLine = Line("0", "0", listOf(), "")
+                    val lines: ArrayList<Line> = ArrayList()
+                    lines.addAll(lyrics.lines as ArrayList<Line>)
+                    lines.add(0, firstLine)
+                    lyricsFormat.postValue(lines)
+                    var txt = ""
+                    for (line in lines) {
+                        if (line == lines.last()) {
+                            txt += line.words
+                        } else {
+                            txt += line.words + "\n"
+                        }
+                    }
+                    lyricsFull.postValue(txt)
+                    Log.d("Check Lyrics", lyricsFormat.value.toString())
+                } else if (lyrics.syncType == "UNSYNCED") {
+                    val lines: ArrayList<Line> = ArrayList()
+                    lines.addAll(lyrics.lines as ArrayList<Line>)
+                    var txt = ""
+                    for (line in lines) {
+                        if (line == lines.last()) {
+                            txt += line.words
+                        } else {
+                            txt += line.words + "\n"
+                        }
+                    }
+                    lyricsFormat.postValue(arrayListOf(Line("0", "0", listOf(), txt)))
+                    lyricsFull.postValue(txt)
+                }
+            } else {
+                val lines = Line("0", "0", listOf(), "Lyrics not found")
+                lyricsFormat.postValue(arrayListOf(lines))
+                Log.d("Check Lyrics", "Lyrics not found")
+            }
+        }
+    }
 
+    fun getLyricsString(current: Long): LyricDict? {
+//        viewModelScope.launch {
+//            while (isPlaying.value == true){
+//                val lyric = lyricsFormat.value?.firstOrNull { it.startTimeMs.toLong() <= progressMillis.value!! }
+//                lyricsString.postValue(lyric?.words ?: "")
+//                delay(100)
+//            }
+//        }
+//        return if (lyricsFormat.value != null){
+//            val lyric = lyricsFormat.value?.firstOrNull { it.startTimeMs.toLong() <= current }
+//            (lyric?.words ?: "")
+//        } else {
+//            ""
+//        }
+        var listLyricDict: LyricDict? = null
+        for (i in 0 until lyricsFormat.value?.size!!) {
+            val sentence = lyricsFormat.value!![i]
+            val next = if (i > 1) listOf(
+                lyricsFormat.value!![i - 2].words,
+                lyricsFormat.value!![i - 1].words
+            ) else if (i > 0) listOf(lyricsFormat.value!![0].words) else null
+            val prev = if (i < lyricsFormat.value!!.size - 2) listOf(
+                lyricsFormat.value!![i + 1].words,
+                lyricsFormat.value!![i + 2].words
+            ) else if (i < lyricsFormat.value!!.size - 1) listOf(lyricsFormat.value!![i + 1].words) else null
+            // get the start time of the current sentence
+            val startTimeMs = sentence.startTimeMs.toLong()
 
-
+            // estimate the end time of the current sentence based on the start time of the next sentence
+            val endTimeMs = if (i < lyricsFormat.value!!.size - 1) {
+                lyricsFormat.value!![i + 1].startTimeMs.toLong()
+            } else {
+                // if this is the last sentence, set the end time to be some default value (e.g., 1 minute after the start time)
+                startTimeMs + 60000
+            }
+            if (current in startTimeMs..endTimeMs) {
+                val lyric = if (sentence.words != "") sentence.words else null
+                listLyricDict = LyricDict(lyric, prev, next)
+                Log.d("Check Lyric", listLyricDict.toString())
+                break
+            } else {
+                continue
+            }
+        }
+        return listLyricDict
+    }
 
 
     private fun removeTrailingComma(sentence: String): String {
@@ -261,6 +354,7 @@ class SharedViewModel @Inject constructor(private val mainRepository: MainReposi
             string
         }
     }
+
     @UnstableApi
     override fun onCleared() {
         viewModelScope.launch {
@@ -268,6 +362,7 @@ class SharedViewModel @Inject constructor(private val mainRepository: MainReposi
         }
     }
 }
+
 sealed class UIEvent {
     object PlayPause : UIEvent()
     object Backward : UIEvent()
@@ -279,3 +374,9 @@ sealed class UIState {
     object Initial : UIState()
     object Ready : UIState()
 }
+
+data class LyricDict(
+    val nowLyric: String?,
+    val nextLyric: List<String>?,
+    val prevLyrics: List<String>?
+)
