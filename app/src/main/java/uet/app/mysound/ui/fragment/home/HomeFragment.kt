@@ -27,12 +27,9 @@ import uet.app.mysound.adapter.home.GenreAdapter
 import uet.app.mysound.adapter.home.HomeItemAdapter
 import uet.app.mysound.adapter.home.MoodsMomentAdapter
 import uet.app.mysound.adapter.home.QuickPicksAdapter
-import uet.app.mysound.adapter.home.chart.ArtistChartAdapter
-import uet.app.mysound.adapter.home.chart.TrackChartAdapter
 import uet.app.mysound.common.Config
 import uet.app.mysound.data.model.browse.album.Track
 import uet.app.mysound.data.model.home.HomeItem
-import uet.app.mysound.data.model.home.chart.toTrack
 import uet.app.mysound.data.queue.Queue
 import uet.app.mysound.databinding.FragmentHomeBinding
 import uet.app.mysound.extension.navigateSafe
@@ -51,8 +48,6 @@ class HomeFragment : Fragment() {
     private lateinit var mAdapter: HomeItemAdapter
     private lateinit var moodsMomentAdapter: MoodsMomentAdapter
     private lateinit var genreAdapter: GenreAdapter
-    private lateinit var trackChartAdapter: TrackChartAdapter
-    private lateinit var artistChartAdapter: ArtistChartAdapter
     private lateinit var quickPicksAdapter: QuickPicksAdapter
 
     private val items = arrayOf("US", "ZZ", "AR", "AU", "AT", "BE", "BO", "BR", "CA", "CL", "CO", "CR", "CZ", "DK", "DO", "EC", "EG", "SV", "EE", "FI", "FR", "DE", "GT", "HN", "HU", "IS", "IN", "ID", "IE", "IL", "IT", "JP", "KE", "LU", "MX", "NL", "NZ", "NI", "NG", "NO", "PA", "PY", "PE", "PL", "PT", "RO", "RU", "SA", "RS", "ZA", "KR", "ES", "SE", "CH", "TZ", "TR", "UG", "UA", "AE", "GB", "UY", "ZW")
@@ -76,8 +71,6 @@ class HomeFragment : Fragment() {
         mAdapter = HomeItemAdapter(arrayListOf(), requireContext(), findNavController())
         moodsMomentAdapter = MoodsMomentAdapter(arrayListOf())
         genreAdapter = GenreAdapter(arrayListOf())
-        trackChartAdapter = TrackChartAdapter(arrayListOf(), requireContext())
-        artistChartAdapter = ArtistChartAdapter(arrayListOf(), requireContext())
         quickPicksAdapter = QuickPicksAdapter(arrayListOf(), requireContext(), findNavController())
         initView()
         initObserver()
@@ -117,14 +110,6 @@ class HomeFragment : Fragment() {
             adapter = genreAdapter
             layoutManager = getGridLayoutHorizontal(3)
         }
-        binding.rvTopTrack.apply {
-            adapter = trackChartAdapter
-            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        }
-        binding.rvTopArtist.apply {
-            adapter = artistChartAdapter
-            layoutManager = getGridLayoutHorizontal(3)
-        }
         binding.rvQuickPicks.apply {
             adapter = quickPicksAdapter
             layoutManager = getGridLayoutHorizontal(3)
@@ -142,14 +127,6 @@ class HomeFragment : Fragment() {
                 val args = Bundle()
                 args.putString("params", genreAdapter.genreList[position].params)
                 findNavController().navigateSafe(R.id.action_global_moodFragment, args)
-            }
-        })
-        artistChartAdapter.setOnArtistClickListener(object :
-            ArtistChartAdapter.OnArtistItemClickListener {
-            override fun onArtistItemClick(position: Int) {
-                val args = Bundle()
-                args.putString("channelId", artistChartAdapter.listArtist[position].browseId)
-                findNavController().navigateSafe(R.id.action_global_artistFragment, args)
             }
         })
         quickPicksAdapter.setOnClickListener(object : QuickPicksAdapter.OnClickListener {
@@ -172,20 +149,6 @@ class HomeFragment : Fragment() {
                 }
             }
         })
-        trackChartAdapter.setOnItemClickListener(object : TrackChartAdapter.SetOnItemClickListener {
-            override fun onItemClick(position: Int) {
-                trackChartAdapter.trackList.getOrNull(position)?.let { song ->
-                    Queue.clear()
-                    val firstQueue: Track = song.toTrack()
-                    Queue.setNowPlaying(firstQueue)
-                    val args = Bundle()
-                    args.putString("videoId", song.videoId)
-                    args.putString("from", "\"${song.title}\" ${getString(R.string.in_charts)}")
-                    args.putString("type", Config.SONG_CLICK)
-                    findNavController().navigateSafe(R.id.action_global_nowPlayingFragment, args)
-                }
-            }
-        })
         binding.swipeRefreshLayout.setOnRefreshListener {
             fetchHomeData()
         }
@@ -194,19 +157,7 @@ class HomeFragment : Fragment() {
             null,
             com.google.android.material.R.attr.listPopupWindowStyle
         )
-        listPopup.anchorView = binding.btRegionCode
-        val codeAdapter = ArrayAdapter(requireContext(), R.layout.item_list_popup, itemsData)
-        listPopup.setAdapter(codeAdapter)
-        listPopup.setOnItemClickListener { _, _, position, _ ->
-            binding.btRegionCode.text = itemsData[position]
-            binding.chartResultLayout.visibility = View.GONE
-            binding.chartLoadingLayout.visibility = View.VISIBLE
-            viewModel.exploreChart(items[position])
-            listPopup.dismiss()
-        }
-        binding.btRegionCode.setOnClickListener {
-            listPopup.show()
-        }
+
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.home_fragment_menu_item_recently_played -> {
@@ -227,37 +178,12 @@ class HomeFragment : Fragment() {
     private fun initObserver() {
         viewModel.loading.observe(viewLifecycleOwner) { loading ->
             if (!loading) {
-                if (viewModel.regionCodeChart.value != null) {
-                    for (i in 1..items.size) {
-                        if (viewModel.regionCodeChart.value == items[i]) {
-                            binding.btRegionCode.text = itemsData[i]
-                            break
-                        }
-                    }
-                    Log.d("Region Code", "onViewCreated: ${viewModel.regionCodeChart.value}")
-                }
+
             } else {
                 showLoading()
             }
         }
 
-        viewModel.chart.observe(viewLifecycleOwner) { response ->
-            when (response) {
-                is Resource.Success -> {
-                    response.data?.let { chart ->
-                        trackChartAdapter.updateData(chart.videos.items)
-                        artistChartAdapter.updateData(chart.artists.itemArtists)
-                    }
-                    binding.chartResultLayout.visibility = View.VISIBLE
-                    binding.chartLoadingLayout.visibility = View.GONE
-                }
-
-                is Resource.Error -> {
-                    binding.chartResultLayout.visibility = View.GONE
-                    binding.chartLoadingLayout.visibility = View.GONE
-                }
-            }
-        }
         viewModel.homeItemList.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is Resource.Success -> {

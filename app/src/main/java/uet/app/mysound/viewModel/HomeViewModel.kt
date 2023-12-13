@@ -19,7 +19,6 @@ import uet.app.mysound.common.SUPPORTED_LANGUAGE
 import uet.app.mysound.data.dataStore.DataStoreManager
 import uet.app.mysound.data.model.explore.mood.Mood
 import uet.app.mysound.data.model.home.HomeItem
-import uet.app.mysound.data.model.home.chart.Chart
 import uet.app.mysound.data.repository.MainRepository
 import uet.app.mysound.utils.Resource
 import javax.inject.Inject
@@ -39,12 +38,8 @@ class HomeViewModel @Inject constructor(
 
     val showSnackBarErrorState = MutableSharedFlow<String>()
 
-    private val _chart: MutableLiveData<Resource<Chart>> = MutableLiveData()
-    val chart: LiveData<Resource<Chart>> = _chart
-    var regionCodeChart: MutableLiveData<String> = MutableLiveData()
 
     val loading = MutableLiveData<Boolean>()
-    val loadingChart = MutableLiveData<Boolean>()
     val errorMessage = MutableLiveData<String>()
     private var regionCode: String = ""
     private var language: String = ""
@@ -82,18 +77,15 @@ class HomeViewModel @Inject constructor(
 //                ),
                 mainRepository.getHomeData(),
                 mainRepository.getMoodAndMomentsData(),
-                mainRepository.getChartData("ZZ")
-            ) { home, exploreMood, exploreChart ->
-                Triple(home, exploreMood, exploreChart)
+            ) { home, exploreMood ->
+                Pair(home, exploreMood)
             }.collect { result ->
                 val home = result.first
                 Log.d("home size", "${home.data?.size}")
                 val exploreMoodItem = result.second
-                val chart = result.third
                 _homeItemList.value = home
                 _exploreMoodItem.value = exploreMoodItem
-                regionCodeChart.value = "ZZ"
-                _chart.value = chart
+
                 Log.d("HomeViewModel", "getHomeItemList: $result")
                 loading.value = false
                 dataStoreManager.cookie.first().let {
@@ -104,27 +96,12 @@ class HomeViewModel @Inject constructor(
                 when {
                     home is Resource.Error -> home.message
                     exploreMoodItem is Resource.Error -> exploreMoodItem.message
-                    chart is Resource.Error -> chart.message
                     else -> null
                 }?.let {
                     showSnackBarErrorState.emit(it)
                     Log.w("Error", "getHomeItemList: ${home.message}")
                     Log.w("Error", "getHomeItemList: ${exploreMoodItem.message}")
-                    Log.w("Error", "getHomeItemList: ${chart.message}")
                 }
-            }
-        }
-    }
-
-    fun exploreChart(region: String) {
-        viewModelScope.launch {
-            loadingChart.value = true
-            mainRepository.getChartData(
-                region).collect { values ->
-                regionCodeChart.value = region
-                _chart.value = values
-                Log.d("HomeViewModel", "getHomeItemList: ${chart.value?.data}")
-                loadingChart.value = false
             }
         }
     }

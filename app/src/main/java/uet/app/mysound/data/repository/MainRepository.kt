@@ -37,7 +37,6 @@ import uet.app.mysound.data.model.explore.mood.MoodsMoment
 import uet.app.mysound.data.model.explore.mood.genre.GenreObject
 import uet.app.mysound.data.model.explore.mood.moodmoments.MoodsMomentObject
 import uet.app.mysound.data.model.home.HomeItem
-import uet.app.mysound.data.model.home.chart.Chart
 import uet.app.mysound.data.model.metadata.Lyrics
 import uet.app.mysound.data.model.podcast.PodcastBrowse
 import uet.app.mysound.data.model.searchResult.albums.AlbumsResult
@@ -49,7 +48,6 @@ import uet.app.mysound.data.model.searchResult.songs.Thumbnail
 import uet.app.mysound.data.model.searchResult.videos.VideosResult
 import uet.app.mysound.data.parser.parseAlbumData
 import uet.app.mysound.data.parser.parseArtistData
-import uet.app.mysound.data.parser.parseChart
 import uet.app.mysound.data.parser.parseGenreObject
 import uet.app.mysound.data.parser.parseLibraryPlaylist
 import uet.app.mysound.data.parser.parseMixedContent
@@ -389,22 +387,6 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
         }
     }.flowOn(Dispatchers.IO)
 
-    suspend fun getChartData(countryCode: String = "KR"): Flow<Resource<Chart>> = flow {
-        runCatching {
-            YouTube.customQuery("FEmusic_charts", country = countryCode).onSuccess { result ->
-                val data =
-                    result.contents?.singleColumnBrowseResultsRenderer?.tabs?.get(0)?.tabRenderer?.content?.sectionListRenderer
-                val chart = parseChart(data)
-                if (chart != null) {
-                    emit(Resource.Success<Chart>(chart))
-                } else {
-                    emit(Resource.Error<Chart>("Error"))
-                }
-            }.onFailure { error ->
-                emit(Resource.Error<Chart>(error.message.toString()))
-            }
-        }
-    }.flowOn(Dispatchers.IO)
 
     suspend fun getMoodAndMomentsData(): Flow<Resource<Mood>> = flow {
         runCatching {
