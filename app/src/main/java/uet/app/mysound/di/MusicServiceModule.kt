@@ -1,72 +1,73 @@
 package uet.app.mysound.di
 
 import android.content.Context
-import androidx.media3.common.AudioAttributes
-import androidx.media3.common.C
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
-import androidx.media3.session.MediaSession
+import androidx.media3.database.DatabaseProvider
+import androidx.media3.database.StandaloneDatabaseProvider
+import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
+import androidx.media3.datasource.cache.NoOpCacheEvictor
+import androidx.media3.datasource.cache.SimpleCache
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import uet.app.mysound.service.SimpleMediaNotificationManager
-import uet.app.mysound.service.SimpleMediaServiceHandler
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import uet.app.mysound.data.dataStore.DataStoreManager
+import uet.app.mysound.data.repository.MainRepository
+import uet.app.mysound.service.SimpleMediaSessionCallback
+import javax.inject.Qualifier
 import javax.inject.Singleton
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class PlayerCache
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class DownloadCache
 
 @Module
 @InstallIn(SingletonComponent::class)
+@UnstableApi
 object MusicServiceModule {
-
-    @Provides
     @Singleton
-    fun provideAudioAttributes(): AudioAttributes =
-        AudioAttributes.Builder()
-            .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
-            .setUsage(C.USAGE_MEDIA)
-            .build()
-
     @Provides
+    fun provideDatabaseProvider(@ApplicationContext context: Context): DatabaseProvider =
+        StandaloneDatabaseProvider(context)
+
     @Singleton
-    @UnstableApi
-    fun providePlayer(
+    @Provides
+    @PlayerCache
+    fun providePlayerCache(
         @ApplicationContext context: Context,
-        audioAttributes: AudioAttributes
-    ): ExoPlayer =
-        ExoPlayer.Builder(context)
-            .setAudioAttributes(audioAttributes, true)
-            .setHandleAudioBecomingNoisy(true)
-            .setTrackSelector(DefaultTrackSelector(context))
-            .build()
-
-    @Provides
-    @Singleton
-    fun provideNotificationManager(
-        @ApplicationContext context: Context,
-        player: ExoPlayer
-    ): SimpleMediaNotificationManager =
-        SimpleMediaNotificationManager(
-            context = context,
-            player = player
+        databaseProvider: DatabaseProvider,
+        dataStoreManager: DataStoreManager
+    ): SimpleCache =
+        SimpleCache(
+            context.filesDir.resolve("exoplayer"),
+            when (val cacheSize = runBlocking { dataStoreManager.maxSongCacheSize.first() }) {
+                -1 -> NoOpCacheEvictor()
+                else -> LeastRecentlyUsedCacheEvictor(cacheSize * 1024 * 1024L)
+            },
+            databaseProvider
         )
 
-    @Provides
     @Singleton
-    fun provideMediaSession(
+    @Provides
+    @DownloadCache
+    fun provideDownloadCache(
         @ApplicationContext context: Context,
-        player: ExoPlayer
-    ): MediaSession =
-        MediaSession.Builder(context, player).build()
+        databaseProvider: DatabaseProvider
+    ): SimpleCache =
+        SimpleCache(context.filesDir.resolve("download"), NoOpCacheEvictor(), databaseProvider)
 
-    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+
     @Provides
     @Singleton
-    fun provideServiceHandler(
-        player: ExoPlayer
-    ): SimpleMediaServiceHandler =
-        SimpleMediaServiceHandler(
-            player = player
-        )
+    fun provideMediaSessionCallback(
+        @ApplicationContext context: Context,
+        mainRepository: MainRepository
+    ): SimpleMediaSessionCallback = SimpleMediaSessionCallback(context, mainRepository)
 }

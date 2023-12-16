@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10sp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:focusable="true"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground">
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivArtistArt"
             android:layout_width="160sp"
             android:layout_height="160sp"
             android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/circle"
-            android:src="@drawable/related_artist_demo" />
+            app:shapeAppearanceOverlay="@style/circle"/>
         <TextView
             android:id="@+id/tvArtistName"
             android:layout_width="160sp"
             android:layout_height="wrap_content"
-            android:text="GERDNANG"
+            android:text=""
             android:textStyle="bold"
             android:textSize="15sp"
             android:layout_marginTop="10sp"
@@ -37,4 +38,3 @@
 
         </TextView>
     </LinearLayout>
-</layout>

@@ -48,7 +48,7 @@
     <color name="md_theme_dark_onError">#690005</color>
     <color name="md_theme_dark_onErrorContainer">#FFDAD6</color>
     <color name="md_theme_dark_outline">#8F909A</color>
-    <color name="md_theme_dark_background">#000000</color>
+    <color name="md_theme_dark_background">#0B0A0A</color>
     <color name="md_theme_dark_onBackground">#E4E2E6</color>
     <color name="md_theme_dark_surface">#000000</color>
     <color name="md_theme_dark_onSurface">#E4E2E6</color>
@@ -60,22 +60,18 @@
     <color name="md_theme_dark_shadow">#000000</color>
     <color name="md_theme_dark_surfaceTint">#B2C5FF</color>
     <color name="md_theme_dark_outlineVariant">#45464F</color>
-    <color name="colorPrimary">#58BCF3</color>
-    <color name="colorPrimaryDark">#4ACA5F</color>
-    <color name="colorAccent">#D81B60</color>
-    <color name="colorText">#111441</color>
-    <color name="colorWhite">#fff</color>
-    <color name="colorPrimaryFaded">#115672</color>
-    <color name="colorGray">#F3F2F2</color>
-    <color name="colorInputText">#273d52</color>
-    <color name="colorHeader">#145798</color>
-    <color name="colorDanger">#ff4444</color>
-    <color name="light_green">#e8f5e9</color>
-    <color name="light_gray">#F3F4F3</color>
-    <color name="colorPrimaryFadedv1">#5988A8</color>
     <color name="md_theme_dark_scrim">#000000</color>
+    <color name="colorPrimaryDark">#19000000</color>
+    <color name="back_button_color">#197E7E7E</color>
+
+    <color name="shimmerBackground">#7E878383</color>
+    <color name="shimmerLine">#FFFFFF</color>
+
+    <color name="test">#00FFFFFF</color>
+    <color name="overlay">#32242424</color>
     <color name="light_blue_600">#FF039BE5</color>
     <color name="light_blue_900">#FF01579B</color>
     <color name="light_blue_A200">#FF40C4FF</color>
     <color name="light_blue_A400">#FF00B0FF</color>
+    <color name="black_overlay">#66000000</color>
 </resources>

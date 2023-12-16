@@ -11,11 +11,11 @@ import uet.app.mysound.R
 import uet.app.mysound.data.model.explore.mood.genre.Content
 import uet.app.mysound.data.model.explore.mood.genre.ItemsPlaylist
 import uet.app.mysound.databinding.ItemMoodMomentPlaylistBinding
+import uet.app.mysound.extension.navigateSafe
 
 class GenreItemAdapter(private var genreList: ArrayList<ItemsPlaylist>, val context: Context, val navController: NavController): RecyclerView.Adapter<GenreItemAdapter.ViewHolder>() {
-    inner class ViewHolder(val binding: ItemMoodMomentPlaylistBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: ItemMoodMomentPlaylistBinding): RecyclerView.ViewHolder(binding.root)
 
-    }
     fun updateData(newList: ArrayList<ItemsPlaylist>){
         genreList.clear()
         genreList.addAll(newList)
@@ -45,7 +45,7 @@ class GenreItemAdapter(private var genreList: ArrayList<ItemsPlaylist>, val cont
                 override fun onClick(position: Int) {
                     val args = Bundle()
                     args.putString("id", playlistContent[position].playlistBrowseId)
-                    navController.navigate(R.id.action_global_playlistFragment, args)
+                    navController.navigateSafe(R.id.action_global_playlistFragment, args)
                 }
             })
         }

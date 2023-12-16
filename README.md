@@ -1,10 +1,11 @@
-
 # BeMusic
 
 ## Yêu cầu:
+
 để run project yêu cầu các thứ sau:
+
 - cài composer php
-- cái node js 
+- cái node js
 - cài xampp.
 
 sau khi cài xammpp, cấu hình lại file php.ini xóa bỏ dấu ";" trước ``extension=pdo_sqlite``
@@ -12,8 +13,9 @@ sau khi cài xammpp, cấu hình lại file php.ini xóa bỏ dấu ";" trước
 sau đó gõ lệnh composer install --ignore-platform-req=php
 
 ## Cấu hình môi trường.
+
 vào file .env
-        
+
     DB_CONNECTION=mysql
     DB_HOST=127.0.0.1
     DB_PORT=3306
@@ -29,4 +31,5 @@ sau đó chạy các lệnh
     php artisan migrate
     php artisan sound:init
     đến đoạn PATH thì gõ C:\
-    
+
+> > > > > > > 8e21e4a9ac894d8b63f4c328cf7feffa476ff694

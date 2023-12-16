@@ -1,13 +1,15 @@
 package uet.app.mysound.data.model.browse.playlist
 
+
 import com.google.gson.annotations.SerializedName
+import uet.app.mysound.data.model.browse.album.Track
 import uet.app.mysound.data.model.searchResult.songs.Thumbnail
 
 data class PlaylistBrowse(
     @SerializedName("author")
     val author: Author,
     @SerializedName("description")
-    val description: String,
+    val description: String?,
     @SerializedName("duration")
     val duration: String,
     @SerializedName("duration_seconds")
@@ -23,7 +25,7 @@ data class PlaylistBrowse(
     @SerializedName("trackCount")
     val trackCount: Int,
     @SerializedName("tracks")
-    val tracks: List<TrackPlaylist>,
+    val tracks: List<Track>,
     @SerializedName("year")
-    val year: String
+    val year: String,
 )
