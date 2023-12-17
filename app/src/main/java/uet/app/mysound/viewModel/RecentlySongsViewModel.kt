@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import uet.app.mysound.data.repository.MainRepository
 import uet.app.mysound.pagination.RecentPagingSource
 import javax.inject.Inject
+import android.util.Log
 
 @HiltViewModel
 class RecentlySongsViewModel @Inject constructor(application: Application, private val mainRepository: MainRepository): AndroidViewModel(application) {

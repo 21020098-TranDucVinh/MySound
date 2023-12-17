@@ -4,7 +4,6 @@ import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
@@ -32,6 +31,7 @@ import uet.app.mysound.data.db.entities.SongEntity
 import uet.app.mysound.data.repository.MainRepository
 import uet.app.mysound.extension.toMediaItem
 import javax.inject.Inject
+import android.util.Log
 
 class SimpleMediaSessionCallback @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -176,6 +176,7 @@ class SimpleMediaSessionCallback @Inject constructor(
         browser: MediaSession.ControllerInfo,
         mediaId: String,
     ): ListenableFuture<LibraryResult<MediaItem>> = scope.future(Dispatchers.IO) {
+        Log.e("TAG", " ===NAM=== onGetItem SimpleMediaSessionCallback")
         mainRepository.getSongById(mediaId).first()?.toMediaItem()?.let {
             LibraryResult.ofItem(it, null)
         } ?: LibraryResult.ofError(LibraryResult.RESULT_ERROR_UNKNOWN)

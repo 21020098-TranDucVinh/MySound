@@ -239,6 +239,7 @@ class SharedViewModel @Inject constructor(private var dataStoreManager: DataStor
                             if (tempSong != null) {
                                 Log.d("Check tempSong", tempSong.toString())
                                 mainRepository.insertSong(tempSong.toSongEntity())
+                                Log.e("TAG", " ===NAM=== init SharedViewModel")
                                 mainRepository.getSongById(tempSong.videoId)
                                     .collectLatest { songEntity ->
                                         _songDB.value = songEntity
@@ -406,6 +407,7 @@ class SharedViewModel @Inject constructor(private var dataStoreManager: DataStor
             downloadState = downloadUtils.getDownload(videoId).stateIn(viewModelScope)
             downloadState.collect { down ->
                 if (down != null) {
+                    Log.e("TAG", " ===NAM=== getDownloadStateFromService SharedViewModel")
                     when (down.state) {
                         Download.STATE_COMPLETED -> {
                             mainRepository.getSongById(videoId).collect{ song ->
@@ -554,6 +556,8 @@ class SharedViewModel @Inject constructor(private var dataStoreManager: DataStor
             mainRepository.insertSong(track.toSongEntity())
             mainRepository.getSongById(track.videoId)
                 .collect { songEntity ->
+                        Log.e("TAG", " ===NAM=== updateDownloadState DownloadedViewModel")
+
                     _songDB.value = songEntity
                     if (songEntity != null) {
                         _liked.value = songEntity.liked
@@ -871,6 +875,7 @@ class SharedViewModel @Inject constructor(private var dataStoreManager: DataStor
     fun updateDownloadState(videoId: String, state: Int) {
         viewModelScope.launch {
             mainRepository.getSongById(videoId).collect { songEntity ->
+                        Log.e("TAG", " ===NAM=== updateDownloadState SharedViewModel")
                 _songDB.value = songEntity
                 if (songEntity != null) {
                     _liked.value = songEntity.liked
@@ -883,6 +888,7 @@ class SharedViewModel @Inject constructor(private var dataStoreManager: DataStor
     fun refreshSongDB() {
         viewModelScope.launch {
             mainRepository.getSongById(videoId.value!!).collect { songEntity ->
+                        Log.e("TAG", " ===NAM=== refreshSongDB SharedViewModel")
                 _songDB.value = songEntity
                 if (songEntity != null) {
                     _liked.value = songEntity.liked
@@ -945,6 +951,7 @@ class SharedViewModel @Inject constructor(private var dataStoreManager: DataStor
                 mainRepository.getSongById(mediaId).collect {song ->
                     if (song != null) {
                         Queue.clear()
+                        Log.e("TAG", " ===NAM=== setPlaying getSavedSongAndQueue SharedViewModel: " + song)
                         Queue.setNowPlaying(song.toTrack())
                         loadMediaItemFromTrack(song.toTrack(), RECOVER_TRACK_QUEUE)
                     }
@@ -1074,6 +1081,7 @@ class SharedViewModel @Inject constructor(private var dataStoreManager: DataStor
         _related.value = null
     }
     fun getLyricsFromFormat(videoId: String, duration: Int) {
+        Log.e("TAG", " ===NAM=== getLyricsFromFormat SharedViewModel")
         viewModelScope.launch {
             if (dataStoreManager.lyricsProvider.first() == DataStoreManager.MUSIXMATCH) {
                 mainRepository.getSongById(videoId).first().let { song ->
@@ -1133,6 +1141,7 @@ class SharedViewModel @Inject constructor(private var dataStoreManager: DataStor
                 }
             }
             else if (dataStoreManager.lyricsProvider.first() == DataStoreManager.YOUTUBE) {
+                        Log.e("TAG", " ===NAM=== getLyricsFromFormat SharedViewModel")
                 mainRepository.getSongById(videoId).first().let {song ->
                     mainRepository.getYouTubeCaption(videoId).collect {response ->
                         _lyrics.value = response

@@ -123,7 +123,10 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
         flow { emit(localDataSource.getLibrarySongs()) }.flowOn(Dispatchers.IO)
 
     suspend fun getSongById(id: String): Flow<SongEntity?> =
-        flow { emit(localDataSource.getSong(id)) }.flowOn(Dispatchers.IO)
+        flow {
+            emit(localDataSource.getSong(id))
+            Log.e("TAG", " ===NAM=== getSongById MainRepository: " + localDataSource.getSong(id))
+        }.flowOn(Dispatchers.IO)
 
     suspend fun insertSong(songEntity: SongEntity) =
         withContext(Dispatchers.IO) { localDataSource.insertSong(songEntity) }

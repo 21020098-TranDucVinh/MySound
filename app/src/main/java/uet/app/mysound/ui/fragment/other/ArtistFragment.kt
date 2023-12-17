@@ -211,6 +211,7 @@ class ArtistFragment: Fragment(){
                 Queue.clear()
                 val firstQueue: Track = songClicked.toTrack()
                 Queue.setNowPlaying(firstQueue)
+                Log.e("TAG", " ===NAM=== setPlaying popularAdapter ArtistFragment")
                 val args = Bundle()
                 args.putString("videoId", videoId)
                 args.putString(
@@ -235,6 +236,7 @@ class ArtistFragment: Fragment(){
                 Queue.clear()
                 val firstQueue: Track = songClicked.toTrack()
                 Queue.setNowPlaying(firstQueue)
+                Log.e("TAG", " ===NAM=== setPlaying videoAdapter ArtistFragment")
                 val args = Bundle()
                 args.putString("videoId", videoId)
                 args.putString(

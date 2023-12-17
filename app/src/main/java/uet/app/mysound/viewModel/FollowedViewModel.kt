@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import uet.app.mysound.data.db.entities.ArtistEntity
 import uet.app.mysound.data.repository.MainRepository
 import javax.inject.Inject
+import android.util.Log
 
 @HiltViewModel
 class FollowedViewModel @Inject constructor(application: Application, private val mainRepository: MainRepository): AndroidViewModel(application) {

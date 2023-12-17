@@ -156,6 +156,7 @@ class AlbumFragment: Fragment() {
                 args.putString("playlistId", viewModel.albumBrowse.value?.data?.audioPlaylistId?.replaceFirst("VL", ""))
                 Queue.clear()
                 Queue.setNowPlaying(viewModel.albumBrowse.value?.data!!.tracks[index])
+                Log.e("TAG", " ===NAM=== setPlaying btShuffle AlbumFragment")
                 val shuffleList: ArrayList<Track> = arrayListOf()
                 shuffleList.addAll(viewModel.albumBrowse.value?.data!!.tracks)
                 shuffleList.remove(viewModel.albumBrowse.value?.data!!.tracks[index])
@@ -175,6 +176,7 @@ class AlbumFragment: Fragment() {
                 args.putString("playlistId", viewModel.albumEntity.value?.browseId?.replaceFirst("VL", ""))
                 Queue.clear()
                 Queue.setNowPlaying(viewModel.listTrack.value?.get(index)!!.toTrack())
+                Log.e("TAG", " ===NAM=== setPlaying btShuffle 2 AlbumFragment")
                 val shuffleList: ArrayList<Track> = arrayListOf()
                 shuffleList.addAll(viewModel.listTrack.value.toArrayListTrack())
                 shuffleList.remove(viewModel.listTrack.value?.get(index)!!.toTrack())
@@ -198,6 +200,7 @@ class AlbumFragment: Fragment() {
                 args.putString("playlistId", viewModel.albumBrowse.value?.data?.audioPlaylistId?.replaceFirst("VL", ""))
                 Queue.clear()
                 Queue.setNowPlaying(viewModel.albumBrowse.value?.data!!.tracks[0])
+                Log.e("TAG", " ===NAM=== setPlaying btPlayPause AlbumFragment")
                 Queue.addAll(viewModel.albumBrowse.value?.data!!.tracks as ArrayList<Track>)
                 if (Queue.getQueue().size >= 1) {
                     Queue.removeFirstTrackForPlaylistAndAlbum()
@@ -215,6 +218,7 @@ class AlbumFragment: Fragment() {
                 args.putString("playlistId", viewModel.albumEntity.value?.browseId?.replaceFirst("VL", ""))
                 Queue.clear()
                 Queue.setNowPlaying(viewModel.listTrack.value?.get(0)!!.toTrack())
+                Log.e("TAG", " ===NAM=== setPlaying btPlayPause AlbumFragment")
                 Queue.addAll(viewModel.listTrack.value.toArrayListTrack())
                 if (Queue.getQueue().size >= 1) {
                     Queue.removeFirstTrackForPlaylistAndAlbum()
@@ -239,6 +243,7 @@ class AlbumFragment: Fragment() {
                     args.putString("playlistId", viewModel.albumBrowse.value?.data?.audioPlaylistId?.replaceFirst("VL", ""))
                     Queue.clear()
                     Queue.setNowPlaying(viewModel.albumBrowse.value?.data!!.tracks[position])
+                    Log.e("TAG", " ===NAM=== setPlaying songsAdapter AlbumFragment")
                     Queue.addAll(viewModel.albumBrowse.value?.data!!.tracks as ArrayList<Track>)
                     if (Queue.getQueue().size >= 1) {
                         Queue.removeTrackWithIndex(position)
@@ -257,6 +262,7 @@ class AlbumFragment: Fragment() {
                     args.putString("playlistId", viewModel.albumEntity.value?.browseId?.replaceFirst("VL", ""))
                     Queue.clear()
                     Queue.setNowPlaying(viewModel.listTrack.value?.get(position)!!.toTrack())
+                    Log.e("TAG", " ===NAM=== setPlaying songsAdapter 2 AlbumFragment")
                     Queue.addAll(viewModel.listTrack.value.toArrayListTrack())
                     if (Queue.getQueue().size >= 1) {
                         Queue.removeTrackWithIndex(position)

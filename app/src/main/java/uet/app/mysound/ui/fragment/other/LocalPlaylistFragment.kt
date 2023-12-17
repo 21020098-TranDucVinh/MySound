@@ -174,6 +174,7 @@ class LocalPlaylistFragment : Fragment() {
                 }
                 Queue.clear()
                 Queue.setNowPlaying((listTrack[position] as SongEntity).toTrack())
+                Log.e("TAG", " ===NAM=== setPlaying playlistAdapter LocalPlaylistFragment")
                 val tempList: ArrayList<Track> = arrayListOf()
                 for (i in listTrack) {
                     tempList.add((i as SongEntity).toTrack())
@@ -216,6 +217,7 @@ class LocalPlaylistFragment : Fragment() {
                     args.putInt("index", position)
                     Queue.clear()
                     Queue.setNowPlaying(listSuggestTrack[position])
+                    Log.e("TAG", " ===NAM=== setPlaying suggestAdapter LocalPlaylistFragment")
                     val tempList: ArrayList<Track> = arrayListOf()
                     for (i in listSuggestTrack) {
                         tempList.add(i)
@@ -302,6 +304,7 @@ class LocalPlaylistFragment : Fragment() {
                 }
                 Queue.clear()
                 Queue.setNowPlaying((listTrack[0] as SongEntity).toTrack())
+                Log.e("TAG", " ===NAM=== setPlaying btPlayPause LocalPlaylistFragment")
                 val tempList: ArrayList<Track> = arrayListOf()
                 for (i in listTrack) {
                     tempList.add((i as SongEntity).toTrack())
@@ -331,6 +334,7 @@ class LocalPlaylistFragment : Fragment() {
                 }
                 Queue.clear()
                 Queue.setNowPlaying((listTrack[index] as SongEntity).toTrack())
+                Log.e("TAG", " ===NAM=== setPlaying btShuffle LocalPlaylistFragment")
                 val tempList: ArrayList<Track> = arrayListOf()
                 for (i in listTrack) {
                     if (i != listTrack[index]) {

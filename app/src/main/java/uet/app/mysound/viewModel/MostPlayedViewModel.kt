@@ -48,6 +48,7 @@ class MostPlayedViewModel @Inject constructor(private val mainRepository: MainRe
     }
 
     fun getSongEntity(videoId: String) {
+                        Log.e("TAG", " ===NAM=== getSongEntity MostPlayedViewModel")
         viewModelScope.launch {
             mainRepository.getSongById(videoId).collect { values ->
                 _songEntity.value = values
@@ -92,6 +93,7 @@ class MostPlayedViewModel @Inject constructor(private val mainRepository: MainRe
         }
     }
     fun updateDownloadState(videoId: String, state: Int) {
+                        Log.e("TAG", " ===NAM=== updateDownloadState MostPlayedViewModel")
         viewModelScope.launch {
             mainRepository.getSongById(videoId).collect { songEntity ->
                 _songEntity.value = songEntity
@@ -105,6 +107,7 @@ class MostPlayedViewModel @Inject constructor(private val mainRepository: MainRe
 
     @UnstableApi
     fun getDownloadStateFromService(videoId: String) {
+                        Log.e("TAG", " ===NAM=== getDownloadStateFromService MostPlayedViewModel")
         viewModelScope.launch {
             downloadState = downloadUtils.getDownload(videoId).stateIn(viewModelScope)
             downloadState.collect { down ->

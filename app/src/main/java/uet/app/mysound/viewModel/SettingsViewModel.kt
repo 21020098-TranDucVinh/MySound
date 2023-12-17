@@ -42,6 +42,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import javax.inject.Inject
+import android.util.Log
 import kotlin.system.exitProcess
 
 @HiltViewModel

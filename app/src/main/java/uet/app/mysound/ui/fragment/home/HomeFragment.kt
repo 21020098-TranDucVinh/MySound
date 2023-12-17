@@ -135,6 +135,7 @@ class HomeFragment : Fragment() {
                 if (song.videoId != null) {
                     Queue.clear()
                     val firstQueue: Track = song.toTrack()
+                    Log.e("TAG", " ===NAM=== setPlaying quickPicksAdapter HomeFragment")
                     Queue.setNowPlaying(firstQueue)
                     val args = Bundle()
                     args.putString("videoId", song.videoId)

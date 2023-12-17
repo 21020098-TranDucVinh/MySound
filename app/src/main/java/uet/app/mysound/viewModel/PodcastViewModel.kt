@@ -13,6 +13,7 @@ import uet.app.mysound.data.model.podcast.PodcastBrowse
 import uet.app.mysound.data.repository.MainRepository
 import uet.app.mysound.utils.Resource
 import javax.inject.Inject
+import android.util.Log
 
 @HiltViewModel
 class PodcastViewModel @Inject constructor(

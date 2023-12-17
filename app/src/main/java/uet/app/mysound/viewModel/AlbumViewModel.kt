@@ -84,6 +84,7 @@ class AlbumViewModel @Inject constructor(
                 var count = 0
                 list?.forEach { track ->
                     mainRepository.getSongById(track).collect { song ->
+            Log.e("TAG", " ===NAM=== insertAlbum AlbumViewModel")
                         if (song != null) {
                             if (song.downloadState == DownloadState.STATE_DOWNLOADED) {
                                 count++
@@ -112,6 +113,8 @@ class AlbumViewModel @Inject constructor(
                 var count = 0
                 list?.forEach { track ->
                     mainRepository.getSongById(track).collect { song ->
+            Log.e("TAG", " ===NAM=== getAlbum AlbumViewModel")
+
                         if (song != null) {
                             if (song.downloadState == DownloadState.STATE_DOWNLOADED) {
                                 count++
@@ -160,6 +163,7 @@ class AlbumViewModel @Inject constructor(
             var count = 0
             list.forEach { track ->
                 mainRepository.getSongById(track.videoId).collect { song ->
+            Log.e("TAG", " ===NAM=== checkAllSongDownloaded AlbumViewModel")
                     if (song != null) {
                         if (song.downloadState == DownloadState.STATE_DOWNLOADED) {
                             count++
@@ -200,6 +204,7 @@ class AlbumViewModel @Inject constructor(
             val downloadState = downloadUtils.getDownload(videoId).stateIn(viewModelScope)
             downloadState.collect { down ->
                 if (down != null) {
+            Log.e("TAG", " ===NAM=== AlbumViewModel")
                     when (down.state) {
                         Download.STATE_COMPLETED -> {
                             mainRepository.getSongById(videoId).collect{ song ->

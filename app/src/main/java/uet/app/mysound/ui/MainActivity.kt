@@ -11,7 +11,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
@@ -71,6 +70,7 @@ import uet.app.youtubeExtractor.YouTube
 import uet.app.youtubeExtractor.models.YouTubeLocale
 import java.util.Locale
 import javax.inject.Inject
+import android.util.Log
 
 @UnstableApi
 @AndroidEntryPoint

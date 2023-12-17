@@ -16,6 +16,7 @@ import uet.app.mysound.data.db.entities.SongEntity
 import uet.app.mysound.data.repository.MainRepository
 import java.time.LocalDateTime
 import javax.inject.Inject
+import android.util.Log
 
 @HiltViewModel
 class DownloadedViewModel @Inject constructor(private val application: Application, private val mainRepository: MainRepository): AndroidViewModel(application) {
@@ -36,6 +37,7 @@ class DownloadedViewModel @Inject constructor(private val application: Applicati
         }
     }
     fun getSongEntity(videoId: String) {
+        Log.e("TAG", " ===NAM=== getSongEntity DownloadedViewModel")
         viewModelScope.launch {
             mainRepository.getSongById(videoId).collect { values ->
                 _songEntity.value = values
@@ -50,6 +52,7 @@ class DownloadedViewModel @Inject constructor(private val application: Applicati
     }
 
     fun updateDownloadState(videoId: String, state: Int) {
+        Log.e("TAG", " ===NAM=== updateDownloadState 1 DownloadedViewModel")
         viewModelScope.launch {
             mainRepository.getSongById(videoId).collect { songEntity ->
                 _songEntity.value = songEntity

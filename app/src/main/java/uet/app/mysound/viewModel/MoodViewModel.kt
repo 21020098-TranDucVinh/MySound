@@ -17,6 +17,7 @@ import uet.app.mysound.data.model.explore.mood.moodmoments.MoodsMomentObject
 import uet.app.mysound.data.repository.MainRepository
 import uet.app.mysound.utils.Resource
 import javax.inject.Inject
+import android.util.Log
 
 @HiltViewModel
 class MoodViewModel @Inject constructor(private val mainRepository: MainRepository, application: Application, private var dataStoreManager: DataStoreManager) : AndroidViewModel(application) {

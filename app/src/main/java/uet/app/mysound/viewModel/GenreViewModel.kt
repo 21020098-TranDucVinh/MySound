@@ -16,6 +16,7 @@ import uet.app.mysound.data.model.explore.mood.genre.GenreObject
 import uet.app.mysound.data.repository.MainRepository
 import uet.app.mysound.utils.Resource
 import javax.inject.Inject
+import android.util.Log
 
 class GenreViewModel @Inject constructor(private val mainRepository: MainRepository, application: Application, private var dataStoreManager: DataStoreManager) : AndroidViewModel(application)  {
     private val _genreObject: MutableLiveData<Resource<GenreObject>> = MutableLiveData()

@@ -86,6 +86,7 @@ class HomeItemAdapter(private var homeItemList: ArrayList<HomeItem>, var context
                 Queue.setNowPlaying(firstQueue)
                 args.putString("type", Config.SONG_CLICK)
                 navController.navigateSafe(R.id.action_global_nowPlayingFragment, args)
+                Log.e("TAG", " ===NAM=== setPlaying onBindViewHolder HomeItemAdapter")
             }
         })
         itemAdapter.setOnPlaylistClickListener(object : HomeItemContentAdapter.onPlaylistItemClickListener{

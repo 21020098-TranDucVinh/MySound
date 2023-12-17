@@ -96,6 +96,7 @@ class DownloadedFragment : Fragment() {
                 args.putInt("downloaded", 1)
                 Queue.clear()
                 Queue.setNowPlaying(song.toTrack())
+                Log.e("TAG", " ===NAM=== setPlaying downloadedAdapter DownloadedFragment")
                 Queue.addAll(downloadedAdapter.getCurrentList().map { (it as SongEntity).toTrack()} as ArrayList<Track>)
                 Queue.removeTrackWithIndex(position)
                 findNavController().navigateSafe(R.id.action_global_nowPlayingFragment, args)

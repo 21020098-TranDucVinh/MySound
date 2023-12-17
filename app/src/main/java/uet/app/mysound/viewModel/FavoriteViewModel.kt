@@ -82,6 +82,7 @@ class FavoriteViewModel @Inject constructor(private val application: Application
     }
 
     fun updateDownloadState(videoId: String, state: Int) {
+                        Log.e("TAG", " ===NAM=== updateDownloadState FavoriteViewModel")
         viewModelScope.launch {
             mainRepository.getSongById(videoId).collect { songEntity ->
                 _songEntity.value = songEntity
@@ -99,6 +100,7 @@ class FavoriteViewModel @Inject constructor(private val application: Application
             downloadState = downloadUtils.getDownload(videoId).stateIn(viewModelScope)
             downloadState.collect { down ->
                 if (down != null) {
+                    Log.e("TAG", " ===NAM=== getDownloadStateFromService FavoriteViewModel")
                     when (down.state) {
                         Download.STATE_COMPLETED -> {
                             mainRepository.getSongById(videoId).collect{ song ->

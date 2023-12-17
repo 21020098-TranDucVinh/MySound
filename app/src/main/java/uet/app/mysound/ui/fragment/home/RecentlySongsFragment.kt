@@ -29,6 +29,7 @@ import uet.app.mysound.extension.toTrack
 import uet.app.mysound.pagination.RecentLoadStateAdapter
 import uet.app.mysound.pagination.RecentPagingAdapter
 import uet.app.mysound.viewModel.RecentlySongsViewModel
+import android.util.Log
 
 @AndroidEntryPoint
 class RecentlySongsFragment: Fragment() {
@@ -100,6 +101,7 @@ class RecentlySongsFragment: Fragment() {
                     Queue.clear()
                     val firstQueue: Track = songClicked.toTrack()
                     Queue.setNowPlaying(firstQueue)
+                    Log.e("TAG", " ===NAM=== setPlaying SONG_CLICK RecentlySongsFragment")
                     val args = Bundle()
                     args.putString("videoId", videoId)
                     args.putString("from", getString(R.string.recently_added))

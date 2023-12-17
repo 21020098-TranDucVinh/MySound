@@ -279,6 +279,7 @@ class PlaylistFragment: Fragment() {
                 }
                 Queue.clear()
                 Queue.setNowPlaying(viewModel.playlistBrowse.value?.data!!.tracks[0])
+                Log.e("TAG", " ===NAM=== setPlaying btPlayPause PlaylistFragment")
                 Queue.addAll(viewModel.playlistBrowse.value?.data!!.tracks as ArrayList<Track>)
                 if (Queue.getQueue().size >= 1) {
                     Queue.removeFirstTrackForPlaylistAndAlbum()
@@ -297,6 +298,7 @@ class PlaylistFragment: Fragment() {
                 }
                 Queue.clear()
                 Queue.setNowPlaying(viewModel.listTrack.value?.get(0)!!.toTrack())
+                Log.e("TAG", " ===NAM=== setPlaying btPlayPause 2 PlaylistFragment")
                 Queue.addAll(viewModel.listTrack.value.toArrayListTrack())
                 if (Queue.getQueue().size >= 1) {
                     Queue.removeFirstTrackForPlaylistAndAlbum()
@@ -324,6 +326,7 @@ class PlaylistFragment: Fragment() {
                     }
                     Queue.clear()
                     Queue.setNowPlaying(viewModel.playlistBrowse.value?.data!!.tracks[position])
+                    Log.e("TAG", " ===NAM=== setPlaying playlistItemAdapter PlaylistFragment")
                     Queue.addAll(viewModel.playlistBrowse.value?.data!!.tracks as ArrayList<Track>)
                     if (Queue.getQueue().size >= 1) {
                         Queue.removeTrackWithIndex(position)
@@ -343,6 +346,7 @@ class PlaylistFragment: Fragment() {
                     }
                     Queue.clear()
                     Queue.setNowPlaying(viewModel.listTrack.value?.get(position)!!.toTrack())
+                    Log.e("TAG", " ===NAM=== setPlaying playlistItemAdapter 2 PlaylistFragment")
                     Queue.addAll(viewModel.listTrack.value.toArrayListTrack())
                     if (Queue.getQueue().size >= 1) {
                         Queue.removeTrackWithIndex(position)
@@ -525,6 +529,7 @@ class PlaylistFragment: Fragment() {
                 }
                 Queue.clear()
                 Queue.setNowPlaying(viewModel.playlistBrowse.value?.data!!.tracks[index])
+                Log.e("TAG", " ===NAM=== setPlaying btShuffle PlaylistFragment")
                 val shuffleList: ArrayList<Track> = arrayListOf()
                 viewModel.playlistBrowse.value?.data?.tracks?.let {
                     shuffleList.addAll(it)
@@ -549,6 +554,7 @@ class PlaylistFragment: Fragment() {
                 }
                 Queue.clear()
                 Queue.setNowPlaying(viewModel.listTrack.value?.get(index)!!.toTrack())
+                Log.e("TAG", " ===NAM=== setPlaying btShuffle 2 PlaylistFragment")
                 val shuffleList: ArrayList<Track> = arrayListOf()
                 viewModel.listTrack.value?.toArrayListTrack()
                     ?.let { it1 -> shuffleList.addAll(it1) }

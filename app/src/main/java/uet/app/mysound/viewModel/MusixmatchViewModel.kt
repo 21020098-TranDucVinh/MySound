@@ -12,6 +12,7 @@ import uet.app.mysound.data.repository.MainRepository
 import uet.app.youtubeExtractor.YouTube
 import uet.app.youtubeExtractor.models.musixmatch.MusixmatchCredential
 import javax.inject.Inject
+import android.util.Log
 
 @HiltViewModel
 class MusixmatchViewModel @Inject constructor(private val dataStore: DataStoreManager, private val mainRepository: MainRepository) : ViewModel() {
