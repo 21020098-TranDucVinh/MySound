@@ -23,7 +23,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.insetter.applyInsetter
 import kotlinx.coroutines.launch
 import uet.app.mysound.R
-import uet.app.mysound.adapter.home.FromMySoundAdapter
 import uet.app.mysound.adapter.home.GenreAdapter
 import uet.app.mysound.adapter.home.HomeItemAdapter
 import uet.app.mysound.adapter.home.MoodsMomentAdapter

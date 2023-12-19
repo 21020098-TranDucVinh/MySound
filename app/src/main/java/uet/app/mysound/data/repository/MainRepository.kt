@@ -1568,9 +1568,9 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
                     )
                 )
             }
-            emit("http://172.20.10.6:8000/play/61a49ba5-7d16-4ceb-b9ef-a1190ce3a2f0?t=10|XRqCFzp8yvPpULLI87VZzn3jx5DMEUo5KwsYPJf4")
-        }.onFailure {
-            it.printStackTrace()
+            emit(format?.url?.plus("&cpn=${data.first}"))
+            }.onFailure {
+                it.printStackTrace()
             Log.e("Stream", "Error: ${it.message}")
             emit(null)
         }

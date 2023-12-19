@@ -30,7 +30,7 @@ import uet.app.mysound.utils.Resource
 import javax.inject.Inject
 
 @HiltViewModel
-class AlbumViewModel @Inject constructor(
+class MyAlbumViewModel @Inject constructor(
     private var dataStoreManager: DataStoreManager,
     private val mainRepository: MainRepository,
     application: Application
@@ -66,7 +66,7 @@ class AlbumViewModel @Inject constructor(
     fun browseAlbum(browseId: String){
         loading.value = true
         viewModelScope.launch {
-            mainRepository.getAlbumData(browseId).collect { values ->
+            mainRepository.getAlbumDataFromMySound(browseId).collect { values ->
                 _albumBrowse.value = values
             }
             withContext(Dispatchers.Main){
