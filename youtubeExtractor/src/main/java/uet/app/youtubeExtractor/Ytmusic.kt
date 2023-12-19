@@ -3,6 +3,22 @@ package uet.app.youtubeExtractor
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import io.ktor.client.*
+import io.ktor.client.engine.okhttp.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.compression.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.cookies.AcceptAllCookiesStorage
+import io.ktor.client.plugins.cookies.HttpCookies
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
+import io.ktor.serialization.kotlinx.json.*
+import io.ktor.serialization.kotlinx.xml.xml
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import nl.adaptivity.xmlutil.XmlDeclMode
+import nl.adaptivity.xmlutil.serialization.XML
 import uet.app.youtubeExtractor.encoder.brotli
 import uet.app.youtubeExtractor.models.Context
 import uet.app.youtubeExtractor.models.WatchEndpoint
@@ -23,22 +39,6 @@ import uet.app.youtubeExtractor.models.musixmatch.SearchMusixmatchResponse
 import uet.app.youtubeExtractor.utils.CustomRedirectConfig
 import uet.app.youtubeExtractor.utils.parseCookieString
 import uet.app.youtubeExtractor.utils.sha1
-import io.ktor.client.*
-import io.ktor.client.engine.okhttp.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.compression.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.cookies.AcceptAllCookiesStorage
-import io.ktor.client.plugins.cookies.HttpCookies
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.serialization.kotlinx.xml.xml
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
-import nl.adaptivity.xmlutil.XmlDeclMode
-import nl.adaptivity.xmlutil.serialization.XML
 import java.lang.reflect.Type
 import java.net.Proxy
 import java.util.*
@@ -539,12 +539,6 @@ class Ytmusic {
             parameter("category", "poi_highlight")
             parameter("category", "filler")
             parameter("service", "YouTube")
-        }
-
-    suspend fun checkForUpdate() =
-        httpClient.get("https://api.github.com/repos/maxrave-dev/SimpMusic/releases/latest") {
-            contentType(ContentType.Application.Json)
-            Log.i("TAG", "GET YOUTUBEMUSIC checkForUpdate")
         }
 
     suspend fun browse(

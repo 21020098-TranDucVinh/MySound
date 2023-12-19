@@ -119,6 +119,7 @@ class PodcastFragment : Fragment() {
                 args.putString("playlistId", id?.replaceFirst("VL", ""))
                 Queue.clear()
                 Queue.setNowPlaying(viewModel.podcastBrowse.value?.data!!.listEpisode[0].toTrack())
+                Log.e("TAG", " ===NAM=== setPlaying btPlayPause PodcastFragment")
                 Queue.addAll(viewModel.podcastBrowse.value?.data!!.listEpisode.toListTrack())
                 if (Queue.getQueue().size >= 1) {
                     Queue.removeFirstTrackForPlaylistAndAlbum()
@@ -141,6 +142,7 @@ class PodcastFragment : Fragment() {
                 args.putString("playlistId", id?.replaceFirst("VL", ""))
                 Queue.clear()
                 Queue.setNowPlaying(viewModel.podcastBrowse.value?.data!!.listEpisode[index].toTrack())
+                Log.e("TAG", " ===NAM=== setPlaying btPlayPause 2 PodcastFragment")
                 val shuffleList: ArrayList<Track> = arrayListOf()
                 viewModel.podcastBrowse.value?.data?.listEpisode?.let {
                     shuffleList.addAll(it.toListTrack())
@@ -191,6 +193,7 @@ class PodcastFragment : Fragment() {
                     args.putInt("index", position)
                     Queue.clear()
                     Queue.setNowPlaying(viewModel.podcastBrowse.value?.data!!.listEpisode[position].toTrack())
+                    Log.e("TAG", " ===NAM=== setPlaying podcastAdapter PodcastFragment")
                     Queue.addAll(viewModel.podcastBrowse.value?.data!!.listEpisode.toListTrack())
                     if (Queue.getQueue().size >= 1) {
                         Queue.removeTrackWithIndex(position)

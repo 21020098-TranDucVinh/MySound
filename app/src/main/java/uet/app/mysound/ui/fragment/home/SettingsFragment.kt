@@ -46,12 +46,8 @@ import uet.app.mysound.extension.setEnabledAll
 import uet.app.mysound.viewModel.SettingsViewModel
 import uet.app.mysound.viewModel.SharedViewModel
 import java.io.File
-import java.text.SimpleDateFormat
-import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 import java.util.Scanner
 
 
@@ -121,7 +117,6 @@ class SettingsFragment : Fragment() {
         viewModel.getSavedPlaybackState()
         viewModel.getSendBackToGoogle()
         viewModel.getSaveRecentSongAndQueue()
-        viewModel.getLastCheckForUpdate()
         viewModel.getSponsorBlockEnabled()
         viewModel.getSponsorBlockCategories()
         viewModel.getTranslationLanguage() //
@@ -227,11 +222,6 @@ class SettingsFragment : Fragment() {
         viewModel.sponsorBlockEnabled.observe(viewLifecycleOwner) {
             binding.swEnableSponsorBlock.isChecked = it == DataStoreManager.TRUE
         }
-        viewModel.lastCheckForUpdate.observe(viewLifecycleOwner) {
-            binding.tvCheckForUpdate.text = getString(R.string.last_checked_at, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                .withZone(ZoneId.systemDefault())
-                .format(Instant.ofEpochMilli(it.toLong())))
-        }
         viewModel.playerCacheLimit.observe(viewLifecycleOwner) {
             binding.tvLimitPlayerCache.text = if (it != -1) "$it MB" else getString(R.string.unlimited)
         }
@@ -249,52 +239,18 @@ class SettingsFragment : Fragment() {
                     if (checkedIndex != -1) {
                         viewModel.setPlayerCacheLimit(LIMIT_CACHE_SIZE.data[checkedIndex])
                         viewModel.playerCacheLimit.observe(viewLifecycleOwner) {
-                            binding.tvLimitPlayerCache.text = if (it != -1) "$it MB" else getString(R.string.unlimited)
-                            Toast.makeText(requireContext(), getString(R.string.restart_app), Toast.LENGTH_SHORT).show()
+                            binding.tvLimitPlayerCache.text =
+                                if (it != -1) "$it MB" else getString(R.string.unlimited)
+                            Toast.makeText(
+                                requireContext(),
+                                getString(R.string.restart_app),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                     dialog.dismiss()
                 }
             dialog.show()
-        }
-        binding.btCheckForUpdate.setOnClickListener {
-            binding.tvCheckForUpdate.text = getString(R.string.checking)
-            viewModel.checkForUpdate()
-            viewModel.githubResponse.observe(viewLifecycleOwner) {response ->
-                if (response != null) {
-                    if (response.tagName != getString(R.string.version_name)) {
-                        binding.tvCheckForUpdate.text = getString(R.string.last_checked_at, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                            .withZone(ZoneId.systemDefault())
-                            .format(Instant.ofEpochMilli(System.currentTimeMillis())))
-                        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-                        val outputFormat = SimpleDateFormat("dd MMM yyyy HH:mm:ss", Locale.getDefault())
-                        val formatted = response.publishedAt?.let { input ->
-                            inputFormat.parse(input)
-                                ?.let { outputFormat.format(it) }
-                        }
-                        MaterialAlertDialogBuilder(requireContext())
-                            .setTitle(getString(R.string.update_available))
-                            .setMessage(getString(R.string.update_message, response.tagName, formatted, response.body))
-                            .setPositiveButton(getString(R.string.download)) { _, _ ->
-                                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(response.assets?.firstOrNull()?.browserDownloadUrl))
-                                startActivity(browserIntent)
-                            }
-                            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                            .show()
-                    }
-                    else {
-                        Toast.makeText(requireContext(), getString(R.string.no_update), Toast.LENGTH_SHORT).show()
-                        viewModel.getLastCheckForUpdate()
-                        viewModel.lastCheckForUpdate.observe(viewLifecycleOwner) {
-                            binding.tvCheckForUpdate.text = getString(R.string.last_checked_at, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                                .withZone(ZoneId.systemDefault())
-                                .format(Instant.ofEpochMilli(it.toLong())))
-                        }
-                    }
-                }
-            }
         }
 
         binding.btVersion.setOnClickListener {
@@ -339,17 +295,11 @@ class SettingsFragment : Fragment() {
         binding.btGithub.setOnClickListener {
             val urlIntent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("https://github.com/maxrave-dev/")
+                Uri.parse("https://github.com/21020098-TranDucVinh/MySound")
             )
             startActivity(urlIntent)
         }
-        binding.btDonate.setOnClickListener {
-            val urlIntent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse("https://paypal.me/maxraveofficial")
-            )
-            startActivity(urlIntent)
-        }
+
         binding.btStoragePlayerCache.setOnClickListener {
             val dialog = MaterialAlertDialogBuilder(requireContext())
                 .setTitle(getString(R.string.clear_player_cache))

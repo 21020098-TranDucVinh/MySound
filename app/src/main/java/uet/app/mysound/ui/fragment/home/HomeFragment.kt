@@ -271,6 +271,7 @@ class HomeFragment : Fragment() {
                 if (song.videoId != null) {
                     Queue.clear()
                     val firstQueue: Track = song.toTrack()
+                    Log.e("TAG", " ===NAM=== setPlaying quickPicksAdapter HomeFragment")
                     Queue.setNowPlaying(firstQueue)
                     val args = Bundle()
                     args.putString("videoId", song.videoId)
@@ -303,10 +304,10 @@ class HomeFragment : Fragment() {
                 }
 
                 R.id.home_fragment_menu_item_settings -> {
-                    val intent = Intent(requireContext(), LoginActivity::class.java)
-                    startActivity(intent)
 
-//                    findNavController().navigateSafe(R.id.logInFragment)
+//                     val intent = Intent(requireContext(), LoginActivity::class.java)
+//                     startActivity(intent)
+                    findNavController().navigateSafe(R.id.action_bottom_navigation_item_home_to_settingsFragment)
                     true
                 }
 

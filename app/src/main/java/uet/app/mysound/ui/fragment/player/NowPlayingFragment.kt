@@ -225,6 +225,7 @@ class NowPlayingFragment : Fragment() {
                             val track = it.toTrack()
                             Queue.clear()
                             Queue.setNowPlaying(track)
+                            Log.e("TAG", " ===NAM=== setPlaying onViewCreated NowPlayingFragment")
                             viewModel.simpleMediaServiceHandler?.reset()
                             viewModel.resetRelated()
                             viewModel.loadMediaItemFromTrack(track, SHARE)

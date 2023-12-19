@@ -96,6 +96,7 @@ class MostPlayedFragment: Fragment() {
                     Queue.clear()
                     val firstQueue: Track = songClicked.toTrack()
                     Queue.setNowPlaying(firstQueue)
+                    Log.e("TAG", " ===NAM=== setPlaying mostPlayedAdapter MostPlayedFragment")
                     val args = Bundle()
                     args.putString("videoId", videoId)
                     args.putString("from", getString(R.string.most_played))

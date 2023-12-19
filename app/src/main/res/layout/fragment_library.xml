@@ -11,14 +11,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/topAppBarLayout"
-            android:background="@color/md_theme_dark_background">
+            android:background="@color/dark_purple">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/topAppBar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:title="@string/app_name"
-                app:titleTextAppearance="@style/TextAppearance.Material3.TitleMedium"
+                app:titleTextAppearance="@style/titleAppBar"
                 app:layout_scrollFlags="scroll|enterAlways|snap"/>
         </com.google.android.material.appbar.AppBarLayout>
         <androidx.core.widget.NestedScrollView
@@ -62,6 +62,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
                                 android:text="@string/favorite"
+                                android:textSize="16.5dp"
                                 android:textColor="#000000"
                                 android:textStyle="bold">
 
@@ -92,6 +93,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="@string/followed"
+                                android:textSize="16.5dp"
                                 android:textStyle="bold"
                                 android:textColor="#000000"
                                 android:layout_gravity="center_vertical">
@@ -129,6 +131,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="@string/most_played"
+                                android:textSize="16.5dp"
                                 android:textStyle="bold"
                                 android:textColor="#000000"
                                 android:layout_gravity="center_vertical">
@@ -160,6 +163,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="@string/downloaded"
+                                android:textSize="16.5dp"
                                 android:textStyle="bold"
                                 android:textColor="#000000"
                                 android:layout_gravity="center_vertical">
@@ -177,7 +181,7 @@
                         android:layout_alignParentStart="true"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
+                        android:textSize="22sp"
                         android:textStyle="bold"
                         android:fontFamily="@font/roboto"
                         android:text="@string/your_youtube_playlists"
@@ -230,7 +234,7 @@
                         android:layout_alignParentStart="true"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
+                        android:textSize="22sp"
                         android:textStyle="bold"
                         android:fontFamily="@font/roboto"
                         android:text="@string/your_playlists"
@@ -238,22 +242,20 @@
                         android:layout_toStartOf="@id/btAddLocalPlaylist">
 
                     </TextView>
-                    <Button
+
+                    <ImageButton
+                        android:id="@+id/btAddLocalPlaylist"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:layout_width="wrap_content"
-                        android:id="@+id/btAddLocalPlaylist"
-                        android:layout_height="wrap_content"
-                        style="?attr/materialButtonOutlinedStyle"
-                        android:text="@string/add"
-                        android:textColor="?attr/colorOnSecondaryContainer"
-                        android:background="@android:color/transparent"
-                        android:src="@drawable/baseline_shuffle_24"
-                        android:focusable="true"
                         android:clickable="true"
+                        android:focusable="true"
+                        android:background="#000000"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/btn_add1"
                         android:foreground="?android:attr/selectableItemBackground">
-
-                    </Button>
+                    </ImageButton>
 
                 </RelativeLayout>
                 <androidx.recyclerview.widget.RecyclerView
@@ -270,13 +272,12 @@
                     android:gravity="center_horizontal"
                     android:text="@string/no_playlists_added"
                     android:visibility="gone">
-
                 </TextView>
                 <TextView
                     android:id="@+id/tvFavoritePlaylists"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
+                    android:textSize="22sp"
                     android:textStyle="bold"
                     android:fontFamily="@font/roboto"
                     android:text="@string/favorite_playlists"
@@ -304,7 +305,7 @@
                     android:id="@+id/tvDownloadedPlaylists"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
+                    android:textSize="22sp"
                     android:textStyle="bold"
                     android:fontFamily="@font/roboto"
                     android:text="@string/downloaded_playlists"
@@ -332,7 +333,7 @@
                     android:id="@+id/tvRecentlyAdded"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
+                    android:textSize="22sp"
                     android:textStyle="bold"
                     android:fontFamily="@font/roboto"
                     android:text="@string/recently_added"

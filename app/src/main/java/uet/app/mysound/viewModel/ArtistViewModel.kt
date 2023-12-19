@@ -100,6 +100,7 @@ class ArtistViewModel @Inject constructor(private val application: Application, 
             mainRepository.insertSong(song)
             mainRepository.getSongById(song.videoId).collect { values ->
                 _songEntity.value = values
+            Log.e("TAG", " ===NAM=== getSongEntity ArtistViewModel")
             }
         }
     }

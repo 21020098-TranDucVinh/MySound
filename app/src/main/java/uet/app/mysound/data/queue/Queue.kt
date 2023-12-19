@@ -1,6 +1,7 @@
 package uet.app.mysound.data.queue
 
 import uet.app.mysound.data.model.browse.album.Track
+import android.util.Log
 
 object Queue {
     private var queue: ArrayList<Track> = ArrayList()
@@ -20,6 +21,7 @@ object Queue {
     }
     fun setNowPlaying(song: Track) {
         nowPlaying = song
+        Log.e("TAG", " ===NAM=== setNowPlaying Queue")
     }
     fun getNowPlaying(): Track? {
         return nowPlaying

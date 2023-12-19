@@ -102,6 +102,7 @@ class PlaylistViewModel @Inject constructor(
         loading.value = true
         viewModelScope.launch {
             if (videoId != null) {
+Log.e("TAG", " ===NAM=== getRadio PlaylistViewModel")
                 mainRepository.getSongById(videoId).collectLatest { song ->
                     if (song != null) {
                         mainRepository.getRadio(radioId, song).collect {
@@ -148,6 +149,8 @@ class PlaylistViewModel @Inject constructor(
                 var count = 0
                 list?.forEach { track ->
                     mainRepository.getSongById(track).collect { song ->
+                        Log.e("TAG", " ===NAM=== getPlaylist PlaylistViewModel")
+
                         if (song != null) {
                             if (song.downloadState == DownloadState.STATE_DOWNLOADED) {
                                 count++
@@ -179,6 +182,7 @@ class PlaylistViewModel @Inject constructor(
     }
 
     fun checkAllSongDownloaded(list: ArrayList<Track>) {
+                        Log.e("TAG", " ===NAM=== checkAllSongDownloaded PlaylistViewModel")
         viewModelScope.launch {
             var count = 0
             list.forEach { track ->
@@ -271,6 +275,9 @@ class PlaylistViewModel @Inject constructor(
             downloadState.collect { down ->
                 Log.d("Check Downloaded", "$videoId ${down?.state}")
                 if (down != null) {
+                    Log.e("TAG", " ===NAM=== getDownloadStateFromService PlaylistViewModel")
+
+
                     when (down.state) {
                         Download.STATE_COMPLETED -> {
                             mainRepository.getSongById(videoId).collect{ song ->
@@ -321,6 +328,7 @@ class PlaylistViewModel @Inject constructor(
         language = runBlocking { dataStoreManager.getString(SELECTED_LANGUAGE).first() }
     }
     fun getSongEntity(song: SongEntity) {
+                    Log.e("TAG", " ===NAM=== getSongEntity PlaylistViewModel")
         viewModelScope.launch {
             mainRepository.insertSong(song)
             mainRepository.getSongById(song.videoId).collect { values ->

@@ -314,6 +314,7 @@ class SearchViewModel @Inject constructor(private val mainRepository: MainReposi
     fun getSongEntity(track: Track) {
         viewModelScope.launch {
             mainRepository.insertSong(track.toSongEntity())
+                        Log.e("TAG", " ===NAM=== getSongEntity SearchViewModel")
             mainRepository.getSongById(track.videoId).collect { values ->
                 _songEntity.value = values
             }
@@ -333,6 +334,8 @@ class SearchViewModel @Inject constructor(private val mainRepository: MainReposi
     fun updateDownloadState(videoId: String, state: Int) {
         viewModelScope.launch {
             mainRepository.getSongById(videoId).collect { songEntity ->
+                        Log.e("TAG", " ===NAM=== updateDownloadState SearchViewModel")
+
                 _songEntity.value = songEntity
             }
             mainRepository.updateDownloadState(videoId, state)
@@ -345,6 +348,7 @@ class SearchViewModel @Inject constructor(private val mainRepository: MainReposi
     @UnstableApi
     fun getDownloadStateFromService(videoId: String) {
         viewModelScope.launch {
+            Log.e("TAG", " ===NAM=== getDownloadStateFromService SearchViewModel")
             downloadState = downloadUtils.getDownload(videoId).stateIn(viewModelScope)
             downloadState.collect { down ->
                 if (down != null) {

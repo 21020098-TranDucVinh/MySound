@@ -6,7 +6,6 @@ import android.content.Intent
 import android.media.audiofx.AudioEffect
 import android.media.audiofx.LoudnessEnhancer
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.lifecycle.LifecycleCoroutineScope
@@ -35,6 +34,7 @@ import uet.app.mysound.data.queue.Queue
 import uet.app.mysound.data.repository.MainRepository
 import uet.app.mysound.extension.connectArtists
 import uet.app.mysound.extension.toListName
+import android.util.Log
 
 @UnstableApi
 class SimpleMediaServiceHandler constructor(
@@ -569,6 +569,7 @@ class SimpleMediaServiceHandler constructor(
     }
 
     private fun updateNotification() {
+        Log.e("TAG", " ===NAM=== updateNotification SimpleMediaServiceHandler")
         updateNotificationJob?.cancel()
         updateNotificationJob = coroutineScope.launch {
             val liked = mainRepository.getSongById(player.currentMediaItem?.mediaId ?: "").first()?.liked

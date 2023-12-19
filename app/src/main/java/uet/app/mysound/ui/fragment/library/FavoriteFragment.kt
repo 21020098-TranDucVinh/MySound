@@ -104,6 +104,7 @@ class FavoriteFragment : Fragment() {
                 args.putInt("index", position)
                 Queue.clear()
                 Queue.setNowPlaying(song.toTrack())
+                Log.e("TAG", " ===NAM=== setPlaying likedAdapter FavoriteFragment")
                 Queue.addAll(listLiked.map { (it as SongEntity).toTrack()} as ArrayList<Track>)
                 Queue.removeTrackWithIndex(position)
                 findNavController().navigateSafe(R.id.action_global_nowPlayingFragment, args)

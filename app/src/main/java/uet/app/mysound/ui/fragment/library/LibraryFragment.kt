@@ -242,6 +242,7 @@ class LibraryFragment : Fragment() {
                     Queue.clear()
                     val firstQueue: Track = songClicked.toTrack()
                     Queue.setNowPlaying(firstQueue)
+                    Log.e("TAG", " ===NAM=== setPlaying SONG_CLICK LibraryFragment")
                     val args = Bundle()
                     args.putString("videoId", videoId)
                     args.putString("from", getString(R.string.recently_added))

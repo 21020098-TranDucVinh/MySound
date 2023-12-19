@@ -182,56 +182,6 @@ class MainActivity : AppCompatActivity() {
 
                                 })
                             }
-//                            val request = ImageRequest.Builder(this@MainActivity)
-//                                .data(it.mediaMetadata.artworkUri)
-//                                .target(
-//                                    onSuccess = { result ->
-//                                        binding.ivArt.setImageDrawable(result)
-//                                    },
-//                                )
-//                                .transformations(object : Transformation {
-//                                    override val cacheKey: String
-//                                        get() = it.mediaMetadata.artworkUri.toString()
-//
-//                                    override suspend fun transform(input: Bitmap, size: Size): Bitmap {
-//                                        val p = Palette.from(input).generate()
-//                                        val defaultColor = 0x000000
-//                                        var startColor = p.getDarkVibrantColor(defaultColor)
-//                                        Log.d("Check Start Color", "transform: $startColor")
-//                                        if (startColor == defaultColor){
-//                                            startColor = p.getDarkMutedColor(defaultColor)
-//                                            if (startColor == defaultColor){
-//                                                startColor = p.getVibrantColor(defaultColor)
-//                                                if (startColor == defaultColor){
-//                                                    startColor = p.getMutedColor(defaultColor)
-//                                                    if (startColor == defaultColor){
-//                                                        startColor = p.getLightVibrantColor(defaultColor)
-//                                                        if (startColor == defaultColor){
-//                                                            startColor = p.getLightMutedColor(defaultColor)
-//                                                        }
-//                                                    }
-//                                                }
-//                                            }
-//                                            Log.d("Check Start Color", "transform: $startColor")
-//                                        }
-//                                        val endColor = 0x1b1a1f
-//                                        val gd = GradientDrawable(
-//                                            GradientDrawable.Orientation.TOP_BOTTOM,
-//                                            intArrayOf(startColor, endColor)
-//                                        )
-//                                        gd.cornerRadius = 0f
-//                                        gd.gradientType = GradientDrawable.LINEAR_GRADIENT
-//                                        gd.gradientRadius = 0.5f
-//                                        gd.alpha = 150
-//                                        val bg = ColorUtils.setAlphaComponent(startColor, 255)
-//                                        binding.card.setCardBackgroundColor(bg)
-//                                        binding.cardBottom.setCardBackgroundColor(bg)
-//                                        return input
-//                                    }
-//
-//                                })
-//                                .build()
-//                            ImageLoader(this@MainActivity).execute(request)
                         }
                     }
                 }
@@ -521,23 +471,6 @@ class MainActivity : AppCompatActivity() {
                                             Toast.makeText(this@MainActivity,
                                                 getString(R.string.this_link_is_not_supported), Toast.LENGTH_SHORT).show()
                                         }
-//                                    else {
-//                                        viewModel.convertNameToId(artistId)
-//                                        viewModel.artistId.observe(this@MainActivity) {channelId ->
-//                                            when (channelId) {
-//                                                is Resource.Success -> {
-//                                                    viewModel.intent.value = null
-//                                                    navController.navigateSafe(R.id.action_global_artistFragment, Bundle().apply {
-//                                                        putString("channelId", channelId.data?.id)
-//                                                    })
-//                                                }
-//                                                is Resource.Error -> {
-//                                                    viewModel.intent.value = null
-//                                                    Toast.makeText(this@MainActivity, channelId.message, Toast.LENGTH_SHORT).show()
-//                                                }
-//                                            }
-//                                        }
-//                                    }
                                     }
 
                                     else -> when {
@@ -643,13 +576,11 @@ class MainActivity : AppCompatActivity() {
                     viewModel.removeSaveQueue()
                     viewModel.resetRelated()
                     viewModel.addQueueToPlayer()
-//                    checkForUpdate()
                 }
             }
         }
         else {
             binding.miniplayer.visibility = View.GONE
-//            checkForUpdate()
         }
     }
 
@@ -685,45 +616,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-//    override fun onNowPlayingSongChange() {
-//        viewModel.metadata.observe(this) {
-//            when(it){
-//                is Resource.Success -> {
-//                    binding.songTitle.text = it.data?.title
-//                    binding.songTitle.isSelected = true
-//                    if (it.data?.artists != null){
-//                        var tempArtist = mutableListOf<String>()
-//                        for (artist in it.data.artists) {
-//                            tempArtist.add(artist.name)
-//                        }
-//                        val artistName = tempArtist.connectArtists()
-//                        binding.songArtist.text = artistName
-//                    }
-//                    binding.songArtist.isSelected = true
-//                    binding.ivArt.load(it.data?.thumbnails?.get(0)?.url)
-//
-//                }
-//                is Resource.Error -> {
-//
-//                }
-//            }
-//        }
-//    }
-//
-//    override fun onIsPlayingChange() {
-//        viewModel.isPlaying.observe(this){
-//            if (it){
-//                binding.btPlayPause.setImageResource(R.drawable.baseline_pause_24)
-//            }else{
-//                binding.btPlayPause.setImageResource(R.drawable.baseline_play_arrow_24)
-//            }
-//        }
-//    }
-//
-//    override fun onUpdateProgressBar(progress: Float) {
-//
-//    }
-
     fun hideBottomNav(){
         binding.bottomNavigationView.visibility = View.GONE
         binding.miniplayer.visibility = View.GONE
@@ -732,34 +624,6 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigationView.visibility = View.VISIBLE
         binding.miniPlayerContainer.visibility = View.VISIBLE
     }
-
-//    private fun checkForUpdate() {
-//        viewModel.checkForUpdate()
-//        viewModel.githubResponse.observe(this) {response ->
-//            if (response != null) {
-//                if (response.tagName != getString(R.string.version_name)) {
-//                    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-//                    val outputFormat = SimpleDateFormat("dd MMM yyyy HH:mm:ss", Locale.getDefault())
-//                    val formatted = response.publishedAt?.let { input ->
-//                        inputFormat.parse(input)
-//                            ?.let { outputFormat.format(it) }
-//                    }
-//
-//                    MaterialAlertDialogBuilder(this)
-//                        .setTitle(getString(R.string.update_available))
-//                        .setMessage(getString(R.string.update_message, response.tagName, formatted, response.body))
-//                        .setPositiveButton(getString(R.string.download)) { _, _ ->
-//                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(response.assets?.firstOrNull()?.browserDownloadUrl))
-//                            startActivity(browserIntent)
-//                        }
-//                        .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
-//                            dialog.dismiss()
-//                        }
-//                        .show()
-//                }
-//            }
-//        }
-//    }
 
     private fun putString(key: String, value: String) {
         viewModel.putString(key, value)

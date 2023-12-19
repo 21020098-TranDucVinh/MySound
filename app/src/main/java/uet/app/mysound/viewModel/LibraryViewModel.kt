@@ -21,6 +21,7 @@ import uet.app.mysound.data.db.entities.SongEntity
 import uet.app.mysound.data.repository.MainRepository
 import java.time.LocalDateTime
 import javax.inject.Inject
+import android.util.Log
 
 
 @HiltViewModel
@@ -121,6 +122,7 @@ class LibraryViewModel @Inject constructor(private val mainRepository: MainRepos
     }
 
     fun getSongEntity(videoId: String) {
+        Log.e("TAG", " ===NAM=== getSongEntity LibraryViewModel")
         viewModelScope.launch {
             mainRepository.getSongById(videoId).collect { values ->
                 _songEntity.value = values

@@ -35,21 +35,7 @@ class CreditFragment : Fragment() {
         binding.btGithub.setOnClickListener {
             val urlIntent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("https://github.com/maxrave-dev/SimpMusic")
-            )
-            startActivity(urlIntent)
-        }
-        binding.btIssue.setOnClickListener {
-            val urlIntent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse("https://github.com/maxrave-dev/SimpMusic/issues")
-            )
-            startActivity(urlIntent)
-        }
-        binding.btBuyMeACoffee.setOnClickListener {
-            val urlIntent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse("https://www.buymeacoffee.com/maxrave")
+                Uri.parse("https://github.com/21020098-TranDucVinh/MySound")
             )
             startActivity(urlIntent)
         }

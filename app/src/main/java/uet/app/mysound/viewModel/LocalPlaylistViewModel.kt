@@ -192,6 +192,7 @@ class LocalPlaylistViewModel @Inject constructor(
             val downloadState = downloadUtils.getDownload(videoId).stateIn(viewModelScope)
             downloadState.collect { down ->
                 if (down != null) {
+                        Log.e("TAG", " ===NAM=== getDownloadStateFromService LocalPlaylistViewModel")
                     when (down.state) {
                         Download.STATE_COMPLETED -> {
                             mainRepository.getSongById(videoId).collect{ song ->
