@@ -37,13 +37,15 @@ class FavoritePlaylistAdapter(private var listPlaylist: ArrayList<Any>, private 
                 tvArtistName.text = album.artistName?.connectArtists()
                 tvArtistName.isSelected = true
                 tvStatus.text =
-                    if (album.downloadState == DownloadState.STATE_NOT_DOWNLOADED) context.getString(
-                        R.string.available_online
-                    )
-                    else if (album.downloadState == DownloadState.STATE_DOWNLOADING) context.getString(R.string.downloading)
-                    else if (album.downloadState == DownloadState.STATE_PREPARING) context.getString(R.string.preparing)
-                    else if (album.downloadState == DownloadState.STATE_DOWNLOADED) context.getString(R.string.downloaded)
-                    else context.getString(R.string.unavailable)
+                    when (album.downloadState) {
+                        DownloadState.STATE_NOT_DOWNLOADED -> context.getString(
+                            R.string.available_online
+                        )
+                        DownloadState.STATE_DOWNLOADING -> context.getString(R.string.downloading)
+                        DownloadState.STATE_PREPARING -> context.getString(R.string.preparing)
+                        DownloadState.STATE_DOWNLOADED -> context.getString(R.string.downloaded)
+                        else -> context.getString(R.string.unavailable)
+                    }
                 tvStatus.isSelected = true
             }
         }
@@ -62,13 +64,15 @@ class FavoritePlaylistAdapter(private var listPlaylist: ArrayList<Any>, private 
                 tvArtistName.text = playlist.author
                 tvArtistName.isSelected = true
                 tvStatus.text =
-                    if (playlist.downloadState == DownloadState.STATE_NOT_DOWNLOADED) context.getString(
-                        R.string.available_online
-                    )
-                    else if (playlist.downloadState == DownloadState.STATE_DOWNLOADING) context.getString(R.string.downloading)
-                    else if (playlist.downloadState == DownloadState.STATE_PREPARING) context.getString(R.string.preparing)
-                    else if (playlist.downloadState == DownloadState.STATE_DOWNLOADED) context.getString(R.string.downloaded)
-                    else context.getString(R.string.unavailable)
+                    when (playlist.downloadState) {
+                        DownloadState.STATE_NOT_DOWNLOADED -> context.getString(
+                            R.string.available_online
+                        )
+                        DownloadState.STATE_DOWNLOADING -> context.getString(R.string.downloading)
+                        DownloadState.STATE_PREPARING -> context.getString(R.string.preparing)
+                        DownloadState.STATE_DOWNLOADED -> context.getString(R.string.downloaded)
+                        else -> context.getString(R.string.unavailable)
+                    }
                 tvStatus.isSelected = true
             }
         }
@@ -92,13 +96,15 @@ class FavoritePlaylistAdapter(private var listPlaylist: ArrayList<Any>, private 
                 tvArtistName.text = context.getString(R.string.you)
                 tvArtistName.isSelected = true
                 tvStatus.text =
-                    if (localPlaylist.downloadState == DownloadState.STATE_NOT_DOWNLOADED) context.getString(
-                        R.string.available_online
-                    )
-                    else if (localPlaylist.downloadState == DownloadState.STATE_DOWNLOADING) context.getString(R.string.downloading)
-                    else if (localPlaylist.downloadState == DownloadState.STATE_PREPARING) context.getString(R.string.preparing)
-                    else if (localPlaylist.downloadState == DownloadState.STATE_DOWNLOADED) context.getString(R.string.downloaded)
-                    else context.getString(R.string.unavailable)
+                    when (localPlaylist.downloadState) {
+                        DownloadState.STATE_NOT_DOWNLOADED -> context.getString(
+                            R.string.available_online
+                        )
+                        DownloadState.STATE_DOWNLOADING -> context.getString(R.string.downloading)
+                        DownloadState.STATE_PREPARING -> context.getString(R.string.preparing)
+                        DownloadState.STATE_DOWNLOADED -> context.getString(R.string.downloaded)
+                        else -> context.getString(R.string.unavailable)
+                    }
                 tvStatus.isSelected = true
             }
         }
