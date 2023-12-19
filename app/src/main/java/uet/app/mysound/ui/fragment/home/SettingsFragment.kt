@@ -43,6 +43,8 @@ import uet.app.mysound.data.dataStore.DataStoreManager
 import uet.app.mysound.databinding.FragmentSettingsBinding
 import uet.app.mysound.extension.navigateSafe
 import uet.app.mysound.extension.setEnabledAll
+import uet.app.mysound.myAPI.User.LoginActivity
+import uet.app.mysound.ui.MainActivity
 import uet.app.mysound.viewModel.SettingsViewModel
 import uet.app.mysound.viewModel.SharedViewModel
 import java.io.File
@@ -88,10 +90,10 @@ class SettingsFragment : Fragment() {
         super.onResume()
         viewModel.getLoggedIn()
         viewModel.loggedIn.observe(viewLifecycleOwner) {
-            if (it == DataStoreManager.TRUE) {
+            if (MainActivity.loginResponse?.token != null) {
                 binding.tvLogInTitle.text = getString(R.string.log_out)
                 binding.tvLogIn.text = getString(R.string.logged_in)
-            } else if (it == DataStoreManager.FALSE) {
+            } else if (MainActivity.loginResponse?.token == null) {
                 binding.tvLogInTitle.text = getString(R.string.log_in)
                 binding.tvLogIn.text = getString(R.string.log_in_to_get_personally_data)
             }
@@ -129,30 +131,30 @@ class SettingsFragment : Fragment() {
         val diskCache = context?.imageLoader?.diskCache
 
         viewModel.loggedIn.observe(viewLifecycleOwner) {
-            if (it == DataStoreManager.TRUE) {
+            if (MainActivity.loginResponse?.token != null) {
                 binding.tvLogInTitle.text = getString(R.string.log_out)
                 binding.tvLogIn.text = getString(R.string.logged_in)
                 setEnabledAll(binding.swSaveHistory, true)
-            } else if (it == DataStoreManager.FALSE) {
+            } else if (MainActivity.loginResponse?.token == null) {
                 binding.tvLogInTitle.text = getString(R.string.log_in)
                 binding.tvLogIn.text = getString(R.string.log_in_to_get_personally_data)
                 setEnabledAll(binding.swSaveHistory, false)
             }
         }
-        viewModel.musixmatchLoggedIn.observe(viewLifecycleOwner) {
-            if (it == DataStoreManager.TRUE) {
-                binding.tvMusixmatchLoginTitle.text = getString(R.string.log_out_from_musixmatch)
-                binding.tvMusixmatchLogin.text = getString(R.string.logged_in)
-                setEnabledAll(binding.swUseMusixmatchTranslation, true)
-                setEnabledAll(binding.btTranslationLanguage, true)
-            } else if (it == DataStoreManager.FALSE) {
-                binding.tvMusixmatchLoginTitle.text = getString(R.string.log_in_to_Musixmatch)
-                binding.tvMusixmatchLogin.text =
-                    getString(R.string.only_support_email_and_password_type)
-                setEnabledAll(binding.swUseMusixmatchTranslation, false)
-                setEnabledAll(binding.btTranslationLanguage, false)
-            }
-        }
+//        viewModel.musixmatchLoggedIn.observe(viewLifecycleOwner) {
+//            if (it == DataStoreManager.TRUE) {
+//                binding.tvMusixmatchLoginTitle.text = getString(R.string.log_out_from_musixmatch)
+//                binding.tvMusixmatchLogin.text = getString(R.string.logged_in)
+//                setEnabledAll(binding.swUseMusixmatchTranslation, true)
+//                setEnabledAll(binding.btTranslationLanguage, true)
+//            } else if (it == DataStoreManager.FALSE) {
+//                binding.tvMusixmatchLoginTitle.text = getString(R.string.log_in_to_Musixmatch)
+//                binding.tvMusixmatchLogin.text =
+//                    getString(R.string.only_support_email_and_password_type)
+//                setEnabledAll(binding.swUseMusixmatchTranslation, false)
+//                setEnabledAll(binding.btTranslationLanguage, false)
+//            }
+//        }
         viewModel.playVideoInsteadOfAudio.observe(viewLifecycleOwner) {
             if (it == DataStoreManager.TRUE) {
                 binding.swEnableVideo.isChecked = true
@@ -165,19 +167,19 @@ class SettingsFragment : Fragment() {
         viewModel.videoQuality.observe(viewLifecycleOwner) {
             binding.tvVideoQuality.text = it
         }
-        viewModel.mainLyricsProvider.observe(viewLifecycleOwner) {
-            if (it == DataStoreManager.YOUTUBE) {
-                binding.tvMainLyricsProvider.text = LYRICS_PROVIDER.items.get(1)
-            } else if (it == DataStoreManager.MUSIXMATCH) {
-                binding.tvMainLyricsProvider.text = LYRICS_PROVIDER.items.get(0)
-            }
-        }
+//        viewModel.mainLyricsProvider.observe(viewLifecycleOwner) {
+//            if (it == DataStoreManager.YOUTUBE) {
+//                binding.tvMainLyricsProvider.text = LYRICS_PROVIDER.items.get(1)
+//            } else if (it == DataStoreManager.MUSIXMATCH) {
+//                binding.tvMainLyricsProvider.text = LYRICS_PROVIDER.items.get(0)
+//            }
+//        }
         viewModel.translationLanguage.observe(viewLifecycleOwner) {
             binding.tvTranslationLanguage.text = it
         }
-        viewModel.useTranslation.observe(viewLifecycleOwner) {
-            binding.swUseMusixmatchTranslation.isChecked = it == DataStoreManager.TRUE
-        }
+//        viewModel.useTranslation.observe(viewLifecycleOwner) {
+//            binding.swUseMusixmatchTranslation.isChecked = it == DataStoreManager.TRUE
+//        }
         viewModel.sendBackToGoogle.observe(viewLifecycleOwner) {
             binding.swSaveHistory.isChecked = it == DataStoreManager.TRUE
         }
@@ -258,24 +260,30 @@ class SettingsFragment : Fragment() {
         }
 
         binding.btLogin.setOnClickListener {
-            if (viewModel.loggedIn.value == DataStoreManager.TRUE) {
-                viewModel.clearCookie()
+            if (MainActivity.loginResponse?.token != null) {
+//                binding.tvLogInTitle.text = getString(R.string.log_in)
+//                binding.tvLogIn.text = getString(R.string.log_in_to_get_personally_data)
+                MainActivity.loginResponse = null
                 Toast.makeText(requireContext(), getString(R.string.logged_out), Toast.LENGTH_SHORT).show()
             }
             else if (viewModel.loggedIn.value == DataStoreManager.FALSE) {
-                findNavController().navigateSafe(R.id.action_global_logInFragment)
+//                binding.tvLogInTitle.text = getString(R.string.log_out)
+//                binding.tvLogIn.text = getString(R.string.logged_in)
+                val intent = Intent(requireContext(), LoginActivity::class.java)
+                startActivity(intent)
+//                findNavController().navigateSafe(R.id.action_global_logInFragment)
             }
         }
         
-        binding.btMusixmatchLogin.setOnClickListener {
-            if (viewModel.musixmatchLoggedIn.value == DataStoreManager.TRUE) {
-                viewModel.clearMusixmatchCookie()
-                Toast.makeText(requireContext(), getString(R.string.logged_out), Toast.LENGTH_SHORT).show()
-            }
-            else if (viewModel.musixmatchLoggedIn.value == DataStoreManager.FALSE) {
-                findNavController().navigateSafe(R.id.action_global_musixmatchFragment)
-            }
-        }
+//        binding.btMusixmatchLogin.setOnClickListener {
+//            if (viewModel.musixmatchLoggedIn.value == DataStoreManager.TRUE) {
+//                viewModel.clearMusixmatchCookie()
+//                Toast.makeText(requireContext(), getString(R.string.logged_out), Toast.LENGTH_SHORT).show()
+//            }
+//            else if (viewModel.musixmatchLoggedIn.value == DataStoreManager.FALSE) {
+//                findNavController().navigateSafe(R.id.action_global_musixmatchFragment)
+//            }
+//        }
 
         binding.btEqualizer.setOnClickListener {
             val eqIntent = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL)
@@ -419,38 +427,38 @@ class SettingsFragment : Fragment() {
                 }
             dialog.show()
         }
-        binding.btMainLyricsProvider.setOnClickListener {
-            var checkedIndex = -1
-            val dialog = MaterialAlertDialogBuilder(requireContext())
-                .setTitle(getString(R.string.main_lyrics_provider))
-                .setSingleChoiceItems(LYRICS_PROVIDER.items, -1) { _, which ->
-                    checkedIndex = which
-                }
-                .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .setPositiveButton(getString(R.string.change)) { dialog, _ ->
-                    if (checkedIndex != -1) {
-                        if (checkedIndex == 0) {
-                            viewModel.setLyricsProvider(DataStoreManager.MUSIXMATCH)
-                            binding.tvMainLyricsProvider.text = DataStoreManager.MUSIXMATCH
-                        } else if (checkedIndex == 1){
-                            viewModel.setLyricsProvider(DataStoreManager.YOUTUBE)
-                            binding.tvMainLyricsProvider.text = DataStoreManager.YOUTUBE
-                        }
-                    }
-                    viewModel.getLyricsProvider()
-                    viewModel.mainLyricsProvider.observe(viewLifecycleOwner) {
-                        if (it == DataStoreManager.YOUTUBE) {
-                            binding.tvMainLyricsProvider.text = LYRICS_PROVIDER.items.get(1)
-                        } else if (it == DataStoreManager.MUSIXMATCH) {
-                            binding.tvMainLyricsProvider.text = LYRICS_PROVIDER.items.get(0)
-                        }
-                    }
-                    dialog.dismiss()
-                }
-            dialog.show()
-        }
+//        binding.btMainLyricsProvider.setOnClickListener {
+//            var checkedIndex = -1
+//            val dialog = MaterialAlertDialogBuilder(requireContext())
+//                .setTitle(getString(R.string.main_lyrics_provider))
+//                .setSingleChoiceItems(LYRICS_PROVIDER.items, -1) { _, which ->
+//                    checkedIndex = which
+//                }
+//                .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+//                    dialog.dismiss()
+//                }
+//                .setPositiveButton(getString(R.string.change)) { dialog, _ ->
+//                    if (checkedIndex != -1) {
+//                        if (checkedIndex == 0) {
+//                            viewModel.setLyricsProvider(DataStoreManager.MUSIXMATCH)
+//                            binding.tvMainLyricsProvider.text = DataStoreManager.MUSIXMATCH
+//                        } else if (checkedIndex == 1){
+//                            viewModel.setLyricsProvider(DataStoreManager.YOUTUBE)
+//                            binding.tvMainLyricsProvider.text = DataStoreManager.YOUTUBE
+//                        }
+//                    }
+//                    viewModel.getLyricsProvider()
+//                    viewModel.mainLyricsProvider.observe(viewLifecycleOwner) {
+//                        if (it == DataStoreManager.YOUTUBE) {
+//                            binding.tvMainLyricsProvider.text = LYRICS_PROVIDER.items.get(1)
+//                        } else if (it == DataStoreManager.MUSIXMATCH) {
+//                            binding.tvMainLyricsProvider.text = LYRICS_PROVIDER.items.get(0)
+//                        }
+//                    }
+//                    dialog.dismiss()
+//                }
+//            dialog.show()
+//        }
 
         binding.btTranslationLanguage.setOnClickListener{
             val materialAlertDialogBuilder = MaterialAlertDialogBuilder(requireContext())
@@ -649,35 +657,35 @@ class SettingsFragment : Fragment() {
                 viewModel.setSendBackToGoogle(false)
             }
         }
-        binding.swUseMusixmatchTranslation.setOnCheckedChangeListener { _, checked ->
-            if (checked) {
-                viewModel.setUseTranslation(true)
-            } else {
-                viewModel.setUseTranslation(false)
-            }
-        }
-        binding.bt3rdPartyLibraries.setOnClickListener {
-
-            val inputStream = requireContext().resources.openRawResource(R.raw.aboutlibraries)
-            val scanner = Scanner(inputStream).useDelimiter("\\A")
-            val stringBuilder = StringBuilder()
-            while (scanner.hasNextLine()) {
-                stringBuilder.append(scanner.nextLine())
-            }
-            Log.w("AboutLibraries", stringBuilder.toString())
-            val localLib = Libs.Builder().withJson(stringBuilder.toString()).build()
-            val intent = LibsBuilder()
-                .withLicenseShown(true)
-                .withVersionShown(true)
-                .withActivityTitle(getString(R.string.third_party_libraries))
-                .withSearchEnabled(true)
-                .withEdgeToEdge(true)
-                .withLibs(
-                    localLib
-                )
-                .intent(requireContext())
-            startActivity(intent)
-        }
+//        binding.swUseMusixmatchTranslation.setOnCheckedChangeListener { _, checked ->
+//            if (checked) {
+//                viewModel.setUseTranslation(true)
+//            } else {
+//                viewModel.setUseTranslation(false)
+//            }
+//        }
+//        binding.bt3rdPartyLibraries.setOnClickListener {
+//
+//            val inputStream = requireContext().resources.openRawResource(R.raw.aboutlibraries)
+//            val scanner = Scanner(inputStream).useDelimiter("\\A")
+//            val stringBuilder = StringBuilder()
+//            while (scanner.hasNextLine()) {
+//                stringBuilder.append(scanner.nextLine())
+//            }
+//            Log.w("AboutLibraries", stringBuilder.toString())
+//            val localLib = Libs.Builder().withJson(stringBuilder.toString()).build()
+//            val intent = LibsBuilder()
+//                .withLicenseShown(true)
+//                .withVersionShown(true)
+//                .withActivityTitle(getString(R.string.third_party_libraries))
+//                .withSearchEnabled(true)
+//                .withEdgeToEdge(true)
+//                .withLibs(
+//                    localLib
+//                )
+//                .intent(requireContext())
+//            startActivity(intent)
+//        }
     }
     private fun browseFiles(dir: File): Long {
         var dirSize: Long = 0
