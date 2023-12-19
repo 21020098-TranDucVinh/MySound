@@ -2,6 +2,8 @@ package uet.app.mysound.ui.fragment
 
 import android.app.Application
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -100,6 +102,7 @@ class SearchFragment : Fragment() {
                 margin()
             }
         }
+        binding.btYTMusic.isSelected = true;
         return binding.root
     }
 
@@ -684,6 +687,20 @@ class SearchFragment : Fragment() {
                 observeSearchHistory()
             }
         })
+        binding.btYTMusic.setOnClickListener{
+            Log.e("TAG", " === NAM === btYTMusic")
+            binding.btYTMusic.isSelected = true;
+            binding.btMySound.isSelected = false;
+//            binding.btYTMusic.backgroundTintList = ColorStateList.valueOf(Color.parseColor("@color/light_purple"))
+//            binding.btMySound.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#359966FF"))
+        }
+        binding.btMySound.setOnClickListener{
+            Log.e("TAG", " === NAM === btMySound")
+            binding.btMySound.isSelected = true;
+            binding.btYTMusic.isSelected = false;
+//            binding.btMySound.backgroundTintList = ColorStateList.valueOf(Color.parseColor("@color/light_purple"))
+//            binding.btYTMusic.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#359966FF"))
+        }
         binding.btClearSearchHistory.setOnClickListener {
             viewModel.searchHistory.value?.clear()
             searchHistory.clear()
