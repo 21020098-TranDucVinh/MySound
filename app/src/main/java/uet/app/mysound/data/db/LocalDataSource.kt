@@ -1,5 +1,6 @@
 package uet.app.mysound.data.db
 
+import android.util.Log
 import uet.app.mysound.data.db.entities.AlbumEntity
 import uet.app.mysound.data.db.entities.ArtistEntity
 import uet.app.mysound.data.db.entities.FormatEntity
@@ -11,6 +12,8 @@ import uet.app.mysound.data.db.entities.QueueEntity
 import uet.app.mysound.data.db.entities.SearchHistory
 import uet.app.mysound.data.db.entities.SetVideoIdEntity
 import uet.app.mysound.data.db.entities.SongEntity
+import uet.app.mysound.myAPI.User.LoginResponse
+import uet.app.mysound.ui.MainActivity
 import java.time.LocalDateTime
 import javax.inject.Inject
 import android.util.Log
@@ -23,27 +26,51 @@ class LocalDataSource @Inject constructor(private val databaseDao: DatabaseDao) 
 
     suspend fun deleteSearchHistory() = databaseDao.deleteSearchHistory()
 
-    suspend fun insertSearchHistory(searchHistory: SearchHistory) = databaseDao.insertSearchHistory(searchHistory)
+    suspend fun insertSearchHistory(searchHistory: SearchHistory) =
+        databaseDao.insertSearchHistory(searchHistory)
 
     suspend fun getAllSongs() = databaseDao.getAllSongs()
     suspend fun getRecentSongs(limit: Int, offset: Int) = databaseDao.getRecentSongs(limit, offset)
-    suspend fun getSongByListVideoId(primaryKeyList: List<String>) = databaseDao.getSongByListVideoId(primaryKeyList)
+    suspend fun getSongByListVideoId(primaryKeyList: List<String>) =
+        databaseDao.getSongByListVideoId(primaryKeyList)
+
     suspend fun getDownloadedSongs() = databaseDao.getDownloadedSongs()
     suspend fun getDownloadingSongs() = databaseDao.getDownloadingSongs()
     suspend fun getLikedSongs() = databaseDao.getLikedSongs()
     suspend fun getLibrarySongs() = databaseDao.getLibrarySongs()
     suspend fun getSong(videoId: String) = databaseDao.getSong(videoId)
-    suspend fun insertSong(song: SongEntity) = databaseDao.insertSong(song)
+    suspend fun insertSong(song: SongEntity) {
+        val response: LoginResponse? = MainActivity.loginResponse
+
+        if (response?.token == null) {
+            // Token is null, call the databaseDao.insertSong(song)
+            databaseDao.insertSong(song)
+
+            // Handle the result as needed, for example, print it to the screen
+            Log.i("YourTag", "Inserted Song: $song")
+        } else {
+            // Token is not null, log information
+            Log.i("YourTag", "Token is not null: ${response.token}")
+            Log.i("YourTag", "AUDIO Token is not null: ${response.audioToken}")
+            databaseDao.insertSong(song)
+        }
+    }
     suspend fun updateListenCount(videoId: String) = databaseDao.updateTotalPlayTime(videoId)
     suspend fun updateLiked(liked: Int, videoId: String) = databaseDao.updateLiked(liked, videoId)
-    suspend fun updateDurationSeconds(durationSeconds: Int, videoId: String) = databaseDao.updateDurationSeconds(durationSeconds, videoId)
-    suspend fun updateSongInLibrary(inLibrary: LocalDateTime, videoId: String) = databaseDao.updateSongInLibrary(inLibrary, videoId)
+    suspend fun updateDurationSeconds(durationSeconds: Int, videoId: String) =
+        databaseDao.updateDurationSeconds(durationSeconds, videoId)
+
+    suspend fun updateSongInLibrary(inLibrary: LocalDateTime, videoId: String) =
+        databaseDao.updateSongInLibrary(inLibrary, videoId)
+
     suspend fun getMostPlayedSongs() = databaseDao.getMostPlayedSongs()
-    suspend fun updateDownloadState(downloadState: Int, videoId: String) = databaseDao.updateDownloadState(downloadState, videoId)
+    suspend fun updateDownloadState(downloadState: Int, videoId: String) =
+        databaseDao.updateDownloadState(downloadState, videoId)
 
     suspend fun getAllArtists() = databaseDao.getAllArtists()
     suspend fun insertArtist(artist: ArtistEntity) = databaseDao.insertArtist(artist)
-    suspend fun updateFollowed(followed: Int, channelId: String) = databaseDao.updateFollowed(followed, channelId)
+    suspend fun updateFollowed(followed: Int, channelId: String) =
+        databaseDao.updateFollowed(followed, channelId)
     suspend fun getArtist(channelId: String) = databaseDao.getArtist(channelId)
     suspend fun getFollowedArtists() = databaseDao.getFollowedArtists()
     suspend fun updateArtistInLibrary(inLibrary: LocalDateTime, channelId: String) = databaseDao.updateArtistInLibrary(inLibrary, channelId)

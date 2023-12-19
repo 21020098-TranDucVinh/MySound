@@ -16,6 +16,7 @@ import uet.app.mysound.extension.toListName
 class HomeItemContentAdapter(private var listContent: ArrayList<Content>, private val context: Context): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private lateinit var mPlaylistListener: onPlaylistItemClickListener
     private lateinit var mAlbumListener: onAlbumItemClickListener
+    private lateinit var mMyAlbumListener: onMyAlbumItemClickListener
     private lateinit var mSongListener: onSongItemClickListener
     private lateinit var mArtistListener: onArtistItemClickListener
     interface onSongItemClickListener{
@@ -26,6 +27,9 @@ class HomeItemContentAdapter(private var listContent: ArrayList<Content>, privat
     }
     interface onAlbumItemClickListener{
         fun onAlbumItemClick(position: Int)
+    }
+    interface onMyAlbumItemClickListener{
+        fun onMyAlbumItemClick(position: Int)
     }
     interface onArtistItemClickListener{
         fun onArtistItemClick(position: Int)
@@ -38,6 +42,9 @@ class HomeItemContentAdapter(private var listContent: ArrayList<Content>, privat
     }
     fun setOnAlbumClickListener(listener: onAlbumItemClickListener){
         mAlbumListener = listener
+    }
+    fun setOnMyAlbumClickListener(listener: onMyAlbumItemClickListener){
+        mMyAlbumListener = listener
     }
     fun setOnArtistClickListener(listener: onArtistItemClickListener){
         mArtistListener = listener
@@ -106,7 +113,31 @@ class HomeItemContentAdapter(private var listContent: ArrayList<Content>, privat
             }
         }
     }
-    inner class ArtistViewHolder(var binding: ItemHomeContentArtistBinding, var listener: onArtistItemClickListener) : RecyclerView.ViewHolder(binding.root){
+
+    inner class MyAlbumViewHolder(var binding: ItemHomeContentPlaylistBinding, var listener: onMyAlbumItemClickListener): RecyclerView.ViewHolder(binding.root){
+        init {
+            binding.root.setOnClickListener {listener.onMyAlbumItemClick(bindingAdapterPosition)}
+        }
+        fun bind(content: Content){
+            with(binding){
+                if (content.thumbnails.size > 1) {
+                    ivArt.load(content.thumbnails[1].url)
+                }
+                else{
+                    ivArt.load(content.thumbnails[0].url)
+                }
+                tvTitle.text = content.title
+                tvTitle.isSelected = true
+                if (content.description != "" && content.description != null) {
+                    tvDescription.text = content.description
+                }
+                else {
+                    tvDescription.text = if (!content.artists.isNullOrEmpty()) content.artists.toListName().connectArtists() else context.getString(R.string.album)
+                }
+                tvDescription.isSelected = true
+            }
+        }
+    }    inner class ArtistViewHolder(var binding: ItemHomeContentArtistBinding, var listener: onArtistItemClickListener) : RecyclerView.ViewHolder(binding.root){
         init {
             binding.root.setOnClickListener {listener.onArtistItemClick(bindingAdapterPosition)}
         }
@@ -129,6 +160,7 @@ class HomeItemContentAdapter(private var listContent: ArrayList<Content>, privat
             SONG -> SongViewHolder(ItemHomeContentSongBinding.inflate(inflate, parent, false), mSongListener)
             PLAYLIST -> PlaylistViewHolder(ItemHomeContentPlaylistBinding.inflate(inflate, parent, false), mPlaylistListener)
             ALBUM -> AlbumViewHolder(ItemHomeContentPlaylistBinding.inflate(inflate, parent, false), mAlbumListener)
+            MY_ALBUM -> MyAlbumViewHolder(ItemHomeContentPlaylistBinding.inflate(inflate, parent, false), mMyAlbumListener)
             ARTIST -> ArtistViewHolder(ItemHomeContentArtistBinding.inflate(inflate, parent, false), mArtistListener)
             else -> throw IllegalArgumentException("Invalid view type")
         }
@@ -139,6 +171,7 @@ class HomeItemContentAdapter(private var listContent: ArrayList<Content>, privat
             is SongViewHolder -> holder.bind(listContent[position])
             is PlaylistViewHolder -> holder.bind(listContent[position])
             is AlbumViewHolder -> holder.bind(listContent[position])
+            is MyAlbumViewHolder -> holder.bind(listContent[position])
             is ArtistViewHolder -> holder.bind(listContent[position])
         }
     }
@@ -155,6 +188,8 @@ class HomeItemContentAdapter(private var listContent: ArrayList<Content>, privat
                 ARTIST
             else
                 ALBUM
+        } else if ((temp.album?.id?.toIntOrNull() ?: 0) < 100) {
+            MY_ALBUM
         }
         else{
             SONG
@@ -169,6 +204,7 @@ class HomeItemContentAdapter(private var listContent: ArrayList<Content>, privat
         private const val SONG = 1
         private const val PLAYLIST = 2
         private const val ALBUM = 3
+        private const val MY_ALBUM = 5
         private const val ARTIST = 4
     }
 }

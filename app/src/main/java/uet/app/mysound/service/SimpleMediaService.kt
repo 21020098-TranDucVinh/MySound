@@ -146,7 +146,6 @@ class SimpleMediaService : MediaLibraryService() {
         Log.d("SimpleMediaService", "onTaskRemoved: ")
         release()
         stopSelf()
-
     }
 
     inner class MusicBinder : Binder() {
@@ -214,6 +213,7 @@ class SimpleMediaService : MediaLibraryService() {
     ): DataSource.Factory {
         return ResolvingDataSource.Factory(cacheDataSourceFactory) { dataSpec ->
             val mediaId = dataSpec.key ?: error("No media id")
+            Log.i("TAG", "DATASPECIOIO : $mediaId")
             val CHUNK_LENGTH = 512 * 1024L
             if (downloadCache.isCached(
                     mediaId,
@@ -221,6 +221,7 @@ class SimpleMediaService : MediaLibraryService() {
                     if (dataSpec.length >= 0) dataSpec.length else 1
                 ) || playerCache.isCached(mediaId, dataSpec.position, CHUNK_LENGTH)
             ) {
+                Log.i("TAG", "DATASPECIOIO" + dataSpec.key)
                 return@Factory dataSpec
             }
             var dataSpecReturn: DataSpec = dataSpec
@@ -233,9 +234,11 @@ class SimpleMediaService : MediaLibraryService() {
                 ).cancellable().collect {
                     if (it != null) {
                         dataSpecReturn = dataSpec.withUri(it.toUri())
+                        Log.i("TAG", "GETSTREAM SimpleMediaService")
                     }
                 }
             }
+            Log.i("TAG", "DATASPECIOIO" + dataSpecReturn.key)
             return@Factory dataSpecReturn
         }
     }

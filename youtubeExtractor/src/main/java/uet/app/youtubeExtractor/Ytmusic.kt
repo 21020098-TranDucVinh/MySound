@@ -1,5 +1,6 @@
 package uet.app.youtubeExtractor
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.ktor.client.*
@@ -198,6 +199,7 @@ class Ytmusic {
                 params = params
             )
         )
+        Log.i("TAG", "YOUTUBEMUSIC search")
         parameter("continuation", continuation)
         parameter("ctoken", continuation)
     }
@@ -235,6 +237,7 @@ class Ytmusic {
     suspend fun getSuggestQuery(query: String) =
         httpClient.get("http://suggestqueries.google.com/complete/search") {
             contentType(ContentType.Application.Json)
+            Log.i("TAG", "GET YOUTUBEMUSIC getSuggestQuery")
             parameter("client", "firefox")
             parameter("ds", "yt")
             parameter("q", query)
@@ -268,6 +271,7 @@ class Ytmusic {
 
     suspend fun postMusixmatchPostCredentials(email: String, password: String, userToken: String) =
         musixmatchClient.post("https://apic.musixmatch.com/ws/1.1/credential.post") {
+            Log.i("TAG", "YOUTUBEMUSIC postMusixmatchPostCredentials")
             contentType(ContentType.Application.Json)
             headers {
                 header(HttpHeaders.UserAgent, "PostmanRuntime/7.33.0")
@@ -438,6 +442,7 @@ class Ytmusic {
         }
 
     suspend fun getYouTubeCaption(url: String) = httpClient.get(url) {
+        Log.i("TAG", "GE YOUTUBEMUSIC getYouTubeCaption")
         contentType(ContentType.Text.Xml)
         headers {
             append(HttpHeaders.Accept, "text/xml; charset=UTF-8")
@@ -454,6 +459,7 @@ class Ytmusic {
                     videoIds = listVideoId
                 )
             )
+            Log.i("TAG", "YOUTUBEMUSIC createYouTubePlaylist")
         }
 
     suspend fun editYouTubePlaylist(playlistId: String, title: String? = null) =
@@ -471,6 +477,7 @@ class Ytmusic {
                     )
                 )
             )
+            Log.i("TAG", "YOUTUBEMUSIC editYouTubePlaylist")
         }
 
     suspend fun addItemYouTubePlaylist(playlistId: String, videoId: String) =
@@ -489,6 +496,7 @@ class Ytmusic {
                     )
                 )
             )
+            Log.i("TAG", "YOUTUBEMUSIC addItemYouTubePlaylist")
         }
 
     suspend fun removeItemYouTubePlaylist(playlistId: String, videoId: String, setVideoId: String) =
@@ -508,6 +516,7 @@ class Ytmusic {
                     )
                 )
             )
+            Log.i("TAG", "YOUTUBEMUSIC removeItemYouTubePlaylist")
         }
 
     /***
@@ -517,6 +526,7 @@ class Ytmusic {
 
     suspend fun getSkipSegments(videoId: String) =
         httpClient.get("https://sponsor.ajay.app/api/skipSegments/") {
+            Log.i("TAG", "GE YOUTUBEMUSIC getSkipSegments")
             contentType(ContentType.Application.Json)
             parameter("videoID", videoId)
             parameter("category", "sponsor")
@@ -531,7 +541,6 @@ class Ytmusic {
             parameter("service", "YouTube")
         }
 
-
     suspend fun browse(
         client: YouTubeClient,
         browseId: String? = null,
@@ -541,6 +550,7 @@ class Ytmusic {
         setLogin: Boolean = false,
     ) = httpClient.post("browse") {
         ytClient(client, if (setLogin) true else cookie != "" && cookie != null)
+        Log.i("TAG", "YOUTUBEMUSIC browse")
 
         if (countryCode != null) {
             setBody(
@@ -571,6 +581,7 @@ class Ytmusic {
 
     suspend fun nextCustom(client: YouTubeClient, videoId: String) = httpClient.post("next") {
         ytClient(client, setLogin = false)
+        Log.i("TAG", "YOUTUBEMUSIC nextCustom")
         setBody(
             BrowseBody(
                 context = client.toContext(locale, visitorData),
@@ -599,6 +610,7 @@ class Ytmusic {
         params: String?,
         continuation: String? = null,
     ) = httpClient.post("next") {
+        Log.i("TAG", "YOUTUBEMUSIC next")
         ytClient(client, setLogin = true)
         setBody(
             NextBody(
@@ -618,6 +630,7 @@ class Ytmusic {
         input: String,
     ) = httpClient.post("music/get_search_suggestions") {
         ytClient(client)
+        Log.i("TAG", "YOUTUBEMUSIC getSearchSuggestions")
         setBody(
             GetSearchSuggestionsBody(
                 context = client.toContext(locale, visitorData),
@@ -632,6 +645,7 @@ class Ytmusic {
         playlistId: String?,
     ) = httpClient.post("music/get_queue") {
         ytClient(client)
+        Log.i("TAG", "YOUTUBEMUSIC getQueue")
         setBody(
             GetQueueBody(
                 context = client.toContext(locale, visitorData),
@@ -645,6 +659,7 @@ class Ytmusic {
 
     suspend fun accountMenu(client: YouTubeClient) = httpClient.post("account/account_menu") {
         ytClient(client)
+        Log.i("TAG", "YOUTUBEMUSIC accountMenu")
         setBody(AccountMenuBody(client.toContext(locale, visitorData)))
     }
 
@@ -663,6 +678,7 @@ class Ytmusic {
         customParams: Map<String, String>? = null,
         playlistId: String?
     ) = httpClient.get(url) {
+        Log.i("TAG", "GET YOUTUBEMUSIC initPlayback")
         ytClient(YouTubeClient.ANDROID_MUSIC, true)
         parameter("ver", "2")
         parameter("c", "ANDROID_MUSIC")
@@ -682,6 +698,7 @@ class Ytmusic {
         customParams: Map<String, String>? = null,
         playlistId: String?
     ) = httpClient.post(url) {
+        Log.i("TAG", "YOUTUBEMUSIC atr")
         ytClient(YouTubeClient.ANDROID_MUSIC, true)
         parameter("c", "ANDROID_MUSIC")
         parameter("cpn", cpn)

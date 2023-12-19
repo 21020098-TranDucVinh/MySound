@@ -105,6 +105,14 @@ class HomeItemAdapter(private var homeItemList: ArrayList<HomeItem>, var context
                 navController.navigateSafe(R.id.action_global_albumFragment, args)
             }
         })
+        itemAdapter.setOnMyAlbumClickListener(object : HomeItemContentAdapter.onMyAlbumItemClickListener{
+            override fun onMyAlbumItemClick(position: Int) {
+                val args = Bundle()
+                Log.d("HomeItemAdapter", "onMyAlbumItemClick: ${homeItemList[holder.bindingAdapterPosition].contents[position]?.browseId}")
+                args.putString("browseId", homeItemList[holder.bindingAdapterPosition].contents[position]?.browseId)
+                navController.navigateSafe(R.id.action_global_myAlbumFragment, args)
+            }
+        })
         itemAdapter.setOnArtistClickListener(object : HomeItemContentAdapter.onArtistItemClickListener {
             override fun onArtistItemClick(position: Int) {
                 val args = Bundle()

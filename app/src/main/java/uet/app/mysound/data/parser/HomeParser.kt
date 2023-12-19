@@ -7,6 +7,7 @@ import uet.app.mysound.data.model.home.Content
 import uet.app.mysound.data.model.home.HomeItem
 import uet.app.mysound.data.model.searchResult.songs.Album
 import uet.app.mysound.data.model.searchResult.songs.Artist
+import uet.app.mysound.parseMixedContentFromMySound
 import uet.app.youtubeExtractor.models.AlbumItem
 import uet.app.youtubeExtractor.models.ArtistItem
 import uet.app.youtubeExtractor.models.MusicResponsiveListItemRenderer
@@ -28,19 +29,24 @@ fun parseMixedContent(data: List<SectionListRenderer.Content>?): List<HomeItem> 
             if (results != null) {
                 val title = results.header?.runs?.get(0)?.text ?: ""
                 val content = results.description.runs?.get(0)?.text ?: ""
-                list.add(HomeItem(contents = listOf(Content(
-                    album = null,
-                    artists = listOf(),
-                    description = content,
-                    isExplicit = null,
-                    playlistId = null,
-                    browseId = null,
-                    thumbnails = listOf(),
-                    title = content,
-                    videoId = null,
-                    views = null
-                )), title = title
-                ))
+                list.add(
+                    HomeItem(
+                        contents = listOf(
+                            Content(
+                                album = null,
+                                artists = listOf(),
+                                description = content,
+                                isExplicit = null,
+                                playlistId = null,
+                                browseId = null,
+                                thumbnails = listOf(),
+                                title = content,
+                                videoId = null,
+                                views = null
+                            )
+                        ), title = title
+                    )
+                )
             }
             else {
                 val results1 = row.musicCarouselShelfRenderer
@@ -302,10 +308,76 @@ fun parseMixedContent(data: List<SectionListRenderer.Content>?): List<HomeItem> 
     return list
 }
 
+
+fun parseMixedContentMySound(jsonData: String?): List<HomeItem> {
+    val contentList: MutableList<Content?> = mutableListOf()
+
+    val mySoundData = parseMixedContentFromMySound(jsonData)
+    val listThumbnail = mutableListOf<uet.app.mysound.data.model.searchResult.songs.Thumbnail>()
+
+    val thumbnail = uet.app.mysound.data.model.searchResult.songs.Thumbnail(
+        height = 100,
+        url = "https://scontent.fhan17-1.fna.fbcdn.net/v/t1.15752-9/370326255_716546323735823_6866928491541157783_n.png?_nc_cat=107&ccb=1-7&_nc_sid=8cd0a2&_nc_eui2=AeFhaPYDgUdUQDCqdsbmdsllLxgXX_7rUOUvGBdf_utQ5V5eXDAkUBUy4xaJKw6gyd77PLlAs3EL1GiUheZNrOr6&_nc_ohc=ffsDqzOvysIAX9pv0VJ&_nc_oc=AQnwRkvz5cRQkRgWH9352yhYF2BnJIb5XPlh6HLGgA5DpWxTNsXfA1nISOQOuufNGLo&_nc_ht=scontent.fhan17-1.fna&oh=03_AdRJbycGqIGldmAP6SavfEDZqp6rCwW3VIqK2ZoJ2cbHZQ&oe=65A8B232",
+        width = 200
+    )
+
+    val thumbnail1 = uet.app.mysound.data.model.searchResult.songs.Thumbnail(
+        height = 100,
+        url = "https://scontent.fhan17-1.fna.fbcdn.net/v/t1.15752-9/370326255_716546323735823_6866928491541157783_n.png?_nc_cat=107&ccb=1-7&_nc_sid=8cd0a2&_nc_eui2=AeFhaPYDgUdUQDCqdsbmdsllLxgXX_7rUOUvGBdf_utQ5V5eXDAkUBUy4xaJKw6gyd77PLlAs3EL1GiUheZNrOr6&_nc_ohc=ffsDqzOvysIAX9pv0VJ&_nc_oc=AQnwRkvz5cRQkRgWH9352yhYF2BnJIb5XPlh6HLGgA5DpWxTNsXfA1nISOQOuufNGLo&_nc_ht=scontent.fhan17-1.fna&oh=03_AdRJbycGqIGldmAP6SavfEDZqp6rCwW3VIqK2ZoJ2cbHZQ&oe=65A8B232",
+        width = 200
+    )
+
+    listThumbnail.add(thumbnail)
+    listThumbnail.add(thumbnail1)
+
+    if (mySoundData != null) {
+        if (mySoundData.albums.isNotEmpty()) {
+            for (album in mySoundData.albums) {
+                val artistsList = mySoundData.artists.map { artist ->
+                    Artist(id = artist.id.toString(), name = artist.name)
+                }
+                val content = Content(
+                    album = Album(
+                        name = album.name,
+                        id = album.id.toString()
+                    ), // Sử dụng thông tin từ album hiện tại
+                    artists = artistsList,
+                    description = "null",
+                    isExplicit = true,
+                    playlistId = "12",
+                    browseId = "14",
+                    thumbnails = listThumbnail,
+                    title = album.name,
+                    videoId = "14",
+                    views = "15",
+                    durationSeconds = 400,
+                    radio = "144"
+                )
+                contentList.add(content)
+            }
+        }
+    }
+
+    val list = mutableListOf<HomeItem>()
+
+    val HomeItemRS = HomeItem(
+        contents = contentList,
+        title = "FROM MYSOUND",
+        subtitle = "FROM MYSOUND",
+        thumbnail = listThumbnail,
+        channelId = "12"
+    )
+
+    list.add(HomeItemRS)
+
+    return list
+}
+
 fun parseSongFlat(data: MusicResponsiveListItemRenderer?): Content? {
     if (data?.flexColumns != null) {
-        val column = mutableListOf<MusicResponsiveListItemRenderer.FlexColumn.MusicResponsiveListItemFlexColumnRenderer?>()
-        for (i in 0..data.flexColumns.size){
+        val column =
+            mutableListOf<MusicResponsiveListItemRenderer.FlexColumn.MusicResponsiveListItemFlexColumnRenderer?>()
+        for (i in 0..data.flexColumns.size) {
             column.add(getFlexColumnItem(data, i))
         }
         return Content(
@@ -314,8 +386,7 @@ fun parseSongFlat(data: MusicResponsiveListItemRenderer?): Content? {
                     id = column[2]?.text?.runs?.get(0)?.navigationEndpoint?.browseEndpoint?.browseId!!,
                     name = column[2]?.text?.runs?.get(0)?.text!!
                 )
-            }
-            else {
+            } else {
                 null
             },
             artists = parseSongArtists(data, 1) ?: listOf(),

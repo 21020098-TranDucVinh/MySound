@@ -197,27 +197,8 @@ class NowPlayingFragment : Fragment() {
                     binding.tvSongTitle.visibility = View.GONE
                     binding.tvSongArtist.visibility = View.GONE
                     Queue.getNowPlaying()?.let {
-//                        lifecycleScope.launch {
-//                            repeatOnLifecycle(Lifecycle.State.CREATED) {
-//                                viewModel.firstTrackAdded.collect { added ->
-//                                    if (added && type == Config.SONG_CLICK) {
-//                                        viewModel.changeFirstTrackAddedToFalse()
-////                                        viewModel.getFormat(it.videoId)
-//                                        getRelated(it.videoId)
-//                                    }
-//                                }
-//                            }
-//                        }
                         viewModel.simpleMediaServiceHandler?.reset()
                         viewModel.resetRelated()
-//                        if (requireContext().isMyServiceRunning(FetchQueue::class.java)) {
-//                            requireActivity().stopService(
-//                                Intent(
-//                                    requireContext(),
-//                                    FetchQueue::class.java
-//                                )
-//                            )
-//                        }
                         viewModel.loadMediaItemFromTrack(it, SONG_CLICK)
                         viewModel.videoId.postValue(it.videoId)
                         viewModel.from.postValue(from)
@@ -247,31 +228,12 @@ class NowPlayingFragment : Fragment() {
                             Log.e("TAG", " ===NAM=== setPlaying onViewCreated NowPlayingFragment")
                             viewModel.simpleMediaServiceHandler?.reset()
                             viewModel.resetRelated()
-//                            if (requireContext().isMyServiceRunning(FetchQueue::class.java)) {
-//                                requireActivity().stopService(
-//                                    Intent(
-//                                        requireContext(),
-//                                        FetchQueue::class.java
-//                                    )
-//                                )
-//                            }
                             viewModel.loadMediaItemFromTrack(track, SHARE)
                             viewModel.videoId.postValue(track.videoId)
                             viewModel.from.postValue(from)
                             updateUIfromQueueNowPlaying()
                             miniplayer.visibility = View.GONE
                             bottom.visibility = View.GONE
-//                            lifecycleScope.launch {
-//                                repeatOnLifecycle(Lifecycle.State.CREATED) {
-//                                    viewModel.firstTrackAdded.collect { added ->
-//                                        if (added && type == Config.SHARE) {
-//                                            viewModel.changeFirstTrackAddedToFalse()
-////                                            viewModel.getFormat(track.videoId)
-//                                            getRelated(track.videoId)
-//                                        }
-//                                    }
-//                                }
-//                            }
                         }
                     }
                 }
@@ -296,32 +258,11 @@ class NowPlayingFragment : Fragment() {
                     Queue.getNowPlaying()?.let {
                         viewModel.simpleMediaServiceHandler?.reset()
                         viewModel.resetRelated()
-//                        if (requireContext().isMyServiceRunning(FetchQueue::class.java)) {
-//                            requireActivity().stopService(
-//                                Intent(
-//                                    requireContext(),
-//                                    FetchQueue::class.java
-//                                )
-//                            )
-//                        }
                         viewModel.loadMediaItemFromTrack(it, VIDEO_CLICK)
                         viewModel.videoId.postValue(it.videoId)
                         viewModel.from.postValue(from)
                         updateUIfromQueueNowPlaying()
-//                        lifecycleScope.launch {
-//                            repeatOnLifecycle(Lifecycle.State.CREATED) {
-//                                viewModel.firstTrackAdded.collect { added ->
-//                                    if (added && type == Config.VIDEO_CLICK) {
-//                                        viewModel.changeFirstTrackAddedToFalse()
-////                                        viewModel.getFormat(it.videoId)
-//                                        getRelated(it.videoId)
-//                                    }
-//                                }
-//                            }
-//                        }
                     }
-                    //}
-//                viewModel.loadMediaItems(videoId!!)
                 }
             }
 
@@ -340,49 +281,11 @@ class NowPlayingFragment : Fragment() {
                     Queue.getNowPlaying()?.let {
                         viewModel.simpleMediaServiceHandler?.reset()
                         viewModel.resetRelated()
-//                        if (requireContext().isMyServiceRunning(FetchQueue::class.java)) {
-//                            requireActivity().stopService(
-//                                Intent(
-//                                    requireContext(),
-//                                    FetchQueue::class.java
-//                                )
-//                            )
-//                        }
                         viewModel.loadMediaItemFromTrack(it, ALBUM_CLICK, index)
                         viewModel.videoId.postValue(it.videoId)
                         viewModel.from.postValue(from)
-//                        viewModel.resetLyrics()
-//                        viewModel.getLyrics(it.title + " " + it.artists?.first()?.name)
                         updateUIfromQueueNowPlaying()
-//                        viewModel._lyrics.observe(viewLifecycleOwner){ resourceLyrics ->
-//                            when(resourceLyrics){
-//                                is Resource.Success -> {
-//                                    if (resourceLyrics.data != null) {
-//                                        viewModel.insertLyrics(resourceLyrics.data.toLyricsEntity(it.videoId))
-//                                        viewModel.parseLyrics(resourceLyrics.data)
-//                                    }
-//                                }
-//                                is Resource.Error -> {
-//                                    viewModel.getSavedLyrics(it.videoId)
-//                                }
-//                            }
-//                        }
                         Log.d("check index", index.toString())
-//                        lifecycleScope.launch {
-//                            repeatOnLifecycle(Lifecycle.State.CREATED) {
-//                                viewModel.firstTrackAdded.collect { added ->
-//                                    if (added && type == Config.ALBUM_CLICK) {
-//                                        viewModel.changeFirstTrackAddedToFalse()
-////                                        viewModel.getFormat(it.videoId)
-//                                        if (index == null) {
-//                                            fetchSourceFromQueue(downloaded = downloaded ?: 0)
-//                                        } else {
-//                                            fetchSourceFromQueue(index!!, downloaded = downloaded ?: 0)
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
                 }
             }
 
@@ -400,49 +303,16 @@ class NowPlayingFragment : Fragment() {
                     Queue.getNowPlaying()?.let {
                         viewModel.simpleMediaServiceHandler?.reset()
                         viewModel.resetRelated()
-//                        if (requireContext().isMyServiceRunning(FetchQueue::class.java)) {
-//                            requireActivity().stopService(
-//                                Intent(
-//                                    requireContext(),
-//                                    FetchQueue::class.java
-//                                )
-//                            )
-//                        }
                         Log.d("check index", index.toString())
                         viewModel.loadMediaItemFromTrack(it, PLAYLIST_CLICK, index)
+//                        val deferredResult = async {
+//                            viewModel.loadMediaItemFromTrack(it, PLAYLIST_CLICK, index)
+//                        }
+//                        deferredResult.await()
+
                         viewModel.videoId.postValue(it.videoId)
                         viewModel.from.postValue(from)
-//                        viewModel.resetLyrics()
-//                        viewModel.getLyrics(it.title + " " + it.artists?.first()?.name)
                         updateUIfromQueueNowPlaying()
-//                        viewModel._lyrics.observe(viewLifecycleOwner){ resourceLyrics ->
-//                            when(resourceLyrics){
-//                                is Resource.Success -> {
-//                                    if (resourceLyrics.data != null) {
-//                                        viewModel.insertLyrics(resourceLyrics.data.toLyricsEntity(it.videoId))
-//                                        viewModel.parseLyrics(resourceLyrics.data)
-//                                    }
-//                                }
-//                                is Resource.Error -> {
-//                                    viewModel.getSavedLyrics(it.videoId)
-//                                }
-//                            }
-//                        }
-//                        lifecycleScope.launch {
-//                            repeatOnLifecycle(Lifecycle.State.CREATED) {
-//                                viewModel.firstTrackAdded.collect { added ->
-//                                    if (added && type == Config.PLAYLIST_CLICK) {
-//                                        viewModel.changeFirstTrackAddedToFalse()
-////                                        viewModel.getFormat(it.videoId)
-//                                        if (index == null) {
-//                                            fetchSourceFromQueue(downloaded = downloaded ?: 0)
-//                                        } else {
-//                                            fetchSourceFromQueue(index!!, downloaded = downloaded ?: 0)
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
                 }
             }
 
@@ -464,24 +334,6 @@ class NowPlayingFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-//            val job7 = launch {
-//                viewModel.songTransitions.collectLatest { isChanged ->
-//                    if (isChanged) {
-//                        val song = viewModel.getCurrentMediaItem()
-//                        if (song != null) {
-//                            Log.i("Now Playing Fragment", "Bên dưới")
-//                            Log.d("Song Transition", "Song Transition")
-//                            videoId = viewModel.videoId.value
-//                            binding.ivArt.setImageResource(0)
-//                            binding.loadingArt.visibility = View.VISIBLE
-//                            Log.d("Check Lyrics", viewModel._lyrics.value?.data.toString())
-//                            updateUIfromCurrentMediaItem(song)
-//                            simpleMediaServiceHandler.setCurrentSongIndex(viewModel.getCurrentMediaItemIndex())
-//                            viewModel.changeSongTransitionToFalse()
-//                        }
-//                    }
-//                }
-//            }
             repeatOnLifecycle(Lifecycle.State.CREATED) {
 
                 val job7 =
@@ -510,10 +362,6 @@ class NowPlayingFragment : Fragment() {
                 val job1 = launch {
                     viewModel.progressString.collect {
                         binding.tvCurrentTime.text = it
-//                        if (viewModel.progress.value * 100 in 0f..100f) {
-//                            binding.progressSong.value = viewModel.progress.value * 100
-////                        songChangeListener.onUpdateProgressBar(viewModel.progress.value * 100)
-//                        }
                     }
                 }
                 val job2 = launch {
@@ -591,34 +439,6 @@ class NowPlayingFragment : Fragment() {
                                         binding.lyricsTextLayout.visibility = View.VISIBLE
                                     }
                                     binding.lyricsLayout.visibility = View.VISIBLE
-//                                    if (temp.nowLyric != null) {
-//                                        binding.tvNowLyrics.visibility = View.VISIBLE
-//                                        binding.tvNowLyrics.text = temp.nowLyric
-//                                    } else {
-//                                        binding.tvNowLyrics.visibility = View.GONE
-//                                    }
-//                                    if (temp.prevLyrics != null) {
-//                                        binding.tvPrevLyrics.visibility = View.VISIBLE
-//                                        if (temp.prevLyrics.size > 1) {
-//                                            val txt = temp.prevLyrics[0] + "\n" + temp.prevLyrics[1]
-//                                            binding.tvPrevLyrics.text = txt
-//                                        } else {
-//                                            binding.tvPrevLyrics.text = temp.prevLyrics[0]
-//                                        }
-//                                    } else {
-//                                        binding.tvPrevLyrics.visibility = View.GONE
-//                                    }
-//                                    if (temp.nextLyric != null) {
-//                                        binding.tvNextLyrics.visibility = View.VISIBLE
-//                                        if (temp.nextLyric.size > 1) {
-//                                            val txt = temp.nextLyric[0] + "\n" + temp.nextLyric[1]
-//                                            binding.tvNextLyrics.text = txt
-//                                        } else {
-//                                            binding.tvNextLyrics.text = temp.nextLyric[0]
-//                                        }
-//                                    } else {
-//                                        binding.tvNextLyrics.visibility = View.GONE
-//                                    }
                                 }
                             }
                         } else {
@@ -714,27 +534,6 @@ class NowPlayingFragment : Fragment() {
                                     Queue.addAll(listWithoutDuplicateElements)
                                     Log.d("Queue", "getRelated: ${Queue.getQueue().size}")
                                     viewModel.addQueueToPlayer()
-//                                if (!requireContext().isMyServiceRunning(FetchQueue::class.java)) {
-//                                    requireActivity().startService(
-//                                        Intent(
-//                                            requireContext(),
-//                                            FetchQueue::class.java
-//                                        )
-//                                    )
-//                                } else {
-//                                    requireActivity().stopService(
-//                                        Intent(
-//                                            requireContext(),
-//                                            FetchQueue::class.java
-//                                        )
-//                                    )
-//                                    requireActivity().startService(
-//                                        Intent(
-//                                            requireContext(),
-//                                            FetchQueue::class.java
-//                                        )
-//                                    )
-//                                }
                                 }
 
                                 is Resource.Error -> {
@@ -747,49 +546,6 @@ class NowPlayingFragment : Fragment() {
                         }
                     }
                 }
-//                val job16 = launch {
-//                    viewModel.firstTrackAdded.collectLatest { added ->
-//                        if (added) {
-//                            when(type) {
-//                                Config.SONG_CLICK -> {
-//                                    viewModel.nowPLaying.first()?.let { getRelated(it.mediaId) }
-//                                    viewModel.changeFirstTrackAddedToFalse()
-//                                }
-//                                Config.SHARE -> {
-//                                    viewModel.nowPLaying.first()?.let { getRelated(it.mediaId) }
-//                                    viewModel.changeFirstTrackAddedToFalse()
-//                                }
-//                                Config.VIDEO_CLICK -> {
-//
-////                                        viewModel.getFormat(it.videoId)
-//                                    viewModel.nowPLaying.first()?.let { getRelated(it.mediaId) }
-//                                    viewModel.changeFirstTrackAddedToFalse()
-//                                }
-//                                Config.ALBUM_CLICK -> {
-//                                    if (index == null) {
-////                                        fetchSourceFromQueue(downloaded = downloaded ?: 0)
-//                                        viewModel.loadPlaylistOrAlbum(downloaded = downloaded ?: 0)
-//                                    } else {
-////                                        fetchSourceFromQueue(index!!, downloaded = downloaded ?: 0)
-//                                        viewModel.loadPlaylistOrAlbum(downloaded = downloaded ?: 0, index = index)
-//                                    }
-//
-//                                    viewModel.changeFirstTrackAddedToFalse()
-//                                }
-//                                Config.PLAYLIST_CLICK -> {
-//                                    if (index == null) {
-////                                        fetchSourceFromQueue(downloaded = downloaded ?: 0)
-//                                        viewModel.loadPlaylistOrAlbum(downloaded = downloaded ?: 0)
-//                                    } else {
-////                                        fetchSourceFromQueue(index!!, downloaded = downloaded ?: 0)
-//                                        viewModel.loadPlaylistOrAlbum(downloaded = downloaded ?: 0, index = index)
-//                                    }
-//                                    viewModel.changeFirstTrackAddedToFalse()
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
                 val job16 = launch {
                     viewModel.translateLyrics.collect {
                         lyricsAdapter.updateTranslatedLyrics(it)
@@ -817,7 +573,7 @@ class NowPlayingFragment : Fragment() {
                         }
                     }
                 }
-                job1.join()
+              job1.join()
                 job2.join()
                 job3.join()
                 job4.join()
@@ -836,6 +592,7 @@ class NowPlayingFragment : Fragment() {
                 job18.join()
             }
         }
+
         binding.btFull.setOnClickListener {
             if (binding.btFull.text == getString(R.string.show)) {
                 binding.btFull.text = getString(R.string.hide)
@@ -862,29 +619,6 @@ class NowPlayingFragment : Fragment() {
             isFullScreen = true
             findNavController().navigateSafe(R.id.action_global_fullscreenFragment)
 
-//                requireActivity().requestedOrientation =
-//                    ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-//                val parent = fullscreen.root.parent as View
-//                parent.fitsSystemWindows = true
-//                val params =
-//                    parent.layoutParams as CoordinatorLayout.LayoutParams
-//                val behavior = params.behavior
-//                if (behavior != null && behavior is BottomSheetBehavior<*>) {
-//                    behavior.peekHeight = binding.root.height
-//                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
-//                    behavior.addBottomSheetCallback(object : BottomSheetCallback() {
-//                        override fun onStateChanged( bottomSheet: View, newState: Int) {
-//                            if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-//                                behavior.state = BottomSheetBehavior.STATE_EXPANDED
-//                            }
-//                        }
-//
-//                        override fun onSlide(bottomSheet: View, slideOffset: Float) {}
-//                    })
-//                }
-
-
-//            }
         }
         binding.playerLayout.setOnClickListener {
             val shortAnimationDuration =
@@ -1355,6 +1089,7 @@ class NowPlayingFragment : Fragment() {
         Log.w("CHECK NOW PLAYING IN QUEUE", "updateUIfromQueueNowPlaying: ${Queue.getNowPlaying()}")
         Log.d("CHECK QUEUE", "updateUIfromQueueNowPlaying: ${Queue.getQueue()}")
         val nowPlaying = Queue.getNowPlaying()
+        Log.i("TAG", "PLAY MUSIC HOME67")
         if (nowPlaying != null) {
 //            viewModel.getFormat(nowPlaying.videoId)
             binding.ivArt.setImageResource(0)
@@ -1450,84 +1185,6 @@ class NowPlayingFragment : Fragment() {
                     }
                 )
             }
-//            val request = ImageRequest.Builder(requireContext())
-//                .data(Uri.parse(thumbUrl))
-//                .diskCacheKey(nowPlaying.videoId)
-//                .diskCachePolicy(CachePolicy.ENABLED)
-//                .target(
-//                    onStart = {
-//                        binding.ivArt.setImageResource(0)
-//                        binding.loadingArt.visibility = View.VISIBLE
-//                        Log.d("Update UI", "onStart: ")
-//                    },
-//                    onSuccess = { result ->
-//                        binding.ivArt.visibility = View.VISIBLE
-//                        binding.loadingArt.visibility = View.GONE
-//                        binding.ivArt.setImageDrawable(result)
-//                        Log.d("Update UI", "onSuccess: ")
-//                        if (viewModel.gradientDrawable.value != null) {
-//                            viewModel.gradientDrawable.observe(viewLifecycleOwner) {
-//                                binding.rootLayout.background = it
-////                            viewModel.lyricsBackground.observe(viewLifecycleOwner, Observer { color ->
-////                                binding.lyricsLayout.setCardBackgroundColor(color)
-////                                Log.d("Update UI", "Lyrics: $color")
-////                                updateStatusBarColor(color)
-////                            })
-//                                viewModel.lyricsBackground.value?.let { it1 ->
-//                                    binding.lyricsLayout.setCardBackgroundColor(
-//                                        it1
-//                                    )
-//                                }
-//                            }
-//                            Log.d("Update UI", "updateUI: NULL")
-//                        }
-////                        songChangeListener.onNowPlayingSongChange()
-//                    },
-//                )
-//                .transformations(object : Transformation {
-//                    override val cacheKey: String
-//                        get() = nowPlaying.videoId
-//
-//                    override suspend fun transform(input: Bitmap, size: Size): Bitmap {
-//                        val p = Palette.from(input).generate()
-//                        val defaultColor = 0x000000
-//                        var startColor = p.getDarkVibrantColor(defaultColor)
-//                        Log.d("Check Start Color", "transform: $startColor")
-//                        if (startColor == defaultColor) {
-//                            startColor = p.getDarkMutedColor(defaultColor)
-//                            if (startColor == defaultColor) {
-//                                startColor = p.getVibrantColor(defaultColor)
-//                                if (startColor == defaultColor) {
-//                                    startColor = p.getMutedColor(defaultColor)
-//                                    if (startColor == defaultColor) {
-//                                        startColor = p.getLightVibrantColor(defaultColor)
-//                                        if (startColor == defaultColor) {
-//                                            startColor = p.getLightMutedColor(defaultColor)
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                            Log.d("Check Start Color", "transform: $startColor")
-//                        }
-////                    val centerColor = 0x6C6C6C
-//                        val endColor = 0x1b1a1f
-//                        val gd = GradientDrawable(
-//                            GradientDrawable.Orientation.TOP_BOTTOM,
-//                            intArrayOf(startColor, endColor)
-//                        )
-//                        gd.cornerRadius = 0f
-//                        gd.gradientType = GradientDrawable.LINEAR_GRADIENT
-//                        gd.gradientRadius = 0.5f
-//                        gd.alpha = 150
-//                        val bg = ColorUtils.setAlphaComponent(startColor, 230)
-//                        viewModel.gradientDrawable.postValue(gd)
-//                        viewModel.lyricsBackground.postValue(bg)
-//                        return input
-//                    }
-//
-//                })
-//                .build()
-//            ImageLoader(requireContext()).enqueue(request)
             binding.topAppBar.subtitle = from
             viewModel.from.postValue(from)
             binding.tvSongTitle.text = nowPlaying.title
@@ -1646,92 +1303,6 @@ class NowPlayingFragment : Fragment() {
                     }
                 })
             }
-//            val request = ImageRequest.Builder(requireContext())
-//                .data(mediaItem.mediaMetadata.artworkUri)
-//                .diskCacheKey(mediaItem.mediaId)
-//                .diskCachePolicy(CachePolicy.ENABLED)
-//                .target(
-//                    onStart = {
-//                        binding.ivArt.setImageResource(0)
-//                        binding.loadingArt.visibility = View.VISIBLE
-//                        Log.d("Update UI", "onStart: ")
-//                    },
-//                    onSuccess = { result ->
-//                        binding.ivArt.visibility = View.VISIBLE
-//                        binding.loadingArt.visibility = View.GONE
-//                        binding.ivArt.setImageDrawable(result)
-//                        Log.d("Update UI", "onSuccess: ")
-//                        if (viewModel.gradientDrawable.value != null) {
-//                            viewModel.gradientDrawable.observe(viewLifecycleOwner) {
-//                                if (it != null) {
-//                                    val start = binding.rootLayout.background
-//                                    val transition = TransitionDrawable(arrayOf(start, it))
-//                                    binding.rootLayout.background = transition
-//                                    transition.isCrossFadeEnabled = true
-//                                    transition.startTransition(500)
-//                                }
-////                            viewModel.lyricsBackground.observe(viewLifecycleOwner, Observer { color ->
-////                                binding.lyricsLayout.setCardBackgroundColor(color)
-////                                Log.d("Update UI", "Lyrics: $color")
-////                                updateStatusBarColor(color)
-////                            })
-//                                viewModel.lyricsBackground.value?.let { it1 ->
-//                                    binding.lyricsLayout.setCardBackgroundColor(
-//                                        it1
-//                                    )
-//                                }
-//                            }
-//                            Log.d("Update UI", "updateUI: NULL")
-//                        }
-////                        songChangeListener.onNowPlayingSongChange()
-//                    },
-//                )
-//                .diskCacheKey(mediaItem.mediaMetadata.artworkUri.toString())
-//                .diskCachePolicy(CachePolicy.ENABLED)
-//                .transformations(object : Transformation {
-//                    override val cacheKey: String
-//                        get() = "paletteArtTransformer"
-//
-//                    override suspend fun transform(input: Bitmap, size: Size): Bitmap {
-//                        val p = Palette.from(input).generate()
-//                        val defaultColor = 0x000000
-//                        var startColor = p.getDarkVibrantColor(defaultColor)
-//                        Log.d("Check Start Color", "transform: $startColor")
-//                        if (startColor == defaultColor) {
-//                            startColor = p.getDarkMutedColor(defaultColor)
-//                            if (startColor == defaultColor) {
-//                                startColor = p.getVibrantColor(defaultColor)
-//                                if (startColor == defaultColor) {
-//                                    startColor = p.getMutedColor(defaultColor)
-//                                    if (startColor == defaultColor) {
-//                                        startColor = p.getLightVibrantColor(defaultColor)
-//                                        if (startColor == defaultColor) {
-//                                            startColor = p.getLightMutedColor(defaultColor)
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                            Log.d("Check Start Color", "transform: $startColor")
-//                        }
-////                    val centerColor = 0x6C6C6C
-//                        val endColor = 0x1b1a1f
-//                        val gd = GradientDrawable(
-//                            GradientDrawable.Orientation.TOP_BOTTOM,
-//                            intArrayOf(startColor, endColor)
-//                        )
-//                        gd.cornerRadius = 0f
-//                        gd.gradientType = GradientDrawable.LINEAR_GRADIENT
-//                        gd.gradientRadius = 0.5f
-//                        gd.alpha = 150
-//                        val bg = ColorUtils.setAlphaComponent(startColor, 230)
-//                        viewModel.gradientDrawable.postValue(gd)
-//                        viewModel.lyricsBackground.postValue(bg)
-//                        return input
-//                    }
-//
-//                })
-//                .build()
-//            ImageLoader(requireContext()).enqueue(request)
         }
     }
 

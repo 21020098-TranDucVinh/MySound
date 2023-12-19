@@ -103,6 +103,17 @@
         app:popEnterAnim="@anim/bottom_to_top"
         app:popExitAnim="@anim/top_to_bottom" />
     <fragment
+        android:id="@+id/myAlbumFragment"
+        android:name="uet.app.mysound.ui.fragment.other.MyAlbumFragment"
+        android:label="MyAlbumFragment" />
+    <action
+        android:id="@+id/action_global_myAlbumFragment"
+        app:destination="@id/myAlbumFragment"
+        app:enterAnim="@anim/bottom_to_top"
+        app:exitAnim="@anim/top_to_bottom"
+        app:popEnterAnim="@anim/bottom_to_top"
+        app:popExitAnim="@anim/top_to_bottom" />
+    <fragment
         android:id="@+id/playlistFragment"
         android:name="uet.app.mysound.ui.fragment.other.PlaylistFragment"
         android:label="PlaylistFragment" />

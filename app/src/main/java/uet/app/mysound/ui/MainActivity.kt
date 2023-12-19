@@ -63,6 +63,8 @@ import uet.app.mysound.databinding.ActivityMainBinding
 import uet.app.mysound.extension.isMyServiceRunning
 import uet.app.mysound.extension.navigateSafe
 import uet.app.mysound.extension.setTextAnimation
+import uet.app.mysound.myAPI.AppData
+import uet.app.mysound.myAPI.User.LoginResponse
 import uet.app.mysound.service.SimpleMediaService
 import uet.app.mysound.service.SimpleMediaServiceHandler
 import uet.app.mysound.viewModel.SharedViewModel
@@ -75,7 +77,9 @@ import javax.inject.Inject
 @UnstableApi
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
+    companion object {
+        var loginResponse: LoginResponse? = null
+    }
     private lateinit var binding: ActivityMainBinding
     val viewModel by viewModels<SharedViewModel>()
     private var action: String? = null
@@ -243,6 +247,15 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         Log.d("MainActivity", "onResume: ")
+        loginResponse = AppData.getInstance().loginResponse
+        if (loginResponse != null) {
+            val token = loginResponse!!.token
+            val audioToken = loginResponse!!.audioToken
+            Log.i("TAG", "TOKEN_124IU_ $token")
+        }
+        else {
+            Log.i("TAG", "TOKEN_124IU_ NULL")
+        }
     }
 
     @UnstableApi
@@ -255,6 +268,7 @@ class MainActivity : AppCompatActivity() {
             viewModel.simpleMediaServiceHandler?.coroutineScope = lifecycleScope
             runCollect()
         }
+
         startMusicService()
         Log.d("MainActivity", "onCreate: ")
         action = intent.action
