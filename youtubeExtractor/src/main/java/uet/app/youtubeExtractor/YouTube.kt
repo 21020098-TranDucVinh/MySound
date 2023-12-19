@@ -569,6 +569,7 @@ object YouTube {
         videoId: String,
         playlistId: String? = null
     ): Result<Triple<String, PlayerResponse, MediaType>> = runCatching {
+        Log.i("TAG", "YOUTUBEMUSIC player(UUU)")
         val ytScrape = ytMusic.scrapeYouTube(videoId).body<String>()
         var response = ""
         var data = ""

@@ -31,6 +31,10 @@ class HomeViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
     private val _homeItemList: MutableLiveData<Resource<ArrayList<HomeItem>>> = MutableLiveData()
     val homeItemList: LiveData<Resource<ArrayList<HomeItem>>> = _homeItemList
+
+    private val _homeItemListFromMySound: MutableLiveData<Resource<ArrayList<HomeItem>>> = MutableLiveData()
+    val homeItemListFromMySound: LiveData<Resource<ArrayList<HomeItem>>> = _homeItemListFromMySound
+
     private val _exploreMoodItem: MutableLiveData<Resource<Mood>> = MutableLiveData()
     val exploreMoodItem: LiveData<Resource<Mood>> = _exploreMoodItem
     private val _accountInfo: MutableLiveData<Pair<String?, String?>?> = MutableLiveData()
@@ -62,7 +66,6 @@ class HomeViewModel @Inject constructor(
                 getHomeItemList()
             }
         }
-
     }
 
     fun getHomeItemList() {
@@ -76,15 +79,15 @@ class HomeViewModel @Inject constructor(
 //                    SUPPORTED_LANGUAGE.serverCodes[SUPPORTED_LANGUAGE.codes.indexOf(language)]
 //                ),
                 mainRepository.getHomeData(),
-                mainRepository.getMoodAndMomentsData(),
-            ) { home, exploreMood ->
-                Pair(home, exploreMood)
+                mainRepository.getHomeDataFromMySound(),
+            ) { home, homeItemListFromMySound ->
+                Pair(home, homeItemListFromMySound)
             }.collect { result ->
                 val home = result.first
                 Log.d("home size", "${home.data?.size}")
-                val exploreMoodItem = result.second
+                val homeItemListFromMySound = result.second
                 _homeItemList.value = home
-                _exploreMoodItem.value = exploreMoodItem
+                _homeItemListFromMySound.value = homeItemListFromMySound
 
                 Log.d("HomeViewModel", "getHomeItemList: $result")
                 loading.value = false
@@ -95,12 +98,12 @@ class HomeViewModel @Inject constructor(
                 }
                 when {
                     home is Resource.Error -> home.message
-                    exploreMoodItem is Resource.Error -> exploreMoodItem.message
+                    homeItemListFromMySound is Resource.Error -> homeItemListFromMySound.message
                     else -> null
                 }?.let {
                     showSnackBarErrorState.emit(it)
                     Log.w("Error", "getHomeItemList: ${home.message}")
-                    Log.w("Error", "getHomeItemList: ${exploreMoodItem.message}")
+                    Log.w("Error", "getHomeItemList: ${homeItemListFromMySound.message}")
                 }
             }
         }

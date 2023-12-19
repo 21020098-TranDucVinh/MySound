@@ -155,6 +155,8 @@ class HomeItemContentAdapter(private var listContent: ArrayList<Content>, privat
                 ARTIST
             else
                 ALBUM
+        } else if ((temp.album?.id?.toIntOrNull() ?: 0) < 100) {
+            ALBUM
         }
         else{
             SONG

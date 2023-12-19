@@ -1,11 +1,11 @@
 package uet.app.mysound.ui.fragment.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.widget.ListPopupWindow
 import androidx.fragment.app.Fragment
@@ -23,6 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.insetter.applyInsetter
 import kotlinx.coroutines.launch
 import uet.app.mysound.R
+import uet.app.mysound.adapter.home.FromMySoundAdapter
 import uet.app.mysound.adapter.home.GenreAdapter
 import uet.app.mysound.adapter.home.HomeItemAdapter
 import uet.app.mysound.adapter.home.MoodsMomentAdapter
@@ -34,6 +35,7 @@ import uet.app.mysound.data.queue.Queue
 import uet.app.mysound.databinding.FragmentHomeBinding
 import uet.app.mysound.extension.navigateSafe
 import uet.app.mysound.extension.toTrack
+import uet.app.mysound.myAPI.User.LoginActivity
 import uet.app.mysound.utils.Resource
 import uet.app.mysound.viewModel.HomeViewModel
 import java.text.SimpleDateFormat
@@ -46,12 +48,140 @@ class HomeFragment : Fragment() {
 
     private val viewModel by viewModels<HomeViewModel>()
     private lateinit var mAdapter: HomeItemAdapter
+    private lateinit var mAdapterFromMySound: HomeItemAdapter
+
     private lateinit var moodsMomentAdapter: MoodsMomentAdapter
     private lateinit var genreAdapter: GenreAdapter
     private lateinit var quickPicksAdapter: QuickPicksAdapter
 
-    private val items = arrayOf("US", "ZZ", "AR", "AU", "AT", "BE", "BO", "BR", "CA", "CL", "CO", "CR", "CZ", "DK", "DO", "EC", "EG", "SV", "EE", "FI", "FR", "DE", "GT", "HN", "HU", "IS", "IN", "ID", "IE", "IL", "IT", "JP", "KE", "LU", "MX", "NL", "NZ", "NI", "NG", "NO", "PA", "PY", "PE", "PL", "PT", "RO", "RU", "SA", "RS", "ZA", "KR", "ES", "SE", "CH", "TZ", "TR", "UG", "UA", "AE", "GB", "UY", "ZW")
-    private val itemsData = arrayOf("United States", "Global", "Argentina", "Australia", "Austria", "Belgium", "Bolivia", "Brazil", "Canada", "Chile", "Colombia", "Costa Rica", "Czech Republic", "Denmark", "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Estonia", "Finland", "France", "Germany", "Guatemala", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Ireland", "Israel", "Italy", "Japan", "Kenya", "Luxembourg", "Mexico", "Netherlands", "New Zealand", "Nicaragua", "Nigeria", "Norway", "Panama", "Paraguay", "Peru", "Poland", "Portugal", "Romania", "Russia", "Saudi Arabia", "Serbia", "South Africa", "South Korea", "Spain", "Sweden", "Switzerland", "Tanzania", "Turkey", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "Uruguay", "Zimbabwe")
+    private val items = arrayOf(
+        "US",
+        "ZZ",
+        "AR",
+        "AU",
+        "AT",
+        "BE",
+        "BO",
+        "BR",
+        "CA",
+        "CL",
+        "CO",
+        "CR",
+        "CZ",
+        "DK",
+        "DO",
+        "EC",
+        "EG",
+        "SV",
+        "EE",
+        "FI",
+        "FR",
+        "DE",
+        "GT",
+        "HN",
+        "HU",
+        "IS",
+        "IN",
+        "ID",
+        "IE",
+        "IL",
+        "IT",
+        "JP",
+        "KE",
+        "LU",
+        "MX",
+        "NL",
+        "NZ",
+        "NI",
+        "NG",
+        "NO",
+        "PA",
+        "PY",
+        "PE",
+        "PL",
+        "PT",
+        "RO",
+        "RU",
+        "SA",
+        "RS",
+        "ZA",
+        "KR",
+        "ES",
+        "SE",
+        "CH",
+        "TZ",
+        "TR",
+        "UG",
+        "UA",
+        "AE",
+        "GB",
+        "UY",
+        "ZW"
+    )
+    private val itemsData = arrayOf(
+        "United States",
+        "Global",
+        "Argentina",
+        "Australia",
+        "Austria",
+        "Belgium",
+        "Bolivia",
+        "Brazil",
+        "Canada",
+        "Chile",
+        "Colombia",
+        "Costa Rica",
+        "Czech Republic",
+        "Denmark",
+        "Dominican Republic",
+        "Ecuador",
+        "Egypt",
+        "El Salvador",
+        "Estonia",
+        "Finland",
+        "France",
+        "Germany",
+        "Guatemala",
+        "Honduras",
+        "Hungary",
+        "Iceland",
+        "India",
+        "Indonesia",
+        "Ireland",
+        "Israel",
+        "Italy",
+        "Japan",
+        "Kenya",
+        "Luxembourg",
+        "Mexico",
+        "Netherlands",
+        "New Zealand",
+        "Nicaragua",
+        "Nigeria",
+        "Norway",
+        "Panama",
+        "Paraguay",
+        "Peru",
+        "Poland",
+        "Portugal",
+        "Romania",
+        "Russia",
+        "Saudi Arabia",
+        "Serbia",
+        "South Africa",
+        "South Korea",
+        "Spain",
+        "Sweden",
+        "Switzerland",
+        "Tanzania",
+        "Turkey",
+        "Uganda",
+        "Ukraine",
+        "United Arab Emirates",
+        "United Kingdom",
+        "Uruguay",
+        "Zimbabwe"
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,6 +199,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mAdapter = HomeItemAdapter(arrayListOf(), requireContext(), findNavController())
+        mAdapterFromMySound = HomeItemAdapter(arrayListOf(), requireContext(), findNavController())
         moodsMomentAdapter = MoodsMomentAdapter(arrayListOf())
         genreAdapter = GenreAdapter(arrayListOf())
         quickPicksAdapter = QuickPicksAdapter(arrayListOf(), requireContext(), findNavController())
@@ -99,8 +230,14 @@ class HomeFragment : Fragment() {
         Log.d("Date", "onCreateView: $date")
         binding.rvHome.apply {
             adapter = mAdapter
+
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        }
+        binding.rvFromMySound.apply {
+            adapter = mAdapterFromMySound
+            layoutManager =LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
         }
         binding.rvMoodsMoment.apply {
             adapter = moodsMomentAdapter
@@ -151,6 +288,7 @@ class HomeFragment : Fragment() {
         })
         binding.swipeRefreshLayout.setOnRefreshListener {
             fetchHomeData()
+            // lay du lieu
         }
         val listPopup = ListPopupWindow(
             requireContext(),
@@ -166,7 +304,10 @@ class HomeFragment : Fragment() {
                 }
 
                 R.id.home_fragment_menu_item_settings -> {
-                    // findNavController().navigateSafe(R.id.action_bottom_navigation_item_home_to_settingsFragment)
+                    val intent = Intent(requireContext(), LoginActivity::class.java)
+                    startActivity(intent)
+
+//                    findNavController().navigateSafe(R.id.logInFragment)
                     true
                 }
 
@@ -215,6 +356,25 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+
+        viewModel.homeItemListFromMySound.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is Resource.Success -> {
+                    response.data?.let { homeItemList ->
+                        val homeItemListWithoutQuickPicks = arrayListOf<HomeItem>()
+                        homeItemListWithoutQuickPicks.addAll(homeItemList)
+                        mAdapterFromMySound.updateData(homeItemListWithoutQuickPicks)
+                    }
+                    showData()
+                }
+
+                is Resource.Error -> {
+                    showData()
+                }
+            }
+        }
+
+//
         viewModel.exploreMoodItem.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is Resource.Success -> {
@@ -224,6 +384,7 @@ class HomeFragment : Fragment() {
                         Log.d("Moods & Moment", "onViewCreated: ${exploreMoodItem.moodsMoments}")
                         Log.d("Genre", "onViewCreated: ${exploreMoodItem.moodsMoments}")
                     }
+                    showData()
                 }
 
                 is Resource.Error -> {
@@ -232,7 +393,7 @@ class HomeFragment : Fragment() {
             }
         }
         binding.accountLayout.visibility = View.GONE
-        viewModel.accountInfo.observe(viewLifecycleOwner) {pair ->
+        viewModel.accountInfo.observe(viewLifecycleOwner) { pair ->
             if (pair != null) {
                 val accountName = pair.first
                 val accountThumbUrl = pair.second
@@ -258,7 +419,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-
 
     }
 

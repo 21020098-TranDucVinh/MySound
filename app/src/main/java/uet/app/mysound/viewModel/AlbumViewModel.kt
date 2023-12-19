@@ -66,7 +66,7 @@ class AlbumViewModel @Inject constructor(
     fun browseAlbum(browseId: String){
         loading.value = true
         viewModelScope.launch {
-            mainRepository.getAlbumData(browseId).collect { values ->
+            mainRepository.getAlbumDataFromMySound(browseId).collect { values ->
                 _albumBrowse.value = values
             }
             withContext(Dispatchers.Main){

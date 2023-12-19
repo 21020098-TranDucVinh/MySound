@@ -547,11 +547,14 @@ class SharedViewModel @Inject constructor(private var dataStoreManager: DataStor
     }
     @UnstableApi
     fun loadMediaItemFromTrack(track: Track, type: String, index: Int? = null) {
+        Log.i("TAG", "loadMediaItemFromTrack");
         quality = runBlocking { dataStoreManager.quality.first() }
         viewModelScope.launch {
             simpleMediaServiceHandler?.clearMediaItems()
             var uri = ""
+            // chen bai hat o day
             mainRepository.insertSong(track.toSongEntity())
+            // song lay ra o day
             mainRepository.getSongById(track.videoId)
                 .collect { songEntity ->
                     _songDB.value = songEntity
@@ -612,6 +615,7 @@ class SharedViewModel @Inject constructor(private var dataStoreManager: DataStor
                             thumbUrl = Regex("([wh])120").replace(thumbUrl, "$1544")
                         }
                         Log.d("Check URI", uri)
+                        // fixme: dùng để lấy dữ liệu từ track ra media
                         simpleMediaServiceHandler?.addMediaItem(
                             MediaItem.Builder()
                                 .setUri(track.videoId)

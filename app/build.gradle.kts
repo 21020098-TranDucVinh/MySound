@@ -152,6 +152,15 @@ dependencies {
 
     implementation("com.daimajia.swipelayout:library:1.2.0@aar")
 
+    //Retrofit 2
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.squareup.retrofit2:adapter-rxjava3:2.9.0")
+    //OkHttp
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
+
+    implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
+
 
     //Custom Activity On Crash
     implementation ("cat.ereza:customactivityoncrash:2.4.0")

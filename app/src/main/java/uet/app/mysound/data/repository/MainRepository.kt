@@ -46,11 +46,15 @@ import uet.app.mysound.data.model.searchResult.songs.Artist
 import uet.app.mysound.data.model.searchResult.songs.SongsResult
 import uet.app.mysound.data.model.searchResult.songs.Thumbnail
 import uet.app.mysound.data.model.searchResult.videos.VideosResult
+import uet.app.mysound.data.parser.MySound.fetchDataFromUrl
 import uet.app.mysound.data.parser.parseAlbumData
+import uet.app.mysound.data.parser.parseAlbumDataFromMySound
+//import uet.app.mysound.data.parser.parseAlbumDataFromMySound
 import uet.app.mysound.data.parser.parseArtistData
 import uet.app.mysound.data.parser.parseGenreObject
 import uet.app.mysound.data.parser.parseLibraryPlaylist
 import uet.app.mysound.data.parser.parseMixedContent
+import uet.app.mysound.data.parser.parseMixedContentMySound
 import uet.app.mysound.data.parser.parseMoodsMomentObject
 import uet.app.mysound.data.parser.parsePlaylistData
 import uet.app.mysound.data.parser.parsePodcast
@@ -94,22 +98,45 @@ import javax.inject.Singleton
 class MainRepository @Inject constructor(private val localDataSource: LocalDataSource, private val dataStoreManager: DataStoreManager, @ApplicationContext private val context: Context) {
     //Database
     suspend fun getSearchHistory(): Flow<List<SearchHistory>> =
-        flow { emit(localDataSource.getSearchHistory()) }.flowOn(Dispatchers.IO)
+        flow {
+            Log.i("TAG", "QUERRY D*9B getSearchHistory")
+            emit(localDataSource.getSearchHistory())
+
+        }.flowOn(Dispatchers.IO)
 
     suspend fun insertSearchHistory(searchHistory: SearchHistory) =
-        withContext(Dispatchers.IO) { localDataSource.insertSearchHistory(searchHistory) }
+        withContext(Dispatchers.IO) {
+            Log.i("TAG", "QUERRY D*9B insertSearchHistory")
+
+            localDataSource.insertSearchHistory(searchHistory)
+        }
 
     suspend fun deleteSearchHistory() =
-        withContext(Dispatchers.IO) { localDataSource.deleteSearchHistory() }
+        withContext(Dispatchers.IO) {
+            Log.i("TAG", "QUERRY D*9B deleteSearchHistory")
+
+            localDataSource.deleteSearchHistory()
+        }
 
     suspend fun getAllSongs(): Flow<List<SongEntity>> =
-        flow { emit(localDataSource.getAllSongs()) }.flowOn(Dispatchers.IO)
+        flow {
+            Log.i("TAG", "QUERRY D*9B getAllSongs")
+
+            emit(localDataSource.getAllSongs())
+        }.flowOn(Dispatchers.IO)
 
     suspend fun getSongsByListVideoId(listVideoId: List<String>): Flow<List<SongEntity>> =
-        flow { emit(localDataSource.getSongByListVideoId(listVideoId)) }.flowOn(Dispatchers.IO)
+        flow {
+            Log.i("TAG", "QUERRY D*9B getSongsByListVideoId")
+
+            emit(localDataSource.getSongByListVideoId(listVideoId))
+        }.flowOn(Dispatchers.IO)
 
     suspend fun getDownloadedSongs(): Flow<List<SongEntity>?> =
-        flow { emit(localDataSource.getDownloadedSongs()) }.flowOn(Dispatchers.IO)
+        flow {
+            Log.i("TAG", "QUERRY D*9B getDownloadedSongs")
+            emit(localDataSource.getDownloadedSongs())
+        }.flowOn(Dispatchers.IO)
 
     suspend fun getDownloadingSongs(): Flow<List<SongEntity>?> =
         flow { emit(localDataSource.getDownloadingSongs()) }.flowOn(Dispatchers.IO)
@@ -117,34 +144,70 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
         flow { emit(localDataSource.getPreparingSongs()) }.flowOn(Dispatchers.IO)
 
     suspend fun getLikedSongs(): Flow<List<SongEntity>> =
-        flow { emit(localDataSource.getLikedSongs()) }.flowOn(Dispatchers.IO)
+        flow {
+            Log.i("TAG", "QUERRY D*9B getLikedSongs")
+            emit(localDataSource.getLikedSongs())
+        }.flowOn(Dispatchers.IO)
 
     suspend fun getLibrarySongs(): Flow<List<SongEntity>> =
-        flow { emit(localDataSource.getLibrarySongs()) }.flowOn(Dispatchers.IO)
+        flow {
+            Log.i("TAG", "QUERRY D*9B getLibrarySongs")
+
+            emit(localDataSource.getLibrarySongs())
+        }.flowOn(Dispatchers.IO)
 
     suspend fun getSongById(id: String): Flow<SongEntity?> =
-        flow { emit(localDataSource.getSong(id)) }.flowOn(Dispatchers.IO)
+        flow {
+            emit(localDataSource.getSong(id))
+            Log.i("TAG", "QUERRY D*9B getSongById")
+        }.flowOn(Dispatchers.IO)
 
     suspend fun insertSong(songEntity: SongEntity) =
-        withContext(Dispatchers.IO) { localDataSource.insertSong(songEntity) }
+        withContext(Dispatchers.IO) {
+            Log.i("TAG", "QUERRY D*9B insertSong")
+
+            localDataSource.insertSong(songEntity)
+        }
 
     suspend fun updateListenCount(videoId: String) =
-        withContext(Dispatchers.IO) { localDataSource.updateListenCount(videoId) }
+        withContext(Dispatchers.IO) {
+            Log.i("TAG", "QUERRY D*9B updateListenCount")
+            localDataSource.updateListenCount(videoId)
+        }
 
     suspend fun updateLikeStatus(videoId: String, likeStatus: Int) =
-        withContext(Dispatchers.Main) { localDataSource.updateLiked(likeStatus, videoId) }
+        withContext(Dispatchers.Main) {
+            Log.i("TAG", "QUERRY D*9B updateLikeStatus")
+
+            localDataSource.updateLiked(likeStatus, videoId)
+        }
 
     suspend fun updateSongInLibrary(inLibrary: LocalDateTime, videoId: String) =
-        withContext(Dispatchers.Main) { localDataSource.updateSongInLibrary(inLibrary, videoId) }
+        withContext(Dispatchers.Main) {
+            Log.i("TAG", "QUERRY D*9B updateSongInLibrary")
+
+            localDataSource.updateSongInLibrary(inLibrary, videoId)
+        }
 
     suspend fun updateDurationSeconds(durationSeconds: Int, videoId: String) =
-        withContext(Dispatchers.Main) { localDataSource.updateDurationSeconds(durationSeconds, videoId) }
+        withContext(Dispatchers.Main) {
+            Log.i("TAG", "QUERRY D*9B updateDurationSeconds")
+
+            localDataSource.updateDurationSeconds(durationSeconds, videoId)
+        }
 
     suspend fun getMostPlayedSongs(): Flow<List<SongEntity>> =
-        flow { emit(localDataSource.getMostPlayedSongs()) }.flowOn(Dispatchers.IO)
+        flow {
+            Log.i("TAG", "QUERRY D*9B getMostPlayedSongs")
+
+            emit(
+                localDataSource.getMostPlayedSongs()
+            )
+        }.flowOn(Dispatchers.IO)
 
     suspend fun updateDownloadState(videoId: String, downloadState: Int) =
         withContext(Dispatchers.Main) {
+            Log.i("TAG", "QUERRY D*9B updateDownloadState")
             localDataSource.updateDownloadState(
                 downloadState,
                 videoId
@@ -152,22 +215,42 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
         }
 
     suspend fun getAllArtists(): Flow<List<ArtistEntity>> =
-        flow { emit(localDataSource.getAllArtists()) }.flowOn(Dispatchers.IO)
+        flow {
+            Log.i("TAG", "QUERRY D*9B getAllArtists")
+
+            emit(localDataSource.getAllArtists())
+        }.flowOn(Dispatchers.IO)
 
     suspend fun getArtistById(id: String): Flow<ArtistEntity> =
-        flow { emit(localDataSource.getArtist(id)) }.flowOn(Dispatchers.IO)
+        flow {
+            Log.i("TAG", "QUERRY D*9B getArtistById")
+
+            emit(localDataSource.getArtist(id))
+        }.flowOn(Dispatchers.IO)
 
     suspend fun insertArtist(artistEntity: ArtistEntity) =
-        withContext(Dispatchers.IO) { localDataSource.insertArtist(artistEntity) }
+        withContext(Dispatchers.IO) {
+            Log.i("TAG", "QUERRY D*9B insertArtist")
+            localDataSource.insertArtist(artistEntity)
+        }
 
     suspend fun updateFollowedStatus(channelId: String, followedStatus: Int) =
-        withContext(Dispatchers.Main) { localDataSource.updateFollowed(followedStatus, channelId) }
+        withContext(Dispatchers.Main) {
+            Log.i("TAG", "QUERRY D*9B updateFollowedStatus")
+            localDataSource.updateFollowed(followedStatus, channelId)
+        }
 
     suspend fun getFollowedArtists(): Flow<List<ArtistEntity>> =
-        flow { emit(localDataSource.getFollowedArtists()) }.flowOn(Dispatchers.IO)
+        flow {
+            Log.i("TAG", "QUERRY D*9B getFollowedArtists")
+
+            emit(localDataSource.getFollowedArtists())
+        }.flowOn(Dispatchers.IO)
 
     suspend fun updateArtistInLibrary(inLibrary: LocalDateTime, channelId: String) =
         withContext(Dispatchers.Main) {
+            Log.i("TAG", "QUERRY D*9B updateArtistInLibrary")
+
             localDataSource.updateArtistInLibrary(
                 inLibrary,
                 channelId
@@ -175,25 +258,45 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
         }
 
     suspend fun getAllAlbums(): Flow<List<AlbumEntity>> =
-        flow { emit(localDataSource.getAllAlbums()) }.flowOn(Dispatchers.IO)
+        flow {
+            Log.i("TAG", "QUERRY D*9B getAllAlbums")
+
+            emit(localDataSource.getAllAlbums())
+        }.flowOn(Dispatchers.IO)
 
     suspend fun getAlbum(id: String): Flow<AlbumEntity> =
-        flow { emit(localDataSource.getAlbum(id)) }.flowOn(Dispatchers.IO)
+        flow {
+            Log.i("TAG", "QUERRY D*9B getAlbum")
+            emit(localDataSource.getAlbum(id))
+        }.flowOn(Dispatchers.IO)
 
     suspend fun getLikedAlbums(): Flow<List<AlbumEntity>> =
-        flow { emit(localDataSource.getLikedAlbums()) }.flowOn(Dispatchers.IO)
+        flow {
+            Log.i("TAG", "QUERRY D*9B getLikedAlbums")
+
+            emit(localDataSource.getLikedAlbums())
+        }.flowOn(Dispatchers.IO)
 
     suspend fun insertAlbum(albumEntity: AlbumEntity) =
-        withContext(Dispatchers.IO) { localDataSource.insertAlbum(albumEntity) }
+        withContext(Dispatchers.IO) {
+            Log.i("TAG", "QUERRY D*9B insertAlbum")
+            localDataSource.insertAlbum(albumEntity)
+        }
 
     suspend fun updateAlbumLiked(albumId: String, likeStatus: Int) =
-        withContext(Dispatchers.Main) { localDataSource.updateAlbumLiked(likeStatus, albumId) }
+        withContext(Dispatchers.Main) {
+            Log.i("TAG", "QUERRY D*9B updateAlbumLiked")
+
+            localDataSource.updateAlbumLiked(likeStatus, albumId)
+        }
 
     suspend fun updateAlbumInLibrary(inLibrary: LocalDateTime, albumId: String) =
         withContext(Dispatchers.Main) { localDataSource.updateAlbumInLibrary(inLibrary, albumId) }
 
     suspend fun updateAlbumDownloadState(albumId: String, downloadState: Int) =
         withContext(Dispatchers.Main) {
+            Log.i("TAG", "QUERRY D*9B updateAlbumDownloadState")
+
             localDataSource.updateAlbumDownloadState(
                 downloadState,
                 albumId
@@ -204,19 +307,38 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
         flow { emit(localDataSource.getAllPlaylists()) }.flowOn(Dispatchers.IO)
 
     suspend fun getPlaylist(id: String): Flow<PlaylistEntity?> =
-        flow { emit(localDataSource.getPlaylist(id)) }.flowOn(Dispatchers.IO)
+        flow {
+            Log.i("TAG", "QUERRY D*9B getPlaylist")
+
+            emit(localDataSource.getPlaylist(id))
+        }.flowOn(Dispatchers.IO)
 
     suspend fun getLikedPlaylists(): Flow<List<PlaylistEntity>> =
-        flow { emit(localDataSource.getLikedPlaylists()) }.flowOn(Dispatchers.IO)
+        flow {
+            Log.i("TAG", "QUERRY D*9B getLikedPlaylists")
+
+            emit(localDataSource.getLikedPlaylists())
+        }.flowOn(Dispatchers.IO)
 
     suspend fun insertPlaylist(playlistEntity: PlaylistEntity) =
-        withContext(Dispatchers.IO) { localDataSource.insertPlaylist(playlistEntity) }
+        withContext(Dispatchers.IO) {
+            Log.i("TAG", "QUERRY D*9B insertPlaylist")
+
+            localDataSource.insertPlaylist(playlistEntity)
+        }
 
     suspend fun insertRadioPlaylist(playlistEntity: PlaylistEntity) =
-        withContext(Dispatchers.IO) { localDataSource.insertRadioPlaylist(playlistEntity) }
+        withContext(Dispatchers.IO) {
+            Log.i("TAG", "QUERRY D*9B insertRadioPlaylist")
+
+            localDataSource.insertRadioPlaylist(playlistEntity)
+        }
 
     suspend fun updatePlaylistLiked(playlistId: String, likeStatus: Int) =
         withContext(Dispatchers.Main) {
+            Log.i("TAG", "QUERRY D*9B updatePlaylistLiked")
+
+
             localDataSource.updatePlaylistLiked(
                 likeStatus,
                 playlistId
@@ -233,6 +355,9 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
 
     suspend fun updatePlaylistDownloadState(playlistId: String, downloadState: Int) =
         withContext(Dispatchers.Main) {
+
+            Log.i("TAG", "QUERRY D*9B updatePlaylistDownloadState")
+
             localDataSource.updatePlaylistDownloadState(
                 downloadState,
                 playlistId
@@ -240,19 +365,34 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
         }
 
     suspend fun getAllLocalPlaylists(): Flow<List<LocalPlaylistEntity>> =
-        flow { emit(localDataSource.getAllLocalPlaylists()) }.flowOn(Dispatchers.IO)
+        flow {
+            Log.i("TAG", "QUERRY D*9B getAllLocalPlaylists")
+
+            emit(localDataSource.getAllLocalPlaylists())
+        }.flowOn(Dispatchers.IO)
 
     suspend fun getLocalPlaylist(id: Long): Flow<LocalPlaylistEntity> =
-        flow { emit(localDataSource.getLocalPlaylist(id)) }.flowOn(Dispatchers.IO)
+        flow {
+
+            Log.i("TAG", "QUERRY D*9B getLocalPlaylist")
+
+            emit(localDataSource.getLocalPlaylist(id))
+        }.flowOn(Dispatchers.IO)
 
     suspend fun insertLocalPlaylist(localPlaylistEntity: LocalPlaylistEntity) =
-        withContext(Dispatchers.IO) { localDataSource.insertLocalPlaylist(localPlaylistEntity) }
+        withContext(Dispatchers.IO) {
+            Log.i("TAG", "QUERRY D*9B insertLocalPlaylist")
+
+            localDataSource.insertLocalPlaylist(localPlaylistEntity)
+        }
 
     suspend fun deleteLocalPlaylist(id: Long) =
         withContext(Dispatchers.IO) { localDataSource.deleteLocalPlaylist(id) }
 
     suspend fun updateLocalPlaylistTitle(title: String, id: Long) =
-        withContext(Dispatchers.IO) { localDataSource.updateLocalPlaylistTitle(title, id) }
+        withContext(Dispatchers.IO) {
+            localDataSource.updateLocalPlaylistTitle(title, id)
+        }
 
     suspend fun updateLocalPlaylistThumbnail(thumbnail: String, id: Long) =
         withContext(Dispatchers.IO) { localDataSource.updateLocalPlaylistThumbnail(thumbnail, id) }
@@ -280,14 +420,23 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
     suspend fun getAllDownloadedPlaylist(): Flow<List<Any>> =
         flow { emit(localDataSource.getAllDownloadedPlaylist()) }.flowOn(Dispatchers.IO)
 
-    suspend fun getRecentSong(limit: Int, offset: Int) =
-        localDataSource.getRecentSongs(limit, offset)
+    suspend fun getRecentSong(limit: Int, offset: Int) = run {
+        println("Fetching recent songs with limit: $limit, offset: $offset")
+        val result = localDataSource.getRecentSongs(limit, offset)
+        Log.i("TAG", "QUERRY D*9B getRecentSong")
+        result  // return result
+    }
 
     suspend fun getSavedLyrics(videoId: String): Flow<LyricsEntity?> =
         flow { emit(localDataSource.getSavedLyrics(videoId)) }.flowOn(Dispatchers.IO)
 
     suspend fun insertLyrics(lyricsEntity: LyricsEntity) =
-        withContext(Dispatchers.IO) { localDataSource.insertLyrics(lyricsEntity) }
+        withContext(Dispatchers.IO) {
+
+            Log.i("TAG", "QUERRY D*9B insertLyrics")
+
+            localDataSource.insertLyrics(lyricsEntity)
+        }
 
     suspend fun insertFormat(format: FormatEntity) =
         withContext(Dispatchers.IO) { localDataSource.insertFormat(format) }
@@ -387,6 +536,23 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
         }
     }.flowOn(Dispatchers.IO)
 
+    suspend fun getHomeDataFromMySound(): Flow<Resource<ArrayList<HomeItem>>> = flow {
+        try {
+            val json = "http://192.168.0.120:8000/data"
+            val data = fetchDataFromUrl(json)
+
+            if (data != null) {
+                val list: ArrayList<HomeItem> = arrayListOf()
+                list.addAll(parseMixedContentMySound(data))
+                Log.i("TAG", " LIST CUA HOME" + list[0].contents.size);
+                emit(Resource.Success<ArrayList<HomeItem>>(list))
+            } else {
+                emit(Resource.Error("Failed to fetch data"))
+            }
+        } catch (error: Exception) {
+            emit(Resource.Error(error.message.toString()))
+        }
+    }.flowOn(Dispatchers.IO)
 
     suspend fun getMoodAndMomentsData(): Flow<Resource<Mood>> = flow {
         runCatching {
@@ -714,12 +880,36 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
         runCatching {
             YouTube.album(browseId, withSongs = true).onSuccess { result ->
                 emit(Resource.Success<AlbumBrowse>(parseAlbumData(result)))
+                Log.i("TAG", "yhanh");
             }.onFailure { e ->
                 Log.d("Album", "Error: ${e.message}")
                 emit(Resource.Error<AlbumBrowse>(e.message.toString()))
             }
         }
     }.flowOn(Dispatchers.IO)
+
+
+    suspend fun getAlbumDataFromMySound(browseId: String): Flow<Resource<AlbumBrowse>> = flow {
+        try {
+            val json = "http://192.168.0.120:8000/album/2"
+            val data = fetchDataFromUrl(json)
+            if (data != null) {
+                val albumBrowse: AlbumBrowse? = parseAlbumDataFromMySound(data);
+                if (albumBrowse != null) {
+                    Log.i("TAG", " ALBUM BROWSE CUA HOME");
+                    emit(Resource.Success(albumBrowse))
+                } else {
+                    emit(Resource.Error("Failed to parse data"))
+                }
+            } else {
+                emit(Resource.Error("Failed to fetch data"))
+            }
+        } catch (error: Exception) {
+            emit(Resource.Error(error.message.toString()))
+        }
+    }.flowOn(Dispatchers.IO)
+
+
     suspend fun getAlbumMore(browseId: String, params: String): Flow<BrowseResult?> = flow {
         runCatching {
             YouTube.browse(browseId = browseId, params = params).onSuccess { result ->
@@ -1331,6 +1521,7 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
         }
     }.flowOn(Dispatchers.IO)
     suspend fun getStream(videoId: String, itag: Int): Flow<String?> = flow{
+        Log.i("TAG", "GETSTREAM MAINREPO")
         YouTube.player(videoId).onSuccess { data ->
             val videoItag =
                 VIDEO_QUALITY.itags.getOrNull(VIDEO_QUALITY.items.indexOf(dataStoreManager.videoQuality.first()))
@@ -1377,12 +1568,12 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
                     )
                 )
             }
-            emit(format?.url?.plus("&cpn=${data.first}"))
-            }.onFailure {
-                it.printStackTrace()
+            emit("http://172.20.10.6:8000/play/61a49ba5-7d16-4ceb-b9ef-a1190ce3a2f0?t=10|XRqCFzp8yvPpULLI87VZzn3jx5DMEUo5KwsYPJf4")
+        }.onFailure {
+            it.printStackTrace()
             Log.e("Stream", "Error: ${it.message}")
-                emit(null)
-            }
+            emit(null)
+        }
     }.flowOn(Dispatchers.IO)
     suspend fun getLibraryPlaylist(): Flow<ArrayList<PlaylistsResult>?> = flow {
         YouTube.getLibraryPlaylists().onSuccess { data ->
