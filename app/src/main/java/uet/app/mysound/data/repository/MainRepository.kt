@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import okio.utf8Size
 import uet.app.mysound.R
 import uet.app.mysound.common.VIDEO_QUALITY
 import uet.app.mysound.data.dataStore.DataStoreManager
@@ -890,7 +891,7 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
 
     suspend fun getAlbumDataFromMySound(browseId: String): Flow<Resource<AlbumBrowse>> = flow {
         try {
-            val json = "http://192.168.0.120:8000/album/2"
+            val json = "http://192.168.0.120:8000/album/$browseId"
             val data = fetchDataFromUrl(json)
             if (data != null) {
                 val albumBrowse: AlbumBrowse? = parseAlbumDataFromMySound(data);
@@ -1521,7 +1522,10 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
     }.flowOn(Dispatchers.IO)
     suspend fun getStream(videoId: String, itag: Int): Flow<String?> = flow{
         Log.i("TAG", "GETSTREAM MAINREPO")
-        YouTube.player(videoId).onSuccess { data ->
+        if (videoId.utf8Size() > 20) {
+            Log.d("TAG", "Biến check là đúng. Thực hiện một số hành động khác ở đây.")
+            emit("http://192.168.0.120:8000/play/$videoId?t=34|4J2NRqo0gJiWEeAQdoMHZlVuZhCUnsBiw305a8kI")
+        } else YouTube.player(videoId).onSuccess { data ->
             val videoItag =
                 VIDEO_QUALITY.itags.getOrNull(VIDEO_QUALITY.items.indexOf(dataStoreManager.videoQuality.first()))
                     ?: 22
