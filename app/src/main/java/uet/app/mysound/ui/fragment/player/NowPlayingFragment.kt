@@ -53,6 +53,7 @@ import uet.app.mysound.adapter.playlist.AddToAPlaylistAdapter
 import uet.app.mysound.common.Config
 import uet.app.mysound.common.Config.ALBUM_CLICK
 import uet.app.mysound.common.Config.MINIPLAYER_CLICK
+import uet.app.mysound.common.Config.MY_ALBUM_CLICK
 import uet.app.mysound.common.Config.PLAYLIST_CLICK
 import uet.app.mysound.common.Config.SHARE
 import uet.app.mysound.common.Config.SONG_CLICK
@@ -286,6 +287,29 @@ class NowPlayingFragment : Fragment() {
                         viewModel.from.postValue(from)
                         updateUIfromQueueNowPlaying()
                         Log.d("check index", index.toString())
+                }
+            }
+
+            MY_ALBUM_CLICK -> {
+                if (playlistId != null) {
+                    viewModel.playlistId.value = playlistId
+                }
+//                if (!viewModel.songTransitions.value){
+                Log.i("Now Playing Fragment", "Album Click")
+                binding.ivArt.setImageResource(0)
+                binding.loadingArt.visibility = View.VISIBLE
+                viewModel.gradientDrawable.postValue(null)
+                viewModel.lyricsBackground.postValue(null)
+                binding.tvSongTitle.visibility = View.GONE
+                binding.tvSongArtist.visibility = View.GONE
+                Queue.getNowPlaying()?.let {
+                    viewModel.simpleMediaServiceHandler?.reset()
+                    viewModel.resetRelated()
+                    viewModel.loadMediaItemFromTrack(it, ALBUM_CLICK, index)
+                    viewModel.videoId.postValue(it.videoId)
+                    viewModel.from.postValue(from)
+                    updateUIfromQueueNowPlaying()
+                    Log.d("check index", index.toString())
                 }
             }
 

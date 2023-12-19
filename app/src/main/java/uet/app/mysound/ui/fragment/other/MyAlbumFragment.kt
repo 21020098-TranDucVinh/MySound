@@ -148,7 +148,7 @@ class MyAlbumFragment: Fragment() {
             if (viewModel.albumBrowse.value is Resource.Success && viewModel.albumBrowse.value?.data != null){
                 val args = Bundle()
                 val index = Random.nextInt(viewModel.albumBrowse.value?.data!!.tracks.size)
-                args.putString("type", Config.ALBUM_CLICK)
+                args.putString("type", Config.MY_ALBUM_CLICK)
                 args.putString("videoId", viewModel.albumBrowse.value?.data!!.tracks[index].videoId)
                 args.putString("from", "Album \"${viewModel.albumBrowse.value?.data!!.title}\"")
                 if (viewModel.albumEntity.value?.downloadState == DownloadState.STATE_DOWNLOADED) {
@@ -167,7 +167,7 @@ class MyAlbumFragment: Fragment() {
             else if (viewModel.albumEntity.value != null && viewModel.albumEntity.value?.downloadState == DownloadState.STATE_DOWNLOADED){
                 val args = Bundle()
                 val index = Random.nextInt(viewModel.albumEntity.value?.tracks?.size!!)
-                args.putString("type", Config.ALBUM_CLICK)
+                args.putString("type", Config.MY_ALBUM_CLICK)
                 args.putString("videoId", viewModel.albumEntity.value?.tracks?.get(index))
                 args.putString("from", "Album \"${viewModel.albumEntity.value?.title}\"")
                 if (viewModel.albumEntity.value?.downloadState == DownloadState.STATE_DOWNLOADED) {
@@ -190,7 +190,7 @@ class MyAlbumFragment: Fragment() {
         binding.btPlayPause.setOnClickListener {
             if (viewModel.albumBrowse.value is Resource.Success && viewModel.albumBrowse.value?.data != null){
                 val args = Bundle()
-                args.putString("type", Config.ALBUM_CLICK)
+                args.putString("type", Config.MY_ALBUM_CLICK)
                 args.putString("videoId", viewModel.albumBrowse.value?.data!!.tracks[0].videoId)
                 args.putString("from", "Album \"${viewModel.albumBrowse.value?.data!!.title}\"")
                 if (viewModel.albumEntity.value?.downloadState == DownloadState.STATE_DOWNLOADED) {
@@ -207,7 +207,7 @@ class MyAlbumFragment: Fragment() {
             }
             else if (viewModel.albumEntity.value != null && viewModel.albumEntity.value?.downloadState == DownloadState.STATE_DOWNLOADED){
                 val args = Bundle()
-                args.putString("type", Config.ALBUM_CLICK)
+                args.putString("type", Config.MY_ALBUM_CLICK)
                 args.putString("videoId", viewModel.albumEntity.value?.tracks?.get(0))
                 args.putString("from", "Album \"${viewModel.albumEntity.value?.title}\"")
                 if (viewModel.albumEntity.value?.downloadState == DownloadState.STATE_DOWNLOADED) {
@@ -230,7 +230,7 @@ class MyAlbumFragment: Fragment() {
             override fun onItemClick(position: Int) {
                 if (viewModel.albumBrowse.value is Resource.Success && viewModel.albumBrowse.value?.data != null){
                     val args = Bundle()
-                    args.putString("type", Config.ALBUM_CLICK)
+                    args.putString("type", Config.MY_ALBUM_CLICK)
                     args.putString("videoId", viewModel.albumBrowse.value?.data!!.tracks[position].videoId)
                     args.putString("from", "Album \"${viewModel.albumBrowse.value?.data!!.title}\"")
                     args.putInt("index", position)
@@ -248,7 +248,7 @@ class MyAlbumFragment: Fragment() {
                 }
                 else if (viewModel.albumEntity.value != null && viewModel.albumEntity.value?.downloadState == DownloadState.STATE_DOWNLOADED){
                     val args = Bundle()
-                    args.putString("type", Config.ALBUM_CLICK)
+                    args.putString("type", Config.MY_ALBUM_CLICK)
                     args.putString("videoId", viewModel.albumEntity.value?.tracks?.get(position))
                     args.putString("from", "Album \"${viewModel.albumEntity.value?.title}\"")
                     args.putInt("index", position)
