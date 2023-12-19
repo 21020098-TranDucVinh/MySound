@@ -47,7 +47,6 @@ import uet.app.youtubeExtractor.models.response.NextResponse
 import uet.app.youtubeExtractor.models.response.PipedResponse
 import uet.app.youtubeExtractor.models.response.PlayerResponse
 import uet.app.youtubeExtractor.models.response.SearchResponse
-import uet.app.youtubeExtractor.models.simpmusic.GithubResponse
 import uet.app.youtubeExtractor.models.splitBySeparator
 import uet.app.youtubeExtractor.models.sponsorblock.SkipSegments
 import uet.app.youtubeExtractor.models.youtube.Transcript
@@ -482,10 +481,6 @@ object YouTube {
      */
     suspend fun getSkipSegments(videoId: String) = runCatching {
         ytMusic.getSkipSegments(videoId).body<List<SkipSegments>>()
-    }
-
-    suspend fun checkForUpdate() = runCatching {
-        ytMusic.checkForUpdate().body<GithubResponse>()
     }
 
     suspend fun explore(): Result<ExplorePage> = runCatching {

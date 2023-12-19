@@ -65,14 +65,7 @@
                 android:textSize="13sp">
 
             </TextView>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="20dp"
-                android:text="@string/maxrave_dev">
 
-            </TextView>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -95,41 +88,7 @@
                 android:text="@string/github">
 
             </Button>
-            <Button
-                android:id="@+id/btIssue"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="25dp"
-                android:layout_marginVertical="5dp"
-                android:minWidth="0sp"
-                android:minHeight="0sp"
-                android:padding="0sp"
-                android:text="@string/issue_tracker">
 
-            </Button>
-            <Button
-                android:id="@+id/btBuyMeACoffee"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="25dp"
-                android:layout_marginVertical="5dp"
-                android:minWidth="0sp"
-                android:minHeight="0sp"
-                android:padding="0sp"
-                android:text="@string/buy_me_a_coffee">
-
-            </Button>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="25dp"
-                android:layout_marginVertical="5dp"
-                android:text="@string/copyright"
-                android:textSize="11sp">
-
-            </TextView>
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="200dp">

@@ -46,15 +46,6 @@ object SUPPORTED_LANGUAGE {
     val items: Array<CharSequence> = arrayOf(
         "English",
         "Tiếng Việt",
-        "Italiano",
-        "Deutsch",
-        "Русский",
-        "Türkçe",
-        "Suomi",
-        "Polski",
-        "Português",
-        "Français",
-        "Español"
     )
     val codes: Array<String> = arrayOf(
         "en-US",
