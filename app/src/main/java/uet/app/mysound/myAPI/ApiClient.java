@@ -4,6 +4,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import uet.app.mysound.common.Config;
 
 public class ApiClient {
 
@@ -16,7 +17,7 @@ public class ApiClient {
 
         return new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl("http://192.168.0.120:8000/")
+                .baseUrl(Config.local_Url)
                 .client(okHttpClient)
                 .build();
     }

@@ -130,15 +130,15 @@ fun parseAlbumDataFromMySound(data: String): AlbumBrowse {
 
     return AlbumBrowse(
         artists = artistList,
-        audioPlaylistId = "data.album.playlistId",
-        description = "data.description",
-        duration = "data.duration",
-        durationSeconds = 5000,
+        audioPlaylistId = "data",
+        description = "unknown",
+        duration = "20",
+        durationSeconds = 50000,
         thumbnails = listThumbnail,
         title = mySoundData.name,
         trackCount = mySoundData.songs.size,
         tracks = trackList,
         type = "Album",
-        year = null
+        year = "2023"
     )
 }

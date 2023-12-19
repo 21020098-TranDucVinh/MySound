@@ -13,6 +13,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okio.utf8Size
 import uet.app.mysound.R
+import uet.app.mysound.common.Config
 import uet.app.mysound.common.VIDEO_QUALITY
 import uet.app.mysound.data.dataStore.DataStoreManager
 import uet.app.mysound.data.db.LocalDataSource
@@ -538,8 +539,9 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
 
     suspend fun getHomeDataFromMySound(): Flow<Resource<ArrayList<HomeItem>>> = flow {
         try {
-            val json = "http://192.168.0.120:8000/data"
-            val data = fetchDataFromUrl(json)
+            var baseUrl = Config.local_Url;
+            val url = "$baseUrl/data"
+            val data = fetchDataFromUrl(url)
 
             if (data != null) {
                 val list: ArrayList<HomeItem> = arrayListOf()
@@ -891,8 +893,9 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
 
     suspend fun getAlbumDataFromMySound(browseId: String): Flow<Resource<AlbumBrowse>> = flow {
         try {
-            val json = "http://192.168.0.120:8000/album/$browseId"
-            val data = fetchDataFromUrl(json)
+            var baseUrl = Config.local_Url;
+            val url = "$baseUrl/album/$browseId"
+            val data = fetchDataFromUrl(url)
             if (data != null) {
                 val albumBrowse: AlbumBrowse? = parseAlbumDataFromMySound(data);
                 if (albumBrowse != null) {
@@ -1524,7 +1527,8 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
         Log.i("TAG", "GETSTREAM MAINREPO")
         if (videoId.utf8Size() > 20) {
             Log.d("TAG", "Biến check là đúng. Thực hiện một số hành động khác ở đây.")
-            emit("http://192.168.0.120:8000/play/$videoId?t=34|4J2NRqo0gJiWEeAQdoMHZlVuZhCUnsBiw305a8kI")
+            var baseUrl = Config.local_Url;
+            emit("$baseUrl/play/$videoId?t=34|4J2NRqo0gJiWEeAQdoMHZlVuZhCUnsBiw305a8kI")
         } else YouTube.player(videoId).onSuccess { data ->
             val videoItag =
                 VIDEO_QUALITY.itags.getOrNull(VIDEO_QUALITY.items.indexOf(dataStoreManager.videoQuality.first()))
