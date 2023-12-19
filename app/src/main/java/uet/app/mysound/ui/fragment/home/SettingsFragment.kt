@@ -91,7 +91,7 @@ class SettingsFragment : Fragment() {
         viewModel.getLoggedIn()
         viewModel.loggedIn.observe(viewLifecycleOwner) {
             if (MainActivity.loginResponse?.token != null) {
-                binding.tvLogInTitle.text = getString(R.string.log_out)
+                binding.tvLogInTitle.text = "Log out"
                 binding.tvLogIn.text = getString(R.string.logged_in)
             } else if (MainActivity.loginResponse?.token == null) {
                 binding.tvLogInTitle.text = getString(R.string.log_in)
@@ -132,7 +132,7 @@ class SettingsFragment : Fragment() {
 
         viewModel.loggedIn.observe(viewLifecycleOwner) {
             if (MainActivity.loginResponse?.token != null) {
-                binding.tvLogInTitle.text = getString(R.string.log_out)
+                binding.tvLogInTitle.text = "Log out"
                 binding.tvLogIn.text = getString(R.string.logged_in)
                 setEnabledAll(binding.swSaveHistory, true)
             } else if (MainActivity.loginResponse?.token == null) {
