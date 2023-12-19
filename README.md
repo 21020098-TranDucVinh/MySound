@@ -1,35 +1,25 @@
-# BeMusic
+# MySound
 
-## Yêu cầu:
+## Note
+- Kotlin
+- Mô hình: MVVM
+- Hilt: Dependence injection
+- Coroutine: Xử lý bất đồng bộ
+- Navigation Component: điều hướng giao diện
 
-để run project yêu cầu các thứ sau:
-
-- cài composer php
-- cái node js
-- cài xampp.
-
-sau khi cài xammpp, cấu hình lại file php.ini xóa bỏ dấu ";" trước ``extension=pdo_sqlite``
-
-sau đó gõ lệnh composer install --ignore-platform-req=php
-
-## Cấu hình môi trường.
-
-vào file .env
-
-    DB_CONNECTION=mysql
-    DB_HOST=127.0.0.1
-    DB_PORT=3306
-    DB_DATABASE=music1
-    DB_USERNAME=root
-    DB_PASSWORD=140903
-
-Tên user name và password đúng
-Database tạo mới;
-
-sau đó chạy các lệnh
-
-    php artisan migrate
-    php artisan sound:init
-    đến đoạn PATH thì gõ C:\
-
-> > > > > > > 8e21e4a9ac894d8b63f4c328cf7feffa476ff694
+## Project structure
+- Adapter: chứa các adapter cho RecyclerView
+- Common: chứa các config, object, constant
+- Data: Data layer
+    - DataStore: Lưu vào Data Storage (like SharedPreferences)
+    - Model: chứa các model
+    - Queue: Lưu list bài hát đang phát
+    - Repository: cung cấp dữ liệu cho ViewModel
+- Di: Dependency injection 
+- Extension: chứa các extension function
+- MyAPI: chứa các API gọi đến server riêng
+- Pagination: chứa các class xử lý phân trang
+- Service: chứa các service
+- UI: chứa các giao diện. Bao gồm 1 activity và các fragment
+- Utils: chứa các util function
+- ViewModel: chứa các ViewModel

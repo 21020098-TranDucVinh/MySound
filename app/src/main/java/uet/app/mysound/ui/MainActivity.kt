@@ -80,10 +80,10 @@ class MainActivity : AppCompatActivity() {
     companion object {
         var loginResponse: LoginResponse? = null
     }
-    private lateinit var binding: ActivityMainBinding
-    val viewModel by viewModels<SharedViewModel>()
-    private var action: String? = null
-    private var data: Uri? = null
+    private lateinit var binding: ActivityMainBinding // ViewBinding
+    val viewModel by viewModels<SharedViewModel>() // ViewModel
+    private var action: String? = null // Action from intent
+    private var data: Uri? = null // Data from intent
 
     @Inject
     lateinit var dataStoreManager: DataStoreManager

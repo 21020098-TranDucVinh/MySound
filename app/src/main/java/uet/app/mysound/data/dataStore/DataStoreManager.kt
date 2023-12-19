@@ -341,31 +341,6 @@ class DataStoreManager @Inject constructor(private val settingsDataStore: DataSt
         preferences[MAX_SONG_CACHE_SIZE] ?: -1
     }
 
-    suspend fun setMaxSongCacheSize(size: Int) {
-        withContext(Dispatchers.IO) {
-            settingsDataStore.edit { settings ->
-                settings[MAX_SONG_CACHE_SIZE] = size
-            }
-        }
-    }
-
-    val watchVideoInsteadOfPlayingAudio = settingsDataStore.data.map { preferences ->
-        preferences[WATCH_VIDEO_INSTEAD_OF_PLAYING_AUDIO] ?: FALSE
-    }
-
-    suspend fun setWatchVideoInsteadOfPlayingAudio(watch: Boolean) {
-        withContext(Dispatchers.IO) {
-            if (watch) {
-                settingsDataStore.edit { settings ->
-                    settings[WATCH_VIDEO_INSTEAD_OF_PLAYING_AUDIO] = TRUE
-                }
-            } else {
-                settingsDataStore.edit { settings ->
-                    settings[WATCH_VIDEO_INSTEAD_OF_PLAYING_AUDIO] = FALSE
-                }
-            }
-        }
-    }
 
     val videoQuality = settingsDataStore.data.map { preferences ->
         preferences[VIDEO_QUALITY] ?: "720p"
