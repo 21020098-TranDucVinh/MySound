@@ -79,7 +79,6 @@ import uet.app.youtubeExtractor.models.musixmatch.MusixmatchCredential
 import uet.app.youtubeExtractor.models.musixmatch.MusixmatchTranslationLyricsResponse
 import uet.app.youtubeExtractor.models.musixmatch.SearchMusixmatchResponse
 import uet.app.youtubeExtractor.models.response.SearchResponse
-import uet.app.youtubeExtractor.models.simpmusic.GithubResponse
 import uet.app.youtubeExtractor.models.sponsorblock.SkipSegments
 import uet.app.youtubeExtractor.models.youtube.YouTubeInitialPage
 import uet.app.youtubeExtractor.pages.BrowseResult
@@ -1429,15 +1428,6 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
             emit(null)
         }
     }.flowOn(Dispatchers.IO)
-
-    fun checkForUpdate(): Flow<GithubResponse?> = flow {
-        YouTube.checkForUpdate().onSuccess {
-            emit(it)
-        }
-            .onFailure {
-                emit(null)
-            }
-    }
 
     suspend fun getYouTubeSetVideoId(youtubePlaylistId: String): Flow<ArrayList<SetVideoIdEntity>?> = flow {
         YouTube.playlist(youtubePlaylistId).onSuccess {

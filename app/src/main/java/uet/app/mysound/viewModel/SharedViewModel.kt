@@ -69,7 +69,6 @@ import uet.app.mysound.service.SimpleMediaState
 import uet.app.mysound.service.test.download.DownloadUtils
 import uet.app.mysound.utils.Resource
 import uet.app.youtubeExtractor.YouTube
-import uet.app.youtubeExtractor.models.simpmusic.GithubResponse
 import uet.app.youtubeExtractor.models.sponsorblock.SkipSegments
 import uet.app.youtubeExtractor.models.youtube.YouTubeInitialPage
 import java.time.LocalDateTime
@@ -1032,17 +1031,7 @@ class SharedViewModel @Inject constructor(private var dataStoreManager: DataStor
             mainRepository.removeQueue()
         }
     }
-    private var _githubResponse = MutableLiveData<GithubResponse>()
-    val githubResponse: LiveData<GithubResponse> = _githubResponse
 
-    fun checkForUpdate() {
-        viewModelScope.launch {
-            mainRepository.checkForUpdate().collect {response ->
-                dataStoreManager.putString("CheckForUpdateAt", System.currentTimeMillis().toString())
-                _githubResponse.postValue(response)
-            }
-        }
-    }
     fun skipSegment(position: Long) {
         simpleMediaServiceHandler?.skipSegment(position)
     }
