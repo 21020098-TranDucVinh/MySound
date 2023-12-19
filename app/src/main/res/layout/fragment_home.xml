@@ -11,19 +11,18 @@
         android:id="@+id/topAppBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/md_theme_dark_background">
+        android:background="@color/dark_purple">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#c0c0c0"
             app:layout_scrollFlags="scroll|enterAlways|snap"
             app:menu="@menu/top_app_bar_home"
             app:subtitle="Good Evening"
             app:subtitleTextAppearance="@style/TextAppearance.AppCompat"
             app:title="My Sound"
-            app:titleTextAppearance="@style/TextAppearance.Material3.TitleMedium"/>
+            app:titleTextAppearance="@style/titleAppBar" />
     </com.google.android.material.appbar.AppBarLayout>
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
