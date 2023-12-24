@@ -941,7 +941,7 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
         runCatching {
             // Gọi API hoặc lấy dữ liệu từ nguồn khác và nhận được dữ liệu dạng JSON
 
-            var baseUrl = Config.local_Url;
+            val baseUrl = Config.local_Url;
             val url = "$baseUrl/search?keyword=$query";
             val data = fetchDataFromUrl(url)
 
