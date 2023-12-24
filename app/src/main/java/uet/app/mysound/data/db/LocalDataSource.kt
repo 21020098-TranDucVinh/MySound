@@ -17,6 +17,7 @@ import uet.app.mysound.data.db.entities.SearchHistory
 import uet.app.mysound.data.db.entities.SetVideoIdEntity
 import uet.app.mysound.data.db.entities.SongEntity
 import uet.app.mysound.data.parser.MySound.fetchDataFromUrl
+import uet.app.mysound.data.parser.MySound.postDataWithJson
 import uet.app.mysound.myAPI.User.LoginResponse
 import uet.app.mysound.ui.MainActivity
 import java.time.LocalDateTime
@@ -43,8 +44,26 @@ class LocalDataSource @Inject constructor(private val databaseDao: DatabaseDao) 
 
     suspend fun deleteSearchHistory() = databaseDao.deleteSearchHistory()
 
-    suspend fun insertSearchHistory(searchHistory: SearchHistory) =
-        databaseDao.insertSearchHistory(searchHistory)
+    suspend fun insertSearchHistory(searchHistory: SearchHistory) {
+        val response: LoginResponse? = MainActivity.loginResponse
+        if (response?.token == null) {
+            // Token is null, call the databaseDao.insertSearchHistory(searchHistory)
+            databaseDao.insertSearchHistory(searchHistory)
+            // Handle the result as needed, for example, print it to the screen
+            Log.i("YourTag", "Inserted SearchHistory: $searchHistory")
+        } else {
+            // Token is not null, log information
+            Log.i("YourTag", "Token is not null: ${response.token}")
+            Log.i("YourTag", "AUDIO Token is not null: ${response.audioToken}")
+            val baseUrl = Config.local_Url
+            val url = "$baseUrl/add_search_history"
+            //
+            val jsonBody = Gson().toJson(searchHistory)
+            val jsonData =
+                postDataWithJson(url, jsonBody, response.token);
+            println(jsonData);
+        }
+    }
 
     suspend fun getAllSongs() = databaseDao.getAllSongs()
     suspend fun getRecentSongs(limit: Int, offset: Int) = databaseDao.getRecentSongs(limit, offset)
