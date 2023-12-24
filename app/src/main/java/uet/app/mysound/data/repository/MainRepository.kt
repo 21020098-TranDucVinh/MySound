@@ -55,6 +55,7 @@ import uet.app.mysound.data.parser.parseAlbumDataFromMySound
 import uet.app.mysound.data.parser.parseArtistData
 import uet.app.mysound.data.parser.parseGenreObject
 import uet.app.mysound.data.parser.parseLibraryPlaylist
+import uet.app.mysound.data.parser.parseMixeSongContend
 import uet.app.mysound.data.parser.parseMixedContent
 import uet.app.mysound.data.parser.parseMixedContentMySound
 import uet.app.mysound.data.parser.parseMoodsMomentObject
@@ -924,6 +925,7 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
             }
         }
     }.flowOn(Dispatchers.IO)
+
     suspend fun getArtistData(channelId: String): Flow<Resource<ArtistBrowse>> = flow {
         runCatching {
             YouTube.artist(channelId).onSuccess { result ->
@@ -934,6 +936,25 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
             }
         }
     }.flowOn(Dispatchers.IO)
+
+    suspend fun getMySearchDataSong(query: String): Flow<Resource<ArrayList<SongsResult>>> = flow {
+        runCatching {
+            // Gọi API hoặc lấy dữ liệu từ nguồn khác và nhận được dữ liệu dạng JSON
+
+            var baseUrl = Config.local_Url;
+            val url = "$baseUrl/search?keyword=$query";
+            val data = fetchDataFromUrl(url)
+
+            // Gọi hàm parseMixeSongContend để chuyển đổi JSON thành danh sách SongsResult
+            val listSongs: ArrayList<SongsResult> = parseMixeSongContend(data)
+
+            emit(Resource.Success(listSongs))
+        }.onFailure { e ->
+            Log.d("Search", "Error: ${e.message}")
+            emit(Resource.Error<ArrayList<SongsResult>>(e.message.toString()))
+        }
+    }.flowOn(Dispatchers.IO)
+
     suspend fun getSearchDataSong(query: String): Flow<Resource<ArrayList<SongsResult>>> = flow {
         runCatching {
             YouTube.search(query, YouTube.SearchFilter.FILTER_SONG).onSuccess { result ->
@@ -964,6 +985,7 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
             }
         }
     }.flowOn(Dispatchers.IO)
+
     suspend fun getSearchDataVideo(query: String): Flow<Resource<ArrayList<VideosResult>>> = flow {
         runCatching {
             YouTube.search(query, YouTube.SearchFilter.FILTER_VIDEO).onSuccess { result ->

@@ -1,6 +1,10 @@
 package uet.app.mysound.data.db
 
 import android.util.Log
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
+import com.google.gson.JsonParser
+import uet.app.mysound.common.Config
 import uet.app.mysound.data.db.entities.AlbumEntity
 import uet.app.mysound.data.db.entities.ArtistEntity
 import uet.app.mysound.data.db.entities.FormatEntity
@@ -12,6 +16,9 @@ import uet.app.mysound.data.db.entities.QueueEntity
 import uet.app.mysound.data.db.entities.SearchHistory
 import uet.app.mysound.data.db.entities.SetVideoIdEntity
 import uet.app.mysound.data.db.entities.SongEntity
+import uet.app.mysound.data.parser.MySound.HttpMethod
+import uet.app.mysound.data.parser.MySound.fetchDataWithJson
+import uet.app.mysound.data.parser.MySound.postDataWithJson
 import uet.app.mysound.myAPI.User.LoginResponse
 import uet.app.mysound.ui.MainActivity
 import java.time.LocalDateTime
@@ -21,12 +28,46 @@ class LocalDataSource @Inject constructor(private val databaseDao: DatabaseDao) 
     suspend fun getAllRecentData() = databaseDao.getAllRecentData()
     suspend fun getAllDownloadedPlaylist() = databaseDao.getAllDownloadedPlaylist()
 
-    suspend fun getSearchHistory() = databaseDao.getSearchHistory()
+
+    suspend fun getSearchHistory(): List<SearchHistory> {
+        val response: LoginResponse? = MainActivity.loginResponse
+
+        if (response?.token != null) {
+            val baseUrl = Config.local_Url
+            val url = "$baseUrl/api/get_search_history"
+            val jsonData = fetchDataWithJson(url, response.token, HttpMethod.GET)
+            val gson = Gson()
+            val jsonObject = JsonParser.parseString(jsonData).asJsonObject
+            val searchHistoryListType = object : TypeToken<List<SearchHistory>>() {}.type
+            return gson.fromJson(jsonObject.getAsJsonArray("search_history"), searchHistoryListType)
+        } else {
+            // Handle the case when the token is null, e.g., return an empty list
+            return databaseDao.getSearchHistory();
+        }
+
+    }
+
 
     suspend fun deleteSearchHistory() = databaseDao.deleteSearchHistory()
 
-    suspend fun insertSearchHistory(searchHistory: SearchHistory) =
-        databaseDao.insertSearchHistory(searchHistory)
+    suspend fun insertSearchHistory(searchHistory: SearchHistory) {
+        val response: LoginResponse? = MainActivity.loginResponse
+        if (response?.token == null) {
+            // Token is null, call the databaseDao.insertSearchHistory(searchHistory)
+            databaseDao.insertSearchHistory(searchHistory)
+            // Handle the result as needed, for example, print it to the screen
+            Log.i("YourTag", "Inserted SearchHistory: $searchHistory")
+        } else {
+            // Token is not null, log information
+            Log.i("YourTag", "Token is not null: ${response.token}")
+            Log.i("YourTag", "AUDIO Token is not null: ${response.audioToken}")
+            val baseUrl = Config.local_Url
+            val url = "$baseUrl/api/add_search_history"
+            val jsonBody = Gson().toJson(searchHistory)
+            val jsonData = postDataWithJson(url, jsonBody, response.token)
+            println("them data: $jsonData");
+        }
+    }
 
     suspend fun getAllSongs() = databaseDao.getAllSongs()
     suspend fun getRecentSongs(limit: Int, offset: Int) = databaseDao.getRecentSongs(limit, offset)
@@ -44,7 +85,6 @@ class LocalDataSource @Inject constructor(private val databaseDao: DatabaseDao) 
         if (response?.token == null) {
             // Token is null, call the databaseDao.insertSong(song)
             databaseDao.insertSong(song)
-
             // Handle the result as needed, for example, print it to the screen
             Log.i("YourTag", "Inserted Song: $song")
         } else {
