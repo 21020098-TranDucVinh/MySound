@@ -2,11 +2,15 @@ package uet.app.mysound.data.parser
 
 import android.content.Context
 import android.util.Log
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import uet.app.mysound.R
 import uet.app.mysound.data.model.home.Content
 import uet.app.mysound.data.model.home.HomeItem
 import uet.app.mysound.data.model.searchResult.songs.Album
 import uet.app.mysound.data.model.searchResult.songs.Artist
+import uet.app.mysound.data.model.searchResult.songs.SongsResult
 import uet.app.mysound.parseMixedContentFromMySound
 import uet.app.youtubeExtractor.models.AlbumItem
 import uet.app.youtubeExtractor.models.ArtistItem
@@ -308,6 +312,94 @@ fun parseMixedContent(data: List<SectionListRenderer.Content>?): List<HomeItem> 
     return list
 }
 
+fun parseMixeSongContend(jsonData: String?): ArrayList<SongsResult> {
+    val songsResults = arrayListOf<SongsResult>()
+
+    jsonData?.let {
+        try {
+            val jsonObject = Gson().fromJson(it, JsonObject::class.java)
+            val songsArray = jsonObject.getAsJsonArray("songs")
+
+            val type = object : TypeToken<List<SongsResult>>() {}.type
+
+            val listThumbnail =
+                mutableListOf<uet.app.mysound.data.model.searchResult.songs.Thumbnail>()
+
+            val thumbnail = uet.app.mysound.data.model.searchResult.songs.Thumbnail(
+                height = 100,
+                url = "https://scontent.fhan17-1.fna.fbcdn.net/v/t1.15752-9/370326255_716546323735823_6866928491541157783_n.png?_nc_cat=107&ccb=1-7&_nc_sid=8cd0a2&_nc_eui2=AeFhaPYDgUdUQDCqdsbmdsllLxgXX_7rUOUvGBdf_utQ5V5eXDAkUBUy4xaJKw6gyd77PLlAs3EL1GiUheZNrOr6&_nc_ohc=ffsDqzOvysIAX9pv0VJ&_nc_oc=AQnwRkvz5cRQkRgWH9352yhYF2BnJIb5XPlh6HLGgA5DpWxTNsXfA1nISOQOuufNGLo&_nc_ht=scontent.fhan17-1.fna&oh=03_AdRJbycGqIGldmAP6SavfEDZqp6rCwW3VIqK2ZoJ2cbHZQ&oe=65A8B232",
+                width = 200
+            )
+
+            val thumbnail1 = uet.app.mysound.data.model.searchResult.songs.Thumbnail(
+                height = 100,
+                url = "https://scontent.fhan17-1.fna.fbcdn.net/v/t1.15752-9/370326255_716546323735823_6866928491541157783_n.png?_nc_cat=107&ccb=1-7&_nc_sid=8cd0a2&_nc_eui2=AeFhaPYDgUdUQDCqdsbmdsllLxgXX_7rUOUvGBdf_utQ5V5eXDAkUBUy4xaJKw6gyd77PLlAs3EL1GiUheZNrOr6&_nc_ohc=ffsDqzOvysIAX9pv0VJ&_nc_oc=AQnwRkvz5cRQkRgWH9352yhYF2BnJIb5XPlh6HLGgA5DpWxTNsXfA1nISOQOuufNGLo&_nc_ht=scontent.fhan17-1.fna&oh=03_AdRJbycGqIGldmAP6SavfEDZqp6rCwW3VIqK2ZoJ2cbHZQ&oe=65A8B232",
+                width = 200
+            )
+
+            listThumbnail.add(thumbnail)
+            listThumbnail.add(thumbnail1)
+
+            for (element in songsArray) {
+                val songObject = element.asJsonObject
+
+                // album
+                val albumObject = songObject.getAsJsonObject("album")
+                val albumId = albumObject.getAsJsonPrimitive("id")?.asString ?: ""
+                val albumName = albumObject.getAsJsonPrimitive("name")?.asString ?: ""
+                val album = Album(albumId, albumName)
+
+                // artist
+                val artistObject = songObject.getAsJsonObject("artist")
+                val artistId = artistObject.getAsJsonPrimitive("id")?.asString ?: ""
+                val artistName = artistObject.getAsJsonPrimitive("name")?.asString ?: ""
+                val item = Artist(artistId, artistName)
+                val artists: MutableList<Artist> = mutableListOf()
+                artists.add(item)
+
+                // ===
+                val category = null
+                val duration = null
+                val durationSeconds = null
+                val feedbackTokens = null
+                val isExplicit = null
+                val resultType = null
+
+                val title = songObject.getAsJsonPrimitive("title")?.asString ?: ""
+                val videoId = songObject.getAsJsonPrimitive("id")?.asString ?: ""
+                val videoType = null
+                val year = Any()
+
+                val songsResult = SongsResult(
+                    album,
+                    artists,
+                    category,
+                    duration,
+                    durationSeconds,
+                    feedbackTokens,
+                    isExplicit,
+                    resultType,
+                    listThumbnail,
+                    title,
+                    videoId,
+                    videoType,
+                    year
+                )
+
+                songsResults.add(songsResult)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    return songsResults.toArrayList()
+}
+
+// Phương thức mở rộng để chuyển đổi List sang ArrayList
+fun <T> List<T>.toArrayList(): ArrayList<T> {
+    return ArrayList(this)
+}
 
 fun parseMixedContentMySound(jsonData: String?): List<HomeItem> {
     val contentList: MutableList<Content?> = mutableListOf()

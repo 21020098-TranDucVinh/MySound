@@ -16,7 +16,8 @@ import uet.app.mysound.data.db.entities.QueueEntity
 import uet.app.mysound.data.db.entities.SearchHistory
 import uet.app.mysound.data.db.entities.SetVideoIdEntity
 import uet.app.mysound.data.db.entities.SongEntity
-import uet.app.mysound.data.parser.MySound.fetchDataFromUrl
+import uet.app.mysound.data.parser.MySound.HttpMethod
+import uet.app.mysound.data.parser.MySound.fetchDataWithJson
 import uet.app.mysound.data.parser.MySound.postDataWithJson
 import uet.app.mysound.myAPI.User.LoginResponse
 import uet.app.mysound.ui.MainActivity
@@ -28,18 +29,23 @@ class LocalDataSource @Inject constructor(private val databaseDao: DatabaseDao) 
     suspend fun getAllDownloadedPlaylist() = databaseDao.getAllDownloadedPlaylist()
 
 
-    fun getSearchHistory(): List<SearchHistory> {
-        val baseUrl = Config.local_Url
-        val url = "$baseUrl/get_search_history"
+    suspend fun getSearchHistory(): List<SearchHistory> {
+        val response: LoginResponse? = MainActivity.loginResponse
 
-        val jsonData = fetchDataFromUrl(url)
-        val gson = Gson()
-        val jsonObject = JsonParser.parseString(jsonData).asJsonObject
-        val searchHistoryListType = object : TypeToken<List<SearchHistory>>() {}.type
-        return gson.fromJson(jsonObject.getAsJsonArray("search_history"), searchHistoryListType)
+        if (response?.token != null) {
+            val baseUrl = Config.local_Url
+            val url = "$baseUrl/api/get_search_history"
+            val jsonData = fetchDataWithJson(url, response.token, HttpMethod.GET)
+            val gson = Gson()
+            val jsonObject = JsonParser.parseString(jsonData).asJsonObject
+            val searchHistoryListType = object : TypeToken<List<SearchHistory>>() {}.type
+            return gson.fromJson(jsonObject.getAsJsonArray("search_history"), searchHistoryListType)
+        } else {
+            // Handle the case when the token is null, e.g., return an empty list
+            return databaseDao.getSearchHistory();
+        }
+
     }
-
-    //suspend fun getSearchHistory() = databaseDao.getSearchHistory()
 
 
     suspend fun deleteSearchHistory() = databaseDao.deleteSearchHistory()
@@ -56,12 +62,10 @@ class LocalDataSource @Inject constructor(private val databaseDao: DatabaseDao) 
             Log.i("YourTag", "Token is not null: ${response.token}")
             Log.i("YourTag", "AUDIO Token is not null: ${response.audioToken}")
             val baseUrl = Config.local_Url
-            val url = "$baseUrl/add_search_history"
-            //
+            val url = "$baseUrl/api/add_search_history"
             val jsonBody = Gson().toJson(searchHistory)
-            val jsonData =
-                postDataWithJson(url, jsonBody, response.token);
-            println(jsonData);
+            val jsonData = postDataWithJson(url, jsonBody, response.token)
+            println("them data: $jsonData");
         }
     }
 

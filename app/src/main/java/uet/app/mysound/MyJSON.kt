@@ -3,6 +3,7 @@ package uet.app.mysound
 import com.google.gson.Gson
 
 import com.google.gson.annotations.SerializedName
+import uet.app.mysound.data.parser.parseMixeSongContend
 
 data class Song(
     val id: String,
@@ -84,7 +85,6 @@ data class Artist(
 
 fun parseMixedContentFromMySound(jsonData: String?): MySoundData? {
     if (jsonData != null) {
-        // Sử dụng Gson để phân tích chuỗi JSON thành đối tượng MySoundData
         val gson = Gson()
         return gson.fromJson(jsonData, MySoundData::class.java)
     }
@@ -94,108 +94,107 @@ fun parseMixedContentFromMySound(jsonData: String?): MySoundData? {
 fun main() {
     val jsonString = """
 {
-  "albums": [
-    {
-      "id": 1,
-      "artist_id": 1,
-      "name": "Unknown Album",
-      "cover": null,
-      "created_at": "2023-12-12T15:42:14.000000Z",
-      "is_compilation": false
-    }
-  ],
-  "artists": [
-    { "id": 1, "name": "Unknown Artist", "image": null },
-    { "id": 2, "name": "Various Artists", "image": null }
-  ],
-  "songs": [
-    {
-      "id": "09d09959-bbc9-4474-84aa-7891f0153232",
-      "album_id": 1,
-      "title": "bai1",
-      "length": 302.34,
-      "track": 0,
-      "disc": 1,
-      "lyrics": "",
-      "created_at": "2023-12-18T08:48:40.000000Z",
-      "artist_id": 1,
-      "year": null,
-      "genre": ""
-    },
-    {
-      "id": "5f8bf371-b584-473d-bf36-6f7cdd53b0bc",
-      "album_id": 1,
-      "title": "bai2",
-      "length": 192.29,
-      "track": 0,
-      "disc": 1,
-      "lyrics": "",
-      "created_at": "2023-12-18T08:48:40.000000Z",
-      "artist_id": 1,
-      "year": null,
-      "genre": ""
-    },
-    {
-      "id": "facdedbe-9cac-49f8-9fb5-bf59483ee1ac",
-      "album_id": 1,
-      "title": "bai3",
-      "length": 208.01,
-      "track": 0,
-      "disc": 1,
-      "lyrics": "",
-      "created_at": "2023-12-18T08:48:40.000000Z",
-      "artist_id": 1,
-      "year": null,
-      "genre": ""
-    }
-  ],
-  "settings": { "media_path": "/home/thanhyk14/DBMUSIC" },
-  "playlists": [],
-  "interactions": [
-    {
-      "song_id": "5f8bf371-b584-473d-bf36-6f7cdd53b0bc",
-      "liked": false,
-      "play_count": 2
-    },
-    {
-      "song_id": "facdedbe-9cac-49f8-9fb5-bf59483ee1ac",
-      "liked": false,
-      "play_count": 1
-    }
-  ],
-  "recentlyPlayed": [
-    "5f8bf371-b584-473d-bf36-6f7cdd53b0bc",
-    "facdedbe-9cac-49f8-9fb5-bf59483ee1ac"
-  ],
-  "users": [
-    {
-      "id": 1,
-      "name": "Sound",
-      "email": "admin@sound.dev",
-      "is_admin": true,
-      "preferences": { "lastfm_session_key": null },
-      "avatar": "https://www.gravatar.com/avatar/f39f3b5d6e192bbc8e289deec7e004a5?s=192&d=robohash"
-    }
-  ],
-  "currentUser": {
-    "id": 1,
-    "name": "Sound",
-    "email": "admin@sound.dev",
-    "is_admin": true,
-    "preferences": { "lastfm_session_key": null },
-    "avatar": "https://www.gravatar.com/avatar/f39f3b5d6e192bbc8e289deec7e004a5?s=192&d=robohash"
-  }
+    "songs": [
+        {
+            "id": "6e54d9f2-4b58-4a1a-8c56-a38f97323ae1",
+            "title": "Rhymastic  Yêu 5 Remix",
+            "length": 208.01,
+            "track": 0,
+            "disc": 1,
+            "lyrics": "",
+            "created_at": "2023-12-24T07:41:47.000000Z",
+            "year": null,
+            "genre": "",
+            "artist": {
+                "id": 1,
+                "name": "Unknown Artist",
+                "image": null
+            },
+            "album": {
+                "id": 1,
+                "artist_id": 1,
+                "name": "Unknown Album",
+                "cover": null,
+                "created_at": "2023-12-24T07:32:14.000000Z",
+                "is_compilation": false
+            }
+        },
+        {
+            "id": "a677bbad-9d93-4147-a84d-daee203863b1",
+            "title": "Yêu Đừng Sợ Đau  Ngô Lan HươngCukak Remix Audio Lyrics Video",
+            "length": 233.09,
+            "track": 0,
+            "disc": 1,
+            "lyrics": "",
+            "created_at": "2023-12-24T07:41:47.000000Z",
+            "year": null,
+            "genre": "",
+            "artist": {
+                "id": 1,
+                "name": "Unknown Artist",
+                "image": null
+            },
+            "album": {
+                "id": 1,
+                "artist_id": 1,
+                "name": "Unknown Album",
+                "cover": null,
+                "created_at": "2023-12-24T07:32:14.000000Z",
+                "is_compilation": false
+            }
+        },
+        {
+            "id": "b7a6fbb3-8493-40d0-a54a-2bed9a1184a3",
+            "title": "Official MV Gấp Đôi Yêu Thương  Tuấn Hưng",
+            "length": 302.34,
+            "track": 0,
+            "disc": 1,
+            "lyrics": "",
+            "created_at": "2023-12-24T07:41:48.000000Z",
+            "year": null,
+            "genre": "",
+            "artist": {
+                "id": 1,
+                "name": "Unknown Artist",
+                "image": null
+            },
+            "album": {
+                "id": 1,
+                "artist_id": 1,
+                "name": "Unknown Album",
+                "cover": null,
+                "created_at": "2023-12-24T07:32:14.000000Z",
+                "is_compilation": false
+            }
+        },
+        {
+            "id": "f139cc54-b81d-4c94-b647-005eb6f536dc",
+            "title": "Bật Tình Yêu Lên  Hòa Minzy x Tăng Duy Tân  MV Lyrics",
+            "length": 219.56,
+            "track": 0,
+            "disc": 1,
+            "lyrics": "",
+            "created_at": "2023-12-24T07:41:47.000000Z",
+            "year": null,
+            "genre": "",
+            "artist": {
+                "id": 1,
+                "name": "Unknown Artist",
+                "image": null
+            },
+            "album": {
+                "id": 1,
+                "artist_id": 1,
+                "name": "Unknown Album",
+                "cover": null,
+                "created_at": "2023-12-24T07:32:14.000000Z",
+                "is_compilation": false
+            }
+        }
+    ]
 }
 """
 
-    val mySoundData = parseMixedContentFromMySound(jsonString)
-    println(mySoundData?.albums)
-    println(mySoundData?.artists)
-    println(mySoundData?.songs)
-    println(mySoundData?.settings)
-
-    println(mySoundData?.interactions)
-    println(mySoundData?.users)
-    println(mySoundData?.currentUser)
-
+    val mySoundData = parseMixeSongContend(jsonString)
+    println(mySoundData);
 }
