@@ -1312,7 +1312,7 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
         if (videoId.utf8Size() > 20) {
             Log.d("TAG", "Biến check là đúng. Thực hiện một số hành động khác ở đây.")
             var baseUrl = Config.local_Url;
-            emit("$baseUrl/play/$videoId?t=34|4J2NRqo0gJiWEeAQdoMHZlVuZhCUnsBiw305a8kI")
+            emit("$baseUrl/play/$videoId?t=6|e0w9z2RzOMpi5Ql6XtcaE7qGIvqrvfdh9Ks9dMHX")
         } else YouTube.player(videoId).onSuccess { data ->
             val videoItag =
                 VIDEO_QUALITY.itags.getOrNull(VIDEO_QUALITY.items.indexOf(dataStoreManager.videoQuality.first()))
