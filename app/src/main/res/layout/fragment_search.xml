@@ -27,6 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/svSearch"
+        android:layout_marginTop="6dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:orientation="horizontal">
@@ -289,22 +290,26 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_centerInParent="true">
+
                 <TextView
+                    android:id="@+id/noSearchTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/everything_you_need"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
+                    android:layout_marginBottom="10sp"
                     android:gravity="center"
-                    android:layout_marginBottom="10sp">
+                    android:text="@string/everything_you_need"
+                    android:textSize="16sp"
+                    android:textStyle="bold">
 
                 </TextView>
+
                 <TextView
+                    android:id="@+id/noSearch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="@string/search_for_songs_artists_albums_playlists_and_more"
-                    android:textSize="14sp"
-                    android:gravity="center">
+                    android:textSize="14sp">
 
                 </TextView>
             </LinearLayout>

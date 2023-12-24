@@ -91,6 +91,8 @@ class SearchFragment : Fragment() {
     private lateinit var suggestAdapter: SuggestQueryAdapter
     private lateinit var suggestYTItemAdapter: SuggestYTItemAdapter
 
+    var isYT:Boolean = true;
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -217,23 +219,24 @@ class SearchFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText.isNullOrEmpty())
+                if (isYT)
                 {
-                    observeSearchHistory()
-                    binding.suggestList.visibility = View.GONE
-                    binding.suggestListYtItem.visibility = View.GONE
-                    binding.recentlyQueryView.visibility = View.VISIBLE
-                    binding.resultView.visibility = View.GONE
-                    binding.defaultLayout.visibility = View.GONE
-                }
-                else {
-                    binding.suggestList.visibility = View.VISIBLE
-                    binding.suggestListYtItem.visibility = View.VISIBLE
-                    binding.recentlyQueryView.visibility = View.GONE
-                    binding.defaultLayout.visibility = View.GONE
-                    binding.resultView.visibility = View.GONE
-                    Log.d("Gọi suggest", "onQueryTextChange: $newText")
-                    fetchSuggestList(newText)
+                    if (newText.isNullOrEmpty()) {
+                        observeSearchHistory()
+                        binding.suggestList.visibility = View.GONE
+                        binding.suggestListYtItem.visibility = View.GONE
+                        binding.recentlyQueryView.visibility = View.VISIBLE
+                        binding.resultView.visibility = View.GONE
+                        binding.defaultLayout.visibility = View.GONE
+                    } else {
+                        binding.suggestList.visibility = View.VISIBLE
+                        binding.suggestListYtItem.visibility = View.VISIBLE
+                        binding.recentlyQueryView.visibility = View.GONE
+                        binding.defaultLayout.visibility = View.GONE
+                        binding.resultView.visibility = View.GONE
+                        Log.d("Gọi suggest", "onQueryTextChange: $newText")
+                        fetchSuggestList(newText)
+                    }
                 }
                 return false
             }
@@ -689,17 +692,35 @@ class SearchFragment : Fragment() {
         })
         binding.btYTMusic.setOnClickListener{
             Log.e("TAG", " === NAM === btYTMusic")
-            binding.btYTMusic.isSelected = true;
-            binding.btMySound.isSelected = false;
-//            binding.btYTMusic.backgroundTintList = ColorStateList.valueOf(Color.parseColor("@color/light_purple"))
-//            binding.btMySound.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#359966FF"))
+            binding.btYTMusic.isSelected = true
+            binding.btMySound.isSelected = false
+            binding.noSearchTitle.setText("Everything you need")
+            binding.noSearch.setText("Search for songs, artists, albums, playlists, and more")
+            binding.svSearch.clearFocus()
+            binding.defaultLayout.visibility = View.VISIBLE
+            binding.resultView.visibility = View.GONE
+            binding.recentlyQueryView.visibility = View.GONE
+            isYT = true;
+            binding.svSearch.setQuery("",false)
         }
         binding.btMySound.setOnClickListener{
             Log.e("TAG", " === NAM === btMySound")
-            binding.btMySound.isSelected = true;
-            binding.btYTMusic.isSelected = false;
-//            binding.btMySound.backgroundTintList = ColorStateList.valueOf(Color.parseColor("@color/light_purple"))
-//            binding.btYTMusic.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#359966FF"))
+            binding.btMySound.isSelected = true
+            binding.btYTMusic.isSelected = false
+            isYT = false;
+            resultList.clear()
+            resultAdapter.updateList(resultList)
+            binding.noSearchTitle.setText("Let's try our music")
+            binding.noSearch.setText("The best songs from MYSOUND")
+//            setEnabledAll(binding.chipGroupTypeSearch, false)
+            binding.svSearch.clearFocus()
+            binding.svSearch.setQuery("",false)
+            binding.suggestList.visibility = View.GONE
+            binding.suggestListYtItem.visibility = View.GONE
+            binding.chipGroupTypeSearch.visibility = View.GONE
+            binding.recentlyQueryView.visibility = View.GONE
+            binding.defaultLayout.visibility = View.VISIBLE
+            binding.resultView.visibility = View.GONE
         }
         binding.btClearSearchHistory.setOnClickListener {
             viewModel.searchHistory.value?.clear()
