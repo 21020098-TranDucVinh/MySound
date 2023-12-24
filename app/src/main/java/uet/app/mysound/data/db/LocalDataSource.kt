@@ -1,6 +1,10 @@
 package uet.app.mysound.data.db
 
 import android.util.Log
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
+import com.google.gson.JsonParser
+import uet.app.mysound.common.Config
 import uet.app.mysound.data.db.entities.AlbumEntity
 import uet.app.mysound.data.db.entities.ArtistEntity
 import uet.app.mysound.data.db.entities.FormatEntity
@@ -12,6 +16,7 @@ import uet.app.mysound.data.db.entities.QueueEntity
 import uet.app.mysound.data.db.entities.SearchHistory
 import uet.app.mysound.data.db.entities.SetVideoIdEntity
 import uet.app.mysound.data.db.entities.SongEntity
+import uet.app.mysound.data.parser.MySound.fetchDataFromUrl
 import uet.app.mysound.myAPI.User.LoginResponse
 import uet.app.mysound.ui.MainActivity
 import java.time.LocalDateTime
@@ -21,7 +26,20 @@ class LocalDataSource @Inject constructor(private val databaseDao: DatabaseDao) 
     suspend fun getAllRecentData() = databaseDao.getAllRecentData()
     suspend fun getAllDownloadedPlaylist() = databaseDao.getAllDownloadedPlaylist()
 
-    suspend fun getSearchHistory() = databaseDao.getSearchHistory()
+
+    fun getSearchHistory(): List<SearchHistory> {
+        val baseUrl = Config.local_Url
+        val url = "$baseUrl/get_search_history"
+
+        val jsonData = fetchDataFromUrl(url)
+        val gson = Gson()
+        val jsonObject = JsonParser.parseString(jsonData).asJsonObject
+        val searchHistoryListType = object : TypeToken<List<SearchHistory>>() {}.type
+        return gson.fromJson(jsonObject.getAsJsonArray("search_history"), searchHistoryListType)
+    }
+
+    //suspend fun getSearchHistory() = databaseDao.getSearchHistory()
+
 
     suspend fun deleteSearchHistory() = databaseDao.deleteSearchHistory()
 
@@ -44,7 +62,6 @@ class LocalDataSource @Inject constructor(private val databaseDao: DatabaseDao) 
         if (response?.token == null) {
             // Token is null, call the databaseDao.insertSong(song)
             databaseDao.insertSong(song)
-
             // Handle the result as needed, for example, print it to the screen
             Log.i("YourTag", "Inserted Song: $song")
         } else {

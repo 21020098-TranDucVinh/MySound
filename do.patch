@@ -1,0 +1,153 @@
+Subject: [PATCH] do
+---
+Index: app/src/main/java/uet/app/mysound/data/db/LocalDataSource.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/uet/app/mysound/data/db/LocalDataSource.kt b/app/src/main/java/uet/app/mysound/data/db/LocalDataSource.kt
+--- a/app/src/main/java/uet/app/mysound/data/db/LocalDataSource.kt	(revision 1750f206001bcd7cd25bdf9c33e5ff21920f79d9)
++++ b/app/src/main/java/uet/app/mysound/data/db/LocalDataSource.kt	(date 1703400802673)
+@@ -11,15 +11,53 @@
+ import uet.app.mysound.data.db.entities.SearchHistory
+ import uet.app.mysound.data.db.entities.SetVideoIdEntity
+ import uet.app.mysound.data.db.entities.SongEntity
++
+ import java.time.LocalDateTime
+ import javax.inject.Inject
+ import android.util.Log
++import androidx.room.PrimaryKey
++import com.google.gson.Gson
++import com.google.gson.JsonParser
++import com.google.gson.annotations.SerializedName
++import com.google.gson.reflect.TypeToken
++import uet.app.mysound.data.parser.search.fetchDataFromUrl
+ 
+ class LocalDataSource @Inject constructor(private val databaseDao: DatabaseDao) {
+     suspend fun getAllRecentData() = databaseDao.getAllRecentData()
+     suspend fun getAllDownloadedPlaylist() = databaseDao.getAllDownloadedPlaylist()
+ 
+-    suspend fun getSearchHistory() = databaseDao.getSearchHistory()
++    val url = "http://192.168.46.51:8000/get_search_history"
++    val jsonData = fetchDataFromUrl(url)
++
++//        val jsonData = """
++//        {
++//            "search_history": [
++//                {
++//                    "query": "query"
++//                },
++//                {
++//                    "query": "query"
++//                },
++//                {
++//                    "query": "query"
++//                },
++//                {
++//                    "query": "query"
++//                }
++//            ]
++//        }
++//    """
++
++    val gson = Gson()
++    val jsonObject = JsonParser.parseString(jsonData).asJsonObject
++    val searchHistoryListType = object : TypeToken<List<SearchHistory>>() {}.type
++    val searchHistoryList: List<SearchHistory> = gson.fromJson(jsonObject.getAsJsonArray("search_history"), searchHistoryListType)
++
++
++
++    fun getSearchHistory() = searchHistoryList;
++    //suspend fun getSearchHistory() = databaseDao.getSearchHistory()
++
+ 
+     suspend fun deleteSearchHistory() = databaseDao.deleteSearchHistory()
+ 
+Index: app/src/main/java/uet/app/mysound/data/parser/search/searchHistory.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/uet/app/mysound/data/parser/search/searchHistory.kt b/app/src/main/java/uet/app/mysound/data/parser/search/searchHistory.kt
+new file mode 100644
+--- /dev/null	(date 1703003724708)
++++ b/app/src/main/java/uet/app/mysound/data/parser/search/searchHistory.kt	(date 1703003724708)
+@@ -0,0 +1,77 @@
++package uet.app.mysound.data.parser.search
++
++import uet.app.mysound.data.model.home.HomeItem
++import java.io.BufferedReader
++import java.io.InputStreamReader
++import java.net.HttpURLConnection
++import java.net.URL
++
++fun fetchDataFromUrl(urlString: String): String? {
++    var connection: HttpURLConnection? = null
++    var reader: BufferedReader? = null
++    var result: String? = ""
++
++    try {
++        val url = URL(urlString)
++        connection = url.openConnection() as HttpURLConnection
++        connection.requestMethod = "GET"
++
++        // Kiểm tra mã trạng thái HTTP
++        val responseCode = connection.responseCode
++        if (responseCode == HttpURLConnection.HTTP_OK) {
++            // Đọc dữ liệu từ InputStream
++            val inputStream = connection.inputStream
++            reader = BufferedReader(InputStreamReader(inputStream))
++            val stringBuilder = StringBuilder()
++            var line: String?
++
++            while (reader.readLine().also { line = it } != null) {
++                stringBuilder.append(line)
++            }
++
++            result = stringBuilder.toString()
++        }
++    } catch (e: Exception) {
++        e.printStackTrace()
++    } finally {
++        // Đóng các resource sau khi sử dụng
++        reader?.close()
++        connection?.disconnect()
++    }
++
++    return result
++//    """
++//        {
++//            "search_history": [
++//                {
++//                    "query": "query"
++//                },
++//                {
++//                    "query": "query"
++//                },
++//                {
++//                    "query": "query"
++//                },
++//                {
++//                    "query": "query"
++//                }
++//            ]
++//        }
++//    """
++}
++
++
++fun getSearchHistory () {
++    val url = "http://127.0.0.1:8000/api/get_search_history"
++    val jsonData = fetchDataFromUrl(url)
++    val list: ArrayList<HomeItem> = arrayListOf()
++
++
++    // Kiểm tra xem dữ liệu đã được lấy thành công hay không
++    if (jsonData != null) {
++        println("Dữ liệu JSON từ URL:")
++        println(list)
++    } else {
++        println("Không thể lấy được dữ liệu từ URL.")
++    }
++}
+\ No newline at end of file

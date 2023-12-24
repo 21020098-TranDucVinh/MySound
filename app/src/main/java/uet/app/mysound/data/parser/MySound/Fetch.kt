@@ -1,4 +1,5 @@
 package uet.app.mysound.data.parser.MySound
+import uet.app.mysound.common.Config
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
@@ -37,4 +38,10 @@ fun fetchDataFromUrl(urlString: String): String? {
 }
 
 fun main() {
+    var baseUrl = Config.local_Url;
+    val url = "$baseUrl/get_search_history"
+
+    val jsonData = fetchDataFromUrl(url)
+
+    println(jsonData);
 }
