@@ -48,7 +48,7 @@ import uet.app.mysound.data.model.searchResult.songs.Artist
 import uet.app.mysound.data.model.searchResult.songs.SongsResult
 import uet.app.mysound.data.model.searchResult.songs.Thumbnail
 import uet.app.mysound.data.model.searchResult.videos.VideosResult
-import uet.app.mysound.data.parser.MySound.fetchDataFromUrl
+import uet.app.mysound.data.parser.MyDB.fetchDataFromUrl
 import uet.app.mysound.data.parser.parseAlbumData
 import uet.app.mysound.data.parser.parseAlbumDataFromMySound
 //import uet.app.mysound.data.parser.parseAlbumDataFromMySound
@@ -219,7 +219,6 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
     suspend fun getAllArtists(): Flow<List<ArtistEntity>> =
         flow {
             Log.i("TAG", "QUERRY D*9B getAllArtists")
-
             emit(localDataSource.getAllArtists())
         }.flowOn(Dispatchers.IO)
 

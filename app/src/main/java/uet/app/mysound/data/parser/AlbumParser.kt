@@ -4,7 +4,7 @@ import uet.app.mysound.data.model.browse.album.AlbumBrowse
 import uet.app.mysound.data.model.browse.album.Track
 import uet.app.mysound.data.model.searchResult.songs.Album
 import uet.app.mysound.data.model.searchResult.songs.Artist
-import uet.app.mysound.data.parser.MySound.parseMyAlbumBrowseJson
+import uet.app.mysound.data.parser.MyDB.parseMyAlbumBrowseJson
 import uet.app.youtubeExtractor.pages.AlbumPage
 
 fun parseAlbumData(data: AlbumPage): AlbumBrowse {
