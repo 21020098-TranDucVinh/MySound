@@ -275,7 +275,7 @@
     <string name="podcasts" translatable="false">Podcasts</string>
     <string name="featured_inArtist">Featured on</string>
 
-    <string name="formMySound"><![CDATA[From My Sound]]></string>
+    <string name="fromMySound"><![CDATA[From My Sound]]></string>
 
     <string name="audio_quality">Audio quality</string>
     <string name="play_video_for_video_track_instead_of_audio_only">Play video for video track instead of audio only</string>
