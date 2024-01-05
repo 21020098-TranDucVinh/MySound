@@ -9,7 +9,6 @@ on:
       - 'fastlane/**'
       - 'assets/**'
       - '.github/**/*.md'
-      - '.github/FUNDING.yml'
       - '.github/ISSUE_TEMPLATE/**'
 
 jobs:

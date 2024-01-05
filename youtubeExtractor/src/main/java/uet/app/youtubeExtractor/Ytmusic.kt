@@ -519,10 +519,6 @@ class Ytmusic {
             Log.i("TAG", "YOUTUBEMUSIC removeItemYouTubePlaylist")
         }
 
-    /***
-     * SponsorBlock testing
-     * @author maxrave-dev
-     */
 
     suspend fun getSkipSegments(videoId: String) =
         httpClient.get("https://sponsor.ajay.app/api/skipSegments/") {
