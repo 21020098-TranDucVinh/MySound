@@ -1,4 +1,4 @@
-package uet.app.mysound.data.parser.MySound
+package uet.app.mysound.data.parser.MyDB
 
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName

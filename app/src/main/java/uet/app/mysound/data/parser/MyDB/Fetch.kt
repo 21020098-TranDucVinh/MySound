@@ -1,4 +1,4 @@
-package uet.app.mysound.data.parser.MySound
+package uet.app.mysound.data.parser.MyDB
 import uet.app.mysound.common.Config
 import java.io.BufferedReader
 import java.io.BufferedWriter

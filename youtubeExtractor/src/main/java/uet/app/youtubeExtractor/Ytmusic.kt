@@ -521,7 +521,7 @@ class Ytmusic {
 
     /***
      * SponsorBlock testing
-     * @author maxrave-dev
+     * @author 
      */
 
     suspend fun getSkipSegments(videoId: String) =

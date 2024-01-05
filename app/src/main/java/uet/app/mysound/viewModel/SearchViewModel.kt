@@ -37,6 +37,7 @@ import uet.app.mysound.data.repository.MainRepository
 import uet.app.mysound.extension.toQueryList
 import uet.app.mysound.extension.toSongEntity
 import uet.app.mysound.service.test.download.DownloadUtils
+import uet.app.mysound.ui.fragment.SearchFragment
 import uet.app.mysound.utils.Resource
 import uet.app.youtubeExtractor.models.SearchSuggestions
 import java.time.LocalDateTime
@@ -126,21 +127,25 @@ class SearchViewModel @Inject constructor(private val mainRepository: MainReposi
         if (loading.value == false){
             loading.value = true
             viewModelScope.launch {
-//                mainRepository.searchSongs(query, "songs", regionCode!!, SUPPORTED_LANGUAGE.serverCodes[SUPPORTED_LANGUAGE.codes.indexOf(language!!)]).collect { values ->
-//                    _songSearchResult.value = values
-//                    Log.d("SearchViewModel", "searchSongs: ${_songSearchResult.value}")
-//                    withContext(Dispatchers.Main) {
-//                        loading.value = false
-//                    }
-//                }
-                mainRepository.getSearchDataSong(query).collect {
-                    _songSearchResult.value = it
-                    Log.d("SearchViewModel", "searchSongs: ${_songSearchResult.value}")
-                    withContext(Dispatchers.Main) {
-                        loading.value = false
+                if (SearchFragment.isYT) {
+                    mainRepository.getSearchDataSong(query).collect {
+                        _songSearchResult.value = it
+                        Log.d("SearchViewModel", "searchSongs: ${_songSearchResult.value}")
+                        withContext(Dispatchers.Main) {
+                            loading.value = false
+                        }
+                    }
+                } else {
+                    mainRepository.getMySearchDataSong(query).collect {
+                        _songSearchResult.value = it
+                        Log.d("SearchViewModel", "searchSongs: ${_songSearchResult.value}")
+                        withContext(Dispatchers.Main) {
+                            loading.value = false
+                        }
                     }
                 }
             }
+            
         }
     }
     fun searchAll(query: String) {
@@ -148,45 +153,82 @@ class SearchViewModel @Inject constructor(private val mainRepository: MainReposi
         loading.value = true
         viewModelScope.launch {
             val job1 = launch {
-                mainRepository.getSearchDataSong(query).collect {values ->
-                    _songSearchResult.value = values
-                    Log.d("SearchViewModel", "searchSongs: ${_songSearchResult.value}")
+                if (SearchFragment.isYT) {
+                    mainRepository.getSearchDataSong(query).collect { values ->
+                        _songSearchResult.value = values
+                        Log.d("SearchViewModel", "searchSongs: ${_songSearchResult.value}")
+                    }
+                } else {
+                    mainRepository.getMySearchDataSong(query).collect {
+                        _songSearchResult.value = it
+                        Log.d("SearchViewModel", "searchSongs: ${_songSearchResult.value}")
+                        withContext(Dispatchers.Main) {
+                            loading.value = false
+                        }
+                    }
                 }
             }
             val job2 = launch {
-                mainRepository.getSearchDataArtist(query).collect {values ->
-                    _artistSearchResult.value = values
-                    Log.d("SearchViewModel", "searchArtists: ${_artistSearchResult.value}")
+                if (SearchFragment.isYT) {
+                    mainRepository.getSearchDataArtist(query).collect { values ->
+                        _artistSearchResult.value = values
+                        Log.d("SearchViewModel", "searchArtists: ${_artistSearchResult.value}")
+                    }
+                } else {
+                    _artistSearchResult.value = Resource.Success(ArrayList())
                 }
             }
             val job3 = launch {
-                mainRepository.getSearchDataAlbum(query).collect {values ->
-                    _albumSearchResult.value = values
-                    Log.d("SearchViewModel", "searchAlbums: ${_albumSearchResult.value}")
+                if (SearchFragment.isYT) {
+                    mainRepository.getSearchDataAlbum(query).collect { values ->
+                        _albumSearchResult.value = values
+                        Log.d("SearchViewModel", "searchAlbums: ${_albumSearchResult.value}")
+                    }
+                } else {
+                    _albumSearchResult.value = Resource.Success(ArrayList())
                 }
             }
             val job4 = launch {
-                mainRepository.getSearchDataPlaylist(query).collect {values ->
-                    _playlistSearchResult.value = values
-                    Log.d("SearchViewModel", "searchPlaylists: ${_playlistSearchResult.value}")
+                if (SearchFragment.isYT) {
+                    mainRepository.getSearchDataPlaylist(query).collect { values ->
+                        _playlistSearchResult.value = values
+                        Log.d("SearchViewModel", "searchPlaylists: ${_playlistSearchResult.value}")
+                    }
+                } else {
+                    _playlistSearchResult.value = Resource.Success(ArrayList())
                 }
             }
             val job5 = launch {
-                mainRepository.getSearchDataVideo(query).collect { values ->
-                    _videoSearchResult.value = values
-                    Log.d("SearchViewModel", "searchVideos: ${_videoSearchResult.value}")
+                if (SearchFragment.isYT) {
+                    mainRepository.getSearchDataVideo(query).collect { values ->
+                        _videoSearchResult.value = values
+                        Log.d("SearchViewModel", "searchVideos: ${_videoSearchResult.value}")
+                    }
+                } else {
+                    _videoSearchResult.value = Resource.Success(ArrayList())
+
                 }
+
             }
             val job6 = launch {
-                mainRepository.getSearchDataFeaturedPlaylist(query).collect { values ->
-                    Log.d("SearchViewModel", "featured: $values")
-                    _featuredPlaylistSearchResult.value = values
+                if (SearchFragment.isYT) {
+                    mainRepository.getSearchDataFeaturedPlaylist(query).collect { values ->
+                        Log.d("SearchViewModel", "featured: $values")
+                        _featuredPlaylistSearchResult.value = values
+                    }
+                } else {
+                    _featuredPlaylistSearchResult.value = Resource.Success(ArrayList())
+
                 }
             }
             val job7 = launch {
-                mainRepository.getSearchDataPodcast(query).collect { values ->
-                    Log.d("SearchViewModel", "podcast: ${values.data.toString()}")
-                    _podcastSearchResult.value = values
+                if (SearchFragment.isYT) {
+                    mainRepository.getSearchDataPodcast(query).collect { values ->
+                        Log.d("SearchViewModel", "podcast: ${values.data.toString()}")
+                        _podcastSearchResult.value = values
+                    }
+                } else {
+                    _podcastSearchResult.value = Resource.Success(ArrayList())
                 }
             }
             job1.join()
@@ -215,12 +257,17 @@ class SearchViewModel @Inject constructor(private val mainRepository: MainReposi
         if (loading.value == false) {
             loading.value = true
             viewModelScope.launch {
-                mainRepository.getSearchDataAlbum(query).collect { values ->
-                    _albumSearchResult.value = values
-                    Log.d("SearchViewModel", "searchAlbums: ${_albumSearchResult.value}")
-                    withContext(Dispatchers.Main) {
-                        loading.value = false
+                if (SearchFragment.isYT) {
+                    mainRepository.getSearchDataAlbum(query).collect { values ->
+                        _albumSearchResult.value = values
+                        Log.d("SearchViewModel", "searchAlbums: ${_albumSearchResult.value}")
+                        withContext(Dispatchers.Main) {
+                            loading.value = false
+                        }
                     }
+                }
+                else {
+                    _albumSearchResult.value = Resource.Success(ArrayList());
                 }
             }
         }
@@ -230,15 +277,20 @@ class SearchViewModel @Inject constructor(private val mainRepository: MainReposi
         if (loading.value == false) {
             loading.value = true
             viewModelScope.launch {
-                mainRepository.getSearchDataFeaturedPlaylist(query).collect { values ->
-                    _featuredPlaylistSearchResult.value = values
-                    Log.d(
-                        "SearchViewModel",
-                        "searchFeaturedPlaylist: ${_featuredPlaylistSearchResult.value}"
-                    )
-                    withContext(Dispatchers.Main) {
-                        loading.value = false
+                if (SearchFragment.isYT) {
+                    mainRepository.getSearchDataFeaturedPlaylist(query).collect { values ->
+                        _featuredPlaylistSearchResult.value = values
+                        Log.d(
+                            "SearchViewModel",
+                            "searchFeaturedPlaylist: ${_featuredPlaylistSearchResult.value}"
+                        )
+                        withContext(Dispatchers.Main) {
+                            loading.value = false
+                        }
                     }
+                }
+                else {
+                    _featuredPlaylistSearchResult.value = Resource.Success(ArrayList())
                 }
             }
         }
@@ -248,12 +300,17 @@ class SearchViewModel @Inject constructor(private val mainRepository: MainReposi
         if (loading.value == false) {
             loading.value = true
             viewModelScope.launch {
-                mainRepository.getSearchDataPodcast(query).collect { values ->
-                    _podcastSearchResult.value = values
-                    Log.d("SearchViewModel", "searchPodcast: ${_podcastSearchResult.value}")
-                    withContext(Dispatchers.Main) {
-                        loading.value = false
+                if (SearchFragment.isYT) {
+                    mainRepository.getSearchDataPodcast(query).collect { values ->
+                        _podcastSearchResult.value = values
+                        Log.d("SearchViewModel", "searchPodcast: ${_podcastSearchResult.value}")
+                        withContext(Dispatchers.Main) {
+                            loading.value = false
+                        }
                     }
+                }
+                else {
+                    _podcastSearchResult.value = Resource.Success(ArrayList());
                 }
             }
         }
@@ -263,38 +320,53 @@ class SearchViewModel @Inject constructor(private val mainRepository: MainReposi
         if (loading.value == false) {
             loading.value = true
             viewModelScope.launch {
-                mainRepository.getSearchDataArtist(query).collect { values ->
-                    _artistSearchResult.value = values
-                    Log.d("SearchViewModel", "searchArtists: ${_artistSearchResult.value}")
-                    withContext(Dispatchers.Main) {
-                        loading.value = false
+                if (SearchFragment.isYT) {
+                    mainRepository.getSearchDataArtist(query).collect { values ->
+                        _artistSearchResult.value = values
+                        Log.d("SearchViewModel", "searchArtists: ${_artistSearchResult.value}")
+                        withContext(Dispatchers.Main) {
+                            loading.value = false
+                        }
+                    }
+                } else {
+                    _artistSearchResult.value = Resource.Success(ArrayList())
                 }
-            } }
+            }
         }
     }
 
     fun searchPlaylists(query: String) {
-        if (loading.value == false){
+        if (loading.value == false) {
             loading.value = true
-            viewModelScope.launch { mainRepository.getSearchDataPlaylist(query).collect {values ->
-                _playlistSearchResult.value = values
-                Log.d("SearchViewModel", "searchPlaylists: ${_playlistSearchResult.value}")
-                withContext(Dispatchers.Main) {
-                    loading.value = false
+            viewModelScope.launch {
+                if (SearchFragment.isYT) {
+                    mainRepository.getSearchDataPlaylist(query).collect { values ->
+                        _playlistSearchResult.value = values
+                        Log.d("SearchViewModel", "searchPlaylists: ${_playlistSearchResult.value}")
+                        withContext(Dispatchers.Main) {
+                            loading.value = false
+                        }
+                    }
+                } else {
+                    _playlistSearchResult.value = Resource.Success(ArrayList())
                 }
-            } }
+            }
         }
     }
     fun searchVideos(query: String) {
         if (loading.value == false) {
             loading.value = true
             viewModelScope.launch {
-                mainRepository.getSearchDataVideo(query).collect { values ->
-                    _videoSearchResult.value = values
-                    Log.d("SearchViewModel", "searchVideos: ${_videoSearchResult.value}")
-                    withContext(Dispatchers.Main) {
-                        loading.value = false
+                if (SearchFragment.isYT) {
+                    mainRepository.getSearchDataVideo(query).collect { values ->
+                        _videoSearchResult.value = values
+                        Log.d("SearchViewModel", "searchVideos: ${_videoSearchResult.value}")
+                        withContext(Dispatchers.Main) {
+                            loading.value = false
+                        }
                     }
+                } else {
+                    _videoSearchResult.value = Resource.Success(ArrayList())
                 }
             }
         }
