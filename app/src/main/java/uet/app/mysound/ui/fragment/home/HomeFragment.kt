@@ -1,6 +1,5 @@
 package uet.app.mysound.ui.fragment.home
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -34,7 +33,6 @@ import uet.app.mysound.data.queue.Queue
 import uet.app.mysound.databinding.FragmentHomeBinding
 import uet.app.mysound.extension.navigateSafe
 import uet.app.mysound.extension.toTrack
-import uet.app.mysound.myAPI.User.LoginActivity
 import uet.app.mysound.utils.Resource
 import uet.app.mysound.viewModel.HomeViewModel
 import java.text.SimpleDateFormat

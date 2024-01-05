@@ -48,7 +48,7 @@ import uet.app.mysound.data.model.searchResult.songs.Artist
 import uet.app.mysound.data.model.searchResult.songs.SongsResult
 import uet.app.mysound.data.model.searchResult.songs.Thumbnail
 import uet.app.mysound.data.model.searchResult.videos.VideosResult
-import uet.app.mysound.data.parser.MySound.fetchDataFromUrl
+import uet.app.mysound.data.parser.MyDB.fetchDataFromUrl
 import uet.app.mysound.data.parser.parseAlbumData
 import uet.app.mysound.data.parser.parseAlbumDataFromMySound
 //import uet.app.mysound.data.parser.parseAlbumDataFromMySound
@@ -75,6 +75,8 @@ import uet.app.mysound.extension.bestMatchingIndex
 import uet.app.mysound.extension.toListTrack
 import uet.app.mysound.extension.toLyrics
 import uet.app.mysound.extension.toTrack
+import uet.app.mysound.myAPI.User.LoginResponse
+import uet.app.mysound.ui.MainActivity
 import uet.app.mysound.utils.Resource
 import uet.app.youtubeExtractor.YouTube
 import uet.app.youtubeExtractor.models.MediaType
@@ -219,7 +221,6 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
     suspend fun getAllArtists(): Flow<List<ArtistEntity>> =
         flow {
             Log.i("TAG", "QUERRY D*9B getAllArtists")
-
             emit(localDataSource.getAllArtists())
         }.flowOn(Dispatchers.IO)
 
@@ -540,7 +541,7 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
 
     suspend fun getHomeDataFromMySound(): Flow<Resource<ArrayList<HomeItem>>> = flow {
         try {
-            var baseUrl = Config.local_Url;
+            val baseUrl = Config.local_Url;
             val url = "$baseUrl/data"
             val data = fetchDataFromUrl(url)
 
@@ -941,7 +942,7 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
         runCatching {
             // Gọi API hoặc lấy dữ liệu từ nguồn khác và nhận được dữ liệu dạng JSON
 
-            var baseUrl = Config.local_Url;
+            val baseUrl = Config.local_Url;
             val url = "$baseUrl/search?keyword=$query";
             val data = fetchDataFromUrl(url)
 
@@ -1332,9 +1333,12 @@ class MainRepository @Inject constructor(private val localDataSource: LocalDataS
     suspend fun getStream(videoId: String, itag: Int): Flow<String?> = flow{
         Log.i("TAG", "GETSTREAM MAINREPO")
         if (videoId.utf8Size() > 20) {
-            Log.d("TAG", "Biến check là đúng. Thực hiện một số hành động khác ở đây.")
-            var baseUrl = Config.local_Url;
-            emit("$baseUrl/play/$videoId?t=6|e0w9z2RzOMpi5Ql6XtcaE7qGIvqrvfdh9Ks9dMHX")
+            val response: LoginResponse? = MainActivity.loginResponse;
+            Log.d("TAG", "")
+            val baseUrl = Config.local_Url;
+            if (response != null) {
+                emit("$baseUrl/play/$videoId?t=${response.audioToken}")
+            } else emit("$baseUrl/play/$videoId?t=6|e0w9z2RzOMpi5Ql6XtcaE7qGIvqrvfdh9Ks9dMHX")
         } else YouTube.player(videoId).onSuccess { data ->
             val videoItag =
                 VIDEO_QUALITY.itags.getOrNull(VIDEO_QUALITY.items.indexOf(dataStoreManager.videoQuality.first()))

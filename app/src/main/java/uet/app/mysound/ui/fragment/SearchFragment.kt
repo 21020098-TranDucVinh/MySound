@@ -91,7 +91,9 @@ class SearchFragment : Fragment() {
     private lateinit var suggestAdapter: SuggestQueryAdapter
     private lateinit var suggestYTItemAdapter: SuggestYTItemAdapter
 
-    var isYT:Boolean = true;
+    companion object {
+        var isYT:Boolean = true;
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
